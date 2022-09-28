@@ -1,0 +1,15 @@
+{
+    "name": "componentparent",
+    "version": "1.0.0",
+    "description": "The container used to start an AR experience",
+    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "author": "Mendix",
+    "config": {
+        "projectPath": "../../ARWidgetsTestProject-main/"
+    },
+    "packagePath": "mendix",
+    "scripts": {
+        "build": "tsc"
+    },
+    "license": "Apache-2.0"
+}

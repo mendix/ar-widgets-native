@@ -1,0 +1,26 @@
+{
+    "name": "arcontainer",
+    "widgetName": "ARContainer",
+    "version": "1.0.0",
+    "description": "The container used to start an AR experience",
+    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "author": "Mendix",
+    "engines": {
+        "node": ">=12"
+    },
+    "config": {
+        "projectPath": "../../ARWidgetsTestProject-main/"
+    },
+    "packagePath": "com.mendix.widget.native",
+    "scripts": {
+        "start": "pluggable-widgets-tools start:native",
+        "buildWithComponentParent": "cd ../ComponentParent && npm run build && cd ../Container && npm run build",
+        "build": "date +%H:%M && pluggable-widgets-tools build:native && date +%H:%M",
+        "format": "pluggable-widgets-tools format",
+        "lint": "pluggable-widgets-tools lint",
+        "lint:fix": "pluggable-widgets-tools lint:fix",
+        "prerelease": "npm run lint",
+        "release": "pluggable-widgets-tools release:native"
+    },
+    "license": "Apache-2.0"
+}
