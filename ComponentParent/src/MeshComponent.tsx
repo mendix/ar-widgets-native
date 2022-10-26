@@ -100,13 +100,7 @@ export function MeshComponent(
             if (mesh.actionManager === null) {
                 mesh.actionManager = new ActionManager();
             }
-            let check = false;
-            mesh.actionManager.actions.forEach(thing => {
-                if (thing.trigger === trigger) {
-                    check = true;
-                }
-            });
-            if (!check) {
+            if (mesh.actionManager.actions.find(action => action.trigger === trigger) === undefined) {
                 mesh.actionManager.registerAction(
                     new ExecuteCodeAction(trigger, function () {
                         if (action?.canExecute) {
