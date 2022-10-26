@@ -33,7 +33,8 @@ export function ARNode(props: ARNodeProps<Style>): React.ReactElement | void {
     return (
         <>
             <MeshComponent
-                mesh={nodeParent}
+                rootMesh={nodeParent}
+                allMeshes={nodeParent ? [nodeParent] : undefined}
                 mxPositionType={props.mxPositionType}
                 mxPositionXStat={props.mxPositionXStat}
                 mxPositionYStat={props.mxPositionYStat}

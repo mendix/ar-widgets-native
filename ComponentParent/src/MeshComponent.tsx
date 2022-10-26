@@ -9,16 +9,19 @@ import {
     Mesh,
     Scene,
     StandardMaterial,
-    PBRMetallicRoughnessMaterial
+    PBRMetallicRoughnessMaterial,
+    ActionManager,
+    ExecuteCodeAction
 } from "@babylonjs/core";
 import { Image } from "react-native";
 import { State } from "react-native-gesture-handler";
-import { ValueStatus } from "mendix";
+import { ValueStatus, ActionValue } from "mendix";
 import { EngineContext, GlobalContext } from "../typings/GlobalContextProps";
 
 export function MeshComponent(
     props: {
-        mesh?: Mesh;
+        rootMesh?: Mesh;
+        allMeshes?: Mesh[];
         OnSceneLoaded: (scene: Scene) => void;
     } & MeshComponentProps
 ): React.ReactElement {
@@ -71,7 +74,8 @@ export function MeshComponent(
         mxOnPinchActionValue,
         mxPinchEnabled,
         mxPinchToScaleEnabled,
-        mesh,
+        rootMesh,
+        allMeshes,
         OnSceneLoaded
     } = props;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
@@ -81,15 +85,6 @@ export function MeshComponent(
     const [scale, setScale] = useState<Vector3>(Vector3.One);
     const [startScale, setStartScale] = useState<Vector3>(Vector3.One);
     const meshRef = useRef<Mesh>();
-    const getAllMeshes = useCallback(() => {
-        if (mesh) {
-            const meshes: Mesh[] = mesh.getChildMeshes(true);
-            if (meshes.length === 0) {
-                meshes.push(mesh);
-            }
-            return meshes;
-        }
-    }, [mesh]);
     const isUsingMaterial = useCallback(
         mxMaterialOption ||
             mxMaterialColor ||
@@ -100,6 +95,46 @@ export function MeshComponent(
             mxMetalness,
         [mxMaterialOption, mxMaterialColor, mxMaterialTexture, mxLightingType, mxRoughness, mxMetalness, mxMetalness]
     );
+    const setAction = (action: ActionValue, trigger: number, meshes: Mesh[]) => {
+        meshes?.forEach(mesh => {
+            if (mesh.actionManager === null) {
+                mesh.actionManager = new ActionManager();
+            }
+            let check = false;
+            mesh.actionManager.actions.forEach(thing => {
+                if (thing.trigger === trigger) {
+                    check = true;
+                }
+            });
+            if (!check) {
+                mesh.actionManager.registerAction(
+                    new ExecuteCodeAction(trigger, function () {
+                        if (action?.canExecute) {
+                            action.execute();
+                        }
+                    })
+                );
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (mxOnClick?.canExecute && allMeshes !== undefined) {
+            setAction(mxOnClick, ActionManager.OnPickTrigger, allMeshes);
+        }
+    }, [mxOnClick, allMeshes]);
+
+    useEffect(() => {
+        if (mxOnHoverEnter?.canExecute && allMeshes !== undefined) {
+            setAction(mxOnHoverEnter, ActionManager.OnPointerOverTrigger, allMeshes);
+        }
+    }, [mxOnHoverEnter, allMeshes]);
+
+    useEffect(() => {
+        if (mxOnHoverExit?.canExecute && allMeshes !== undefined) {
+            setAction(mxOnHoverExit, ActionManager.OnPointerOutTrigger, allMeshes);
+        }
+    }, [mxOnHoverExit, allMeshes]);
 
     useEffect(() => {
         if (engineContext.scene) {
@@ -108,14 +143,14 @@ export function MeshComponent(
     }, [engineContext.scene]);
 
     useEffect(() => {
-        if (mesh && !meshRef.current) meshRef.current = mesh;
-        if (mesh && !isNaN(parentContext)) {
+        if (rootMesh && !meshRef.current) meshRef.current = rootMesh;
+        if (rootMesh && !isNaN(parentContext)) {
             const localParentMesh = engineContext.scene?.getMeshByUniqueId(parentContext);
             if (localParentMesh) {
-                mesh.setParent(localParentMesh);
+                rootMesh.parent = localParentMesh;
             }
         }
-    }, [mesh, parentContext, engineContext.scene]);
+    }, [rootMesh, parentContext, engineContext.scene]);
 
     useEffect(() => {
         return () => {
@@ -125,34 +160,34 @@ export function MeshComponent(
 
     //#region Translation(position, rotation, scale)
     useEffect(() => {
-        if (mesh && engineContext.scaleState === State.ACTIVE) {
-            setStartScale(mesh.scaling.clone());
+        if (rootMesh && engineContext.scaleState === State.ACTIVE) {
+            setStartScale(rootMesh.scaling.clone());
         }
     }, [engineContext.scaleState]);
 
     useEffect(() => {
-        if (mesh) {
-            mesh.position.x = position.x;
-            mesh.position.y = position.y;
-            mesh.position.z = position.z;
+        if (rootMesh) {
+            rootMesh.position.x = position.x;
+            rootMesh.position.y = position.y;
+            rootMesh.position.z = position.z;
         }
-    }, [position, engineContext.xrActive, mesh]);
+    }, [position, engineContext.xrActive, rootMesh]);
 
     useEffect(() => {
-        if (mesh) {
-            mesh.rotation.x = rotation.x * (Math.PI / 180);
-            mesh.rotation.y = rotation.y * (Math.PI / 180);
-            mesh.rotation.z = rotation.z * (Math.PI / 180);
+        if (rootMesh) {
+            rootMesh.rotation.x = rotation.x * (Math.PI / 180);
+            rootMesh.rotation.y = rotation.y * (Math.PI / 180);
+            rootMesh.rotation.z = rotation.z * (Math.PI / 180);
         }
-    }, [rotation, engineContext.xrActive, mesh]);
+    }, [rotation, engineContext.xrActive, rootMesh]);
 
     useEffect(() => {
-        if (mesh) {
-            mesh.scaling.x = scale.x;
-            mesh.scaling.y = scale.y;
-            mesh.scaling.z = scale.z;
+        if (rootMesh) {
+            rootMesh.scaling.x = scale.x;
+            rootMesh.scaling.y = scale.y;
+            rootMesh.scaling.z = scale.z;
         }
-    }, [scale, engineContext.xrActive, mesh]);
+    }, [scale, engineContext.xrActive, rootMesh]);
 
     useEffect(() => {
         if (mxPositionType === "Attribute") {
@@ -283,10 +318,9 @@ export function MeshComponent(
     //#region Material
     useEffect(() => {
         //This sets up all the  material information for the mesh
-        if (mesh && engineContext.scene && isUsingMaterial) {
+        if (allMeshes !== undefined && engineContext.scene && isUsingMaterial) {
             let texture: Texture | undefined;
             let color: Color3 | undefined;
-            mesh.visibility = Number(mxOpacity?.value);
             if (mxMaterialOption === "Color" && mxMaterialColor) {
                 color = Color3.FromHexString(mxMaterialColor);
             }
@@ -299,8 +333,9 @@ export function MeshComponent(
                     texture = new Texture(`file://${mxMaterialTexture.value.uri}`);
                 }
             }
-            const meshes = getAllMeshes();
-            meshes?.forEach(childMesh => {
+
+            allMeshes?.forEach(childMesh => {
+                childMesh.visibility = Number(mxOpacity?.value);
                 if (mxLightingType === "PBR" && mxMaterialOption !== "Object") {
                     handlePBRMaterial(childMesh, color, texture);
                 }
@@ -309,7 +344,7 @@ export function MeshComponent(
                 }
             });
         }
-    }, [mxMaterialColor, mxMaterialTexture, mesh, engineContext.scene]);
+    }, [mxMaterialColor, mxMaterialTexture, allMeshes, engineContext.scene]);
 
     const handlePBRMaterial = (mesh: Mesh, color?: Color3, texture?: Texture) => {
         if (engineContext.scene) {
@@ -348,34 +383,34 @@ export function MeshComponent(
     };
 
     useEffect(() => {
-        getAllMeshes()?.forEach(childMesh => {
+        allMeshes?.forEach(childMesh => {
             if (mxOpacity?.value) {
                 childMesh.visibility = Number(mxOpacity.value);
             }
         });
-    }, [mxOpacity?.value, getAllMeshes]);
+    }, [mxOpacity?.value, allMeshes]);
 
     useEffect(() => {
-        getAllMeshes()?.forEach(childMesh => {
+        allMeshes?.forEach(childMesh => {
             if (mxRoughness?.value && childMesh && childMesh.material instanceof PBRMetallicRoughnessMaterial) {
                 childMesh.material.roughness = Number(mxRoughness.value);
             }
         });
-    }, [mxRoughness?.value, getAllMeshes]);
+    }, [mxRoughness?.value, allMeshes]);
 
     useEffect(() => {
-        getAllMeshes()?.forEach(childMesh => {
+        allMeshes?.forEach(childMesh => {
             if (mxMetalness?.value && childMesh && childMesh.material instanceof PBRMetallicRoughnessMaterial) {
                 childMesh.material.metallic = Number(mxMetalness.value);
             }
         });
-    }, [mxMetalness?.value, mesh]);
+    }, [mxMetalness?.value, allMeshes]);
     //#endregion
 
     //#region Interaction
     useEffect(() => {
         //Handles dragging behaviour on mesh
-        if (mesh && engineContext.scene && engineContext.xrActive) {
+        if (rootMesh && engineContext.scene && engineContext.xrActive) {
             if (mxDraggingEnabled && mxUseDraggingInteraction && engineContext.featuresManager) {
                 if (mxDragType === "FixedToWorld") {
                     const hitTest = engineContext.featuresManager?.enableFeature(WebXRFeatureName.HIT_TEST, "latest", {
@@ -389,15 +424,15 @@ export function MeshComponent(
                             mxOnDrag.execute();
                         }
                         hitTest.onHitTestResultObservable.add(eventData => {
-                            if (mesh) {
+                            if (rootMesh) {
                                 eventData.map(result => {
-                                    mesh!.position = result.position;
+                                    rootMesh!.position = result.position;
                                 });
                             }
                         });
                     }
                 } else if (mxDragType === "FixedDistance") {
-                    mesh.setParent(engineContext.scene.activeCamera);
+                    rootMesh.parent = engineContext.scene.activeCamera;
                     if (mxOnDrag?.canExecute && !mxOnDrag.isExecuting) {
                         mxOnDrag.execute();
                     }
@@ -409,45 +444,24 @@ export function MeshComponent(
                 } else if (mxDragType === "FixedDistance" && parentContext) {
                     const parentMesh = engineContext.scene?.getMeshByUniqueId(parentContext);
                     if (parentMesh) {
-                        mesh.setParent(parentMesh);
+                        rootMesh.parent = parentMesh;
                     }
                 }
             }
         }
-    }, [mesh, engineContext.scene, mxDraggingEnabled, engineContext.featuresManager, engineContext.xrActive]);
+    }, [rootMesh, engineContext.scene, mxDraggingEnabled, engineContext.featuresManager, engineContext.xrActive]);
 
     useEffect(() => {
-        if (mesh?.scaling && mxUsePinchInteraction && mxPinchToScaleEnabled && mxPinchEnabled) {
-            mesh.scaling.x = startScale.x * engineContext.pinchScale;
-            mesh.scaling.y = startScale.y * engineContext.pinchScale;
-            mesh.scaling.z = startScale.z * engineContext.pinchScale;
+        if (rootMesh?.scaling && mxUsePinchInteraction && mxPinchToScaleEnabled && mxPinchEnabled) {
+            rootMesh.scaling.x = startScale.x * engineContext.pinchScale;
+            rootMesh.scaling.y = startScale.y * engineContext.pinchScale;
+            rootMesh.scaling.z = startScale.z * engineContext.pinchScale;
         }
         if (mxPinchEnabled && mxUsePinchInteraction && mxOnPinchActionValue?.canExecute) {
             mxOnPinchActionValue.execute();
         }
     }, [engineContext.pinchScale]);
 
-    useEffect(() => {
-        const foundMesh = getAllMeshes()?.find(someMesh => engineContext.pickedIDClicked.includes(someMesh.uniqueId));
-        if (foundMesh) {
-            engineContext.setPickedIDClicked(pickedIDs => pickedIDs.filter(id => id !== foundMesh.uniqueId));
-            if (mxOnClick?.canExecute) {
-                mxOnClick.execute();
-            }
-        }
-    }, [engineContext.pickedIDClicked]);
-
-    useEffect(() => {
-        const foundMesh = getAllMeshes()?.find(someMesh => engineContext.hoveringMeshID === someMesh.uniqueId);
-        if (foundMesh && mxOnHoverEnter?.canExecute) {
-            mxOnHoverEnter.execute();
-        }
-        if (!foundMesh || isNaN(engineContext.hoveringMeshID)) {
-            if (mxOnHoverExit?.canExecute) {
-                mxOnHoverExit.execute();
-            }
-        }
-    }, [engineContext.hoveringMeshID]);
     //#endregion
 
     return <Fragment />;

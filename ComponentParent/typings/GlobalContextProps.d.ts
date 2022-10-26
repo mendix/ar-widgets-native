@@ -3,9 +3,6 @@ export type EngineContext = {
     featuresManager?: WebXRFeaturesManager;
     xrActive: boolean;
     pinchScale: number;
-    pickedIDClicked: Array<number>;
-    setPickedIDClicked: React.Dispatch<React.SetStateAction<Array<number>>>;
-    hoveringMeshID: number;
     setImageTrackingOptions: React.Dispatch<
         React.SetStateAction<
             Array<{

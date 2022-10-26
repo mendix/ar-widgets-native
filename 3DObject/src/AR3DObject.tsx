@@ -1,6 +1,7 @@
 import React, { createElement, useEffect, useState } from "react";
 import { Style } from "@mendix/pluggable-widgets-tools";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
@@ -10,46 +11,37 @@ import { ValueStatus } from "mendix";
 import { Scene } from "@babylonjs/core/scene";
 
 export const AR3DObject = (props: AR3DObjectProps<Style>) => {
-    const [mesh, setMesh] = useState<Mesh | undefined>();
+    const [rootMesh, setRootMesh] = useState<Mesh | undefined>();
+    const [allMeshes, setAllMeshes] = useState<Mesh[] | undefined>();
     const [scene, setScene] = useState<Scene>();
 
     const handleSceneLoaded = (loadedScene: Scene) => {
         setScene(loadedScene);
-        if (props.mxSourceExpr.status === ValueStatus.Available) {
-            SceneLoader.LoadAssetContainer(props.mxSourceExpr.value, undefined, loadedScene, container => {
-                // Empty mesh, doesn't render anything but can influence child objects. This allows us to move multiple loaded meshes as if it's just one.
-                const parent = new Mesh("AR3DObjectParent", loadedScene);
-                container.meshes?.forEach(mesh => {
-                    // Set the parent of each mesh in this container to our new parent mesh
-                    mesh.parent = parent;
+        handleMesh(loadedScene);
+    };
+
+    useEffect(() => {
+        if (rootMesh) rootMesh.dispose();
+        if (scene) handleMesh(scene);
+    }, [props.mxSourceExpr.value]);
+
+    const handleMesh = (scene: Scene) => {
+        if (props.mxSourceExpr.value) {
+            SceneLoader.ImportMesh("", props.mxSourceExpr.value, "", scene, models => {
+                setRootMesh(models[0] as Mesh);
+                let castMeshes: Mesh[] = [];
+                models.forEach(abstractMesh => {
+                    castMeshes = [...castMeshes, abstractMesh as Mesh];
                 });
-                setMesh(parent);
-                // Adds the objects to our current scene
-                container.addAllToScene();
+                setAllMeshes(castMeshes);
             });
         }
     };
 
-    useEffect(() => {
-        if (mesh && props.mxSourceExpr.value) {
-            mesh.dispose();
-            SceneLoader.LoadAssetContainer(props.mxSourceExpr.value, undefined, scene, container => {
-                // Empty mesh, doesn't render anything but can influence child objects. This allows us to move multiple loaded meshes as if it's just one.
-                const parent = new Mesh("AR3DObjectParent", scene);
-                container.meshes?.forEach(mesh => {
-                    // Set the parent of each mesh in this container to our new parent mesh
-                    mesh.parent = parent;
-                });
-                setMesh(parent);
-                // Adds the objects to our current scene
-                container.addAllToScene();
-            });
-        }
-    }, [props.mxSourceExpr.value]);
-
     return (
         <MeshComponent
-            mesh={mesh}
+            rootMesh={rootMesh}
+            allMeshes={allMeshes}
             mxPositionType={props.mxPositionType}
             mxPositionXStat={props.mxPositionXStat}
             mxPositionYStat={props.mxPositionYStat}

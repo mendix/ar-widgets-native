@@ -12,7 +12,8 @@ export function ARCube(props: ARCubeProps<Style>): React.ReactElement | void {
 
     return (
         <MeshComponent
-            mesh={mesh}
+            rootMesh={mesh}
+            allMeshes={mesh ? [mesh] : undefined}
             mxPositionType={props.mxPositionType}
             mxPositionXStat={props.mxPositionXStat}
             mxPositionYStat={props.mxPositionYStat}

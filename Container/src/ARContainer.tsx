@@ -56,9 +56,6 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
     const [focus, setFocus] = useState<boolean>(true);
     const [scaleState, setScaleState] = useState<State>(State.UNDETERMINED);
     const [pinchScale, setPinchScale] = useState<number>();
-    const [pickedIDClicked, setPickedIDClicked] = useState<number[]>([]);
-    const [hoveringMeshID, setHoveringMeshID] = useState<number>();
-    const [pickedHoveredMeshID, setPickedHoveredMeshID] = useState<number>(NaN);
     const [imageTrackingOptions, setImageTrackingOptions] = useState<
         Array<{
             src: string;
@@ -66,7 +63,6 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
         }>
     >();
     const [trackedImageLocation, setTrackedImageLocation] = useState<{ src: string; matrix: Matrix }>();
-    const [clickedCoordinates, setClickedCoordinates] = useState<{ x: number; y: number }>();
 
     const handleNavigationLoaded = (
         navigation: NavigationScreenProp<NavigationRoute<NavigationParams>, NavigationParams>
@@ -111,17 +107,6 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
                     setDeviceTouch(undefined);
                 }
             });
-            newScene.onAfterRenderObservable.add(() => {
-                const picked = newScene.pick(
-                    newScene.getEngine().getRenderWidth() / 2,
-                    newScene.getEngine().getRenderHeight() / 2
-                );
-                if (picked?.hit && picked?.pickedMesh) {
-                    setPickedHoveredMeshID(picked.pickedMesh.uniqueId);
-                } else {
-                    setPickedHoveredMeshID(NaN);
-                }
-            });
         }
     };
 
@@ -130,12 +115,6 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
             setInPreview(props.mxUsePreview);
         }
     }, [props.mxUsePreview]);
-
-    useEffect(() => {
-        if (xrActive && focus) {
-            setHoveringMeshID(pickedHoveredMeshID);
-        }
-    }, [pickedHoveredMeshID]);
 
     useEffect(() => {
         if (engine) {
@@ -199,21 +178,11 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
             deviceTouch?.onInputChangedObservable.add((event: IMouseEvent) => {
                 if (event.inputIndex === PointerInput.Move && event.movementX) {
                     setTouchRotation(event.movementX / 100);
-                } else if (event.inputIndex === PointerInput.LeftClick) {
-                    setClickedCoordinates({ x: event.clientX, y: event.clientY });
                 }
             });
         }
     }, [deviceTouch]);
 
-    useEffect(() => {
-        if (clickedCoordinates && focus) {
-            const picked = scene?.pick(clickedCoordinates.x, clickedCoordinates.y);
-            if (picked?.pickedMesh) {
-                setPickedIDClicked(pickedIDs => [...pickedIDs, picked.pickedMesh!.uniqueId]);
-            }
-        }
-    }, [clickedCoordinates]);
     // #endregion
 
     // #region XR settings
@@ -288,9 +257,6 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
                 xrActive,
                 scaleState,
                 pinchScale,
-                pickedIDClicked,
-                setPickedIDClicked,
-                hoveringMeshID,
                 ParentContext,
                 setImageTrackingOptions,
                 trackedImageLocation
