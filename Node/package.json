@@ -14,7 +14,7 @@
     "packagePath": "com.mendix.widget.native",
     "scripts": {
         "start": "pluggable-widgets-tools start:native",
-        "buildWithComponentParent": "cd ../ComponentParent && npm run build && cd ../Node && npm run build",
+        "buildWithComponentParent": "npm run --prefix \"../ComponentParent\" && pluggable-widgets-tools build:native",
         "build": "pluggable-widgets-tools build:native",
         "format": "pluggable-widgets-tools format",
         "lint": "pluggable-widgets-tools lint",

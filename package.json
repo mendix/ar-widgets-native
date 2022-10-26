@@ -10,12 +10,8 @@
     },
     "packagePath": "mendix",
     "scripts": {
-        "start": "pluggable-widgets-tools start:native",
-        "build": "pluggable-widgets-tools build:native",
-        "lint": "pluggable-widgets-tools lint",
-        "lint:fix": "pluggable-widgets-tools lint:fix",
-        "prerelease": "npm run lint",
-        "release": "pluggable-widgets-tools release:native",
+        "buildComponentParent": "npm run --prefix \"./ComponentParent\" build",
+        "buildAll": "npm run --prefix \"./3DObject\" build & npm run --prefix \"./Cube\" build & npm run --prefix \"./ImageTracker\" build &  npm run --prefix \"./Node\" build &  npm run --prefix \"./Sphere\" build &  npm run --prefix \"./Square\" build",
         "postinstall": "cd ComponentParent && npm run build"
     },
     "license": "Apache-2.0",
