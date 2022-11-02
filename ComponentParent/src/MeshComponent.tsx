@@ -426,7 +426,7 @@ export function MeshComponent(
                         });
                     }
                 } else if (mxDragType === "FixedDistance") {
-                    rootMesh.parent = engineContext.scene.activeCamera;
+                    rootMesh.setParent(engineContext.scene.activeCamera);
                     if (mxOnDrag?.canExecute && !mxOnDrag.isExecuting) {
                         mxOnDrag.execute();
                     }
@@ -438,7 +438,7 @@ export function MeshComponent(
                 } else if (mxDragType === "FixedDistance" && parentContext) {
                     const parentMesh = engineContext.scene?.getMeshByUniqueId(parentContext);
                     if (parentMesh) {
-                        rootMesh.parent = parentMesh;
+                        rootMesh.setParent(parentMesh);
                     }
                 }
             }
