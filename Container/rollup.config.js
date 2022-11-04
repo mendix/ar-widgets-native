@@ -2,7 +2,16 @@ import copy from "rollup-plugin-copy";
 
 export default args => {
     const result = args.configDefaultConfig;
-    const dependencies = ["@babylonjs/core", "@babylonjs/loaders", "react-native-permissions"];
+    const dependencies = [
+        "@babylonjs/core",
+        "@babylonjs/loaders",
+        "react-native-permissions",
+        "tslib",
+        "semver",
+        "lru-cache",
+        "yallist",
+        "lodash"
+    ];
     result.forEach(config => {
         config.external?.push(/^@babylonjs\/core($|\/)/);
         config.external?.push(/^semver/);
