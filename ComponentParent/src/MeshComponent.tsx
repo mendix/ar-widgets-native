@@ -141,7 +141,7 @@ export function MeshComponent(
         if (rootMesh && !isNaN(parentContext)) {
             const localParentMesh = engineContext.scene?.getMeshByUniqueId(parentContext);
             if (localParentMesh) {
-                rootMesh.parent = localParentMesh;
+                rootMesh.setParent(localParentMesh);
             }
         }
     }, [rootMesh, parentContext, engineContext.scene]);
