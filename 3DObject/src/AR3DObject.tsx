@@ -21,15 +21,19 @@ export const AR3DObject = (props: AR3DObjectProps<Style>) => {
     };
 
     useEffect(() => {
-        if (rootMesh) rootMesh.dispose();
-        if (scene) handleMesh(scene);
+        if (rootMesh) {
+            rootMesh.dispose();
+        }
+        if (scene) {
+            handleMesh(scene);
+        }
     }, [props.mxSourceExpr.value]);
 
     const handleMesh = (scene: Scene) => {
         if (props.mxSourceExpr.value) {
             SceneLoader.ImportMesh("", props.mxSourceExpr.value, "", scene, models => {
                 setRootMesh(models[0] as Mesh);
-                //Set root quaternion rotation to null, since we want to use our own.
+                // Set root quaternion rotation to null, since we want to use our own.
                 models[0].rotationQuaternion = null;
                 let castMeshes: Mesh[] = [];
                 models.forEach(abstractMesh => {
