@@ -74,9 +74,6 @@ export function ARNode(props: ARNodeProps<Style>): React.ReactElement | void {
                 mxPinchEnabled={props.mxPinchEnabled.value ?? false}
                 mxPinchToScaleEnabled={props.mxPinchToScaleEnabled}
                 mxOnPinchActionValue={props.mxOnPinchActionValue}
-                mxOnHoverEnter={props.mxOnHoverEnter}
-                mxOnHoverExit={props.mxOnHoverExit}
-                mxOnClick={props.mxOnClick}
             />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>

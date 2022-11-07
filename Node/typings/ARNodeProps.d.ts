@@ -60,9 +60,6 @@ export interface ARNodeProps<Style> {
     mxPinchEnabled: DynamicValue<boolean>;
     mxPinchToScaleEnabled: boolean;
     mxOnPinchActionValue?: ActionValue;
-    mxOnClick?: ActionValue;
-    mxOnHoverEnter?: ActionValue;
-    mxOnHoverExit?: ActionValue;
 }
 
 export interface ARNodePreviewProps {
@@ -110,7 +107,4 @@ export interface ARNodePreviewProps {
     mxPinchEnabled: string;
     mxPinchToScaleEnabled: boolean;
     mxOnPinchActionValue: {} | null;
-    mxOnClick: {} | null;
-    mxOnHoverEnter: {} | null;
-    mxOnHoverExit: {} | null;
 }
