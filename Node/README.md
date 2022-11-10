@@ -26,6 +26,3 @@ group.
 | Enable Pinching: expression(boolean)                                       |
 | EnablePinchToScale: boolean                                                |
 | OnPinch(): action                                                          |
-| OnClick(): action                                                          |
-| OnHoverEnter(): action                                                     |
-| OnHoverExit(): action                                                      |
