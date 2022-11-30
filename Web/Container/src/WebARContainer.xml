@@ -12,6 +12,7 @@
     <name>Container (AR) - Beta</name>
     <description>The container used to start an AR experience</description>
     <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
             <propertyGroup caption="Preview">

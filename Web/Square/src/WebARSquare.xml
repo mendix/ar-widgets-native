@@ -12,6 +12,7 @@
     <name>Square (AR) - Beta</name>
     <description>Add an AR Square</description>
     <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
             <propertyGroup caption="Position">

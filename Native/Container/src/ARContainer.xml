@@ -12,6 +12,7 @@
     <name>Container (AR) - Beta</name>
     <description>AR widget that can contain other AR widgets</description>
     <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
             <propertyGroup caption="Preview">
@@ -35,8 +36,11 @@
                 </property>
                 <property key="mxHdrPath" type="expression" required="false">
                     <caption>Environment map path</caption>
-                    <description
-                    >The environment map path used for realistic lighting. For more information on what a environment map is and how to create one please refer to https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment </description>
+                    <description>
+                        The environment map path used for realistic lighting. For more information on what a environment
+                        map is and how to create one please refer to
+                        https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment
+                    </description>
                     <returnType type="String" />
                 </property>
             </propertyGroup>

@@ -12,6 +12,7 @@
     <name>3D Object (AR) - Beta</name>
     <description>3D Object</description>
     <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
             <propertyGroup caption="General">
