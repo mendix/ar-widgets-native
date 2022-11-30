@@ -8,8 +8,5 @@
         "projectPath": "../../ARWidgetsTestProject-main/"
     },
     "packagePath": "mendix",
-    "scripts": {
-        "build": "tsc"
-    },
     "license": "Apache-2.0"
 }
