@@ -21,12 +21,7 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement | 
             if (typeof mxMaterialTexture.value === "string") {
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "object") {
-                setTexture(
-                    new Texture(
-                        mxMaterialTexture.value.uri, //mxMaterialTexture.value.uri.slice(0, mxMaterialTexture.value.uri.lastIndexOf("?")),
-                        scene
-                    )
-                );
+                setTexture(new Texture(mxMaterialTexture.value.uri, scene));
             }
         }
     }, [mxMaterialTexture, scene]);

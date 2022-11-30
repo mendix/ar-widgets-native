@@ -83,7 +83,6 @@ export function MeshComponent(
     const [startScale, setStartScale] = useState<Vector3>(Vector3.One);
     const meshRef = useRef<Mesh>();
     const setAction = (action: ActionValue, trigger: number, meshes: Mesh[]) => {
-        console.log("SET ACTION");
         meshes?.forEach(mesh => {
             if (mesh.actionManager === null) {
                 mesh.actionManager = new ActionManager();
@@ -91,7 +90,6 @@ export function MeshComponent(
             if (mesh.actionManager.actions.find(action => action.trigger === trigger) === undefined) {
                 mesh.actionManager.registerAction(
                     new ExecuteCodeAction(trigger, () => {
-                        console.log("ACTION CALLED");
                         if (action?.canExecute) {
                             action.execute();
                         }
@@ -102,9 +100,7 @@ export function MeshComponent(
     };
 
     useEffect(() => {
-        console.log("mxOnClick, allMeshes " + mxOnClick + "" + allMeshes);
         if (mxOnClick?.canExecute && allMeshes !== undefined) {
-            console.log("REGISTER CLICK");
             setAction(mxOnClick, ActionManager.OnPickTrigger, allMeshes);
         }
     }, [mxOnClick, allMeshes]);
