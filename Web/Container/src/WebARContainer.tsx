@@ -5,8 +5,7 @@ import { ValueStatus } from "mendix";
 import { Scene } from "@babylonjs/core/scene";
 import "@babylonjs/core/Helpers/sceneHelpers";
 import { Mesh } from "@babylonjs/core/Meshes";
-import { Matrix, Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { WebXRFeatureName, WebXRFeaturesManager } from "@babylonjs/core/XR";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { CubeTexture } from "@babylonjs/core/Materials/Textures/cubeTexture";
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { Tools } from "@babylonjs/core/Misc/tools";
@@ -17,15 +16,6 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const [scene, setScene] = useState<Scene>();
     const [parent, setParent] = useState<Mesh | undefined>();
     const [parentID, setParentID] = useState<number>(NaN);
-    const [imageTrackingOptions, setImageTrackingOptions] = useState<
-        Array<{
-            src: string;
-            estimatedRealWorldWidth: number;
-        }>
-    >([]);
-    const [trackedImageLocation, setTrackedImageLocation] = useState<{ src: string; matrix: Matrix }>();
-    const [featuresManager, setFeaturesManager] = useState<WebXRFeaturesManager>();
-    const [xrActive, setXrActive] = useState<boolean>(false);
 
     useEffect(() => {
         // If we want realistic lighting, use the provided environment map
@@ -68,20 +58,6 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             .catch(reason => {
                 console.log("Could not start AR. " + reason);
             });
-        // .then(xr => {
-        //     if (
-        //         xr &&
-        //         WebXRFeaturesManager.GetAvailableFeatures().indexOf(WebXRFeatureName.LIGHT_ESTIMATION) !== -1
-        //     ) {
-        //         xr.baseExperience.featuresManager.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
-        //             setSceneEnvironmentTexture: true,
-        //             // cubeMapPollInterval: 1000,
-        //             createDirectionalLightSource: true
-        //             // reflectionFormat: 'srgba8',
-        //             // disableCubeMapReflection: true
-        //         });
-        //     }
-        // });
 
         if (parent) {
             parent.rotation = Vector3.Zero();
@@ -91,11 +67,7 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     return (
         <EngineContext.Provider
             value={{
-                scene,
-                featuresManager,
-                xrActive,
-                setImageTrackingOptions,
-                trackedImageLocation
+                scene
             }}
         >
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
