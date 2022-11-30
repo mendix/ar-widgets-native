@@ -12,7 +12,8 @@ export function ARSquare(props: ARSquareProps<Style>): ReturnType<typeof MeshCom
 
     return (
         <MeshComponent
-            mesh={mesh}
+            rootMesh={mesh}
+            allMeshes={mesh ? [mesh] : undefined}
             mxPositionType={props.mxPositionType}
             mxPositionXStat={props.mxPositionXStat}
             mxPositionYStat={props.mxPositionYStat}

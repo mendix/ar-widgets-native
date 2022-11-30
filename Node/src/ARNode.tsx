@@ -33,7 +33,8 @@ export function ARNode(props: ARNodeProps<Style>): React.ReactElement | void {
     return (
         <>
             <MeshComponent
-                mesh={nodeParent}
+                rootMesh={nodeParent}
+                allMeshes={nodeParent ? [nodeParent] : undefined}
                 mxPositionType={props.mxPositionType}
                 mxPositionXStat={props.mxPositionXStat}
                 mxPositionYStat={props.mxPositionYStat}
@@ -73,9 +74,6 @@ export function ARNode(props: ARNodeProps<Style>): React.ReactElement | void {
                 mxPinchEnabled={props.mxPinchEnabled.value ?? false}
                 mxPinchToScaleEnabled={props.mxPinchToScaleEnabled}
                 mxOnPinchActionValue={props.mxOnPinchActionValue}
-                mxOnHoverEnter={props.mxOnHoverEnter}
-                mxOnHoverExit={props.mxOnHoverExit}
-                mxOnClick={props.mxOnClick}
             />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>

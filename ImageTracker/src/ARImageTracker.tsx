@@ -90,7 +90,8 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
     return (
         <>
             <MeshComponent
-                mesh={imagetrackerParent}
+                rootMesh={imagetrackerParent}
+                allMeshes={imagetrackerParent ? [imagetrackerParent] : undefined}
                 mxPositionType={"Static"}
                 mxPositionXStat={Big(0)}
                 mxPositionYStat={Big(0)}

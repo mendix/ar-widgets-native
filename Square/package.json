@@ -14,13 +14,15 @@
     "packagePath": "com.mendix.widget.native",
     "scripts": {
         "start": "pluggable-widgets-tools start:native",
-        "buildWithComponentParent": "cd ../ComponentParent && npm run build && cd ../Square && npm run build",
+        "buildWithComponentParent": "npm run --prefix \"../ComponentParent\" && pluggable-widgets-tools build:native",
         "build": "pluggable-widgets-tools build:native",
         "format": "pluggable-widgets-tools format",
         "lint": "pluggable-widgets-tools lint",
         "lint:fix": "pluggable-widgets-tools lint:fix",
         "prerelease": "npm run lint",
-        "release": "pluggable-widgets-tools release:native"
+        "prettier": "prettier --write ./typings/*",
+        "release": "pluggable-widgets-tools release:native",
+        "releaseWithPrettier": "npm run prettier && npm run release"
     },
     "license": "Apache-2.0"
 }

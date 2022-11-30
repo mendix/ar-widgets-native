@@ -5,8 +5,8 @@ export default args => {
     const dependencies = [
         "@babylonjs/core",
         "@babylonjs/loaders",
-        "tslib",
         "react-native-permissions",
+        "tslib",
         "semver",
         "lru-cache",
         "yallist",
@@ -16,7 +16,6 @@ export default args => {
         config.external?.push(/^@babylonjs\/core($|\/)/);
         config.external?.push(/^semver/);
         config.external?.push(/^react-native-permissions/);
-        config.external?.push(/^lodash/);
     });
     result[0].plugins.push(
         copy({
