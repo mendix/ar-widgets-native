@@ -1,5 +1,5 @@
 /**
- * This file was generated from WebARCube.xml
+ * This file was generated from WebAR3DObject.xml
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix UI Content Team
  */
@@ -13,17 +13,18 @@ export type MxRotationTypeEnum = "Static" | "Attribute" | "Expression";
 
 export type MxScaleTypeEnum = "Static" | "Attribute" | "Expression";
 
-export type MxMaterialOptionEnum = "Texture" | "Color";
+export type MxMaterialOptionEnum = "Object" | "Texture" | "Color";
 
 export type MxLightingTypeEnum = "Simple" | "PBR";
 
 export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";
 
-export interface WebARCubeContainerProps {
+export interface WebAR3DObjectContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
     tabIndex?: number;
+    mxSourceExpr: DynamicValue<string>;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: Big;
     mxPositionYStat: Big;
@@ -74,11 +75,12 @@ export interface WebARCubeContainerProps {
     mxOnHoverExit?: ActionValue;
 }
 
-export interface WebARCubePreviewProps {
+export interface WebAR3DObjectPreviewProps {
     className: string;
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    mxSourceExpr: string;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: number | null;
     mxPositionYStat: number | null;
@@ -110,7 +112,7 @@ export interface WebARCubePreviewProps {
     mxScaleYExpr: string;
     mxScaleZExpr: string;
     mxMaterialOption: MxMaterialOptionEnum;
-    mxMaterialTexture: { type: "static"; imageUrl: string } | { type: "dynamic"; entity: string } | null;
+    mxMaterialTexture: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
     mxMaterialColor: string;
     mxOpacity: string;
     mxLightingType: MxLightingTypeEnum;
