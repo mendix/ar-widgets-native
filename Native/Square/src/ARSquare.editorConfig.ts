@@ -1,4 +1,4 @@
-import { Properties, Problem } from "../../../Shared/ComponentParent/typings/PageEditor";
+import { Problem, Properties } from "@mendix/pluggable-widgets-tools";
 import { MxBaseProps } from "../../../Shared/ComponentParent/typings/MxBaseProps";
 import { getPropertiesBase, checkBase } from "../../../Shared/ComponentParent/utils/3DObject.editorConfig";
 

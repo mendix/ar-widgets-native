@@ -1,8 +1,7 @@
-import { hidePropertyIn, hidePropertiesIn } from "./PageEditorUtils";
-import { Properties, Problem } from "../typings/PageEditor";
+import { hidePropertiesIn, hidePropertyIn, Problem, Properties, PropertyGroup } from "@mendix/pluggable-widgets-tools";
 import { MxBaseProps, PosRotScaleTypeEnum } from "../typings/MxBaseProps";
 
-export function getPropertiesBase(values: MxBaseProps, defaultProperties: Properties): Properties {
+export function getPropertiesBase(values: MxBaseProps, defaultProperties: PropertyGroup[]): Properties {
     if (values.mxMaterialOption === "Color") {
         hidePropertyIn(defaultProperties, values, "mxMaterialTexture");
     } else if (values.mxMaterialOption === "Texture") {

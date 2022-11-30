@@ -1,7 +1,6 @@
-import { Properties, Problem } from "../../../Shared/ComponentParent/typings/PageEditor";
 import { ARContainerProps } from "../typings/ARContainerProps";
-import { hidePropertyIn } from "../../../Shared/ComponentParent/utils/PageEditorUtils";
 import { Style } from "util";
+import { hidePropertyIn, Problem, Properties } from "@mendix/pluggable-widgets-tools";
 
 export function getProperties(values: ARContainerProps<Style>, defaultProperties: Properties): Properties {
     if (!values.mxUsePBR) {

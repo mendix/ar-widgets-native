@@ -1,8 +1,7 @@
 {
     "compilerOptions": {
         "noEmitOnError": true,
-        "sourceMap": true,
-        "module": "esnext",
+        "module": "CommonJS",
         "target": "es6",
         "lib": ["esnext", "dom"],
         "types": ["jest", "node"],
