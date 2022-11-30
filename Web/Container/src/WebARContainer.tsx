@@ -1,7 +1,6 @@
 import { createElement, ReactElement, useEffect, useState } from "react";
 import SceneComponent from "babylonjs-hook";
 import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/src/EngineContext";
-import { WebARContainerContainerProps } from "typings/WebARContainerProps";
 import { ValueStatus } from "mendix";
 import { Scene } from "@babylonjs/core/scene";
 import "@babylonjs/core/Helpers/sceneHelpers";
@@ -13,6 +12,7 @@ import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { Tools } from "@babylonjs/core/Misc/tools";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { IWebXRTrackedImage, WebXRImageTracking } from "@babylonjs/core/XR/features/WebXRImageTracking";
+import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
 
 export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
     const [scene, setScene] = useState<Scene>();

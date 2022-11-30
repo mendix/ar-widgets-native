@@ -15,12 +15,12 @@
         "strictFunctionTypes": false,
         "skipLibCheck": true,
         "noUnusedParameters": true,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "noUnusedLocals": false,
-        "jsxFactory": "React.createElement",
-        "resolveJsonModule": true,
-        "jsxFragmentFactory": "React.Fragment"
+        // "jsxFactory": "React.createElement",
+        "resolveJsonModule": true
+        // "jsxFragmentFactory": "React.Fragment"
     }
 }
