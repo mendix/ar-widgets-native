@@ -360,7 +360,7 @@ export function MeshComponent(
 
     useEffect(() => {
         allMeshes?.forEach(childMesh => {
-            if (mxOpacity?.value) {
+            if (mxOpacity?.status === ValueStatus.Available) {
                 childMesh.visibility = Number(mxOpacity.value);
             }
         });
