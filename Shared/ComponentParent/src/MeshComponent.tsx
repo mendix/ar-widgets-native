@@ -1,20 +1,18 @@
 import React, { Fragment, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { MeshComponentProps } from "../typings/MeshComponentProps";
-import {
-    Color3,
-    Texture,
-    WebXRFeatureName,
-    WebXRHitTest,
-    Vector3,
-    Mesh,
-    Scene,
-    StandardMaterial,
-    PBRMetallicRoughnessMaterial,
-    ActionManager,
-    ExecuteCodeAction
-} from "@babylonjs/core";
 import { ValueStatus, ActionValue } from "mendix";
 import { EngineContext, GlobalContext, State } from "../typings/GlobalContextProps";
+import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { Scene } from "@babylonjs/core/scene";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { ActionManager } from "@babylonjs/core/Actions/actionManager";
+import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { PBRMetallicRoughnessMaterial } from "@babylonjs/core/Materials/PBR/pbrMetallicRoughnessMaterial";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { WebXRFeatureName } from "@babylonjs/core/XR/webXRFeaturesManager";
+import { WebXRHitTest } from "@babylonjs/core/XR/features/WebXRHitTest";
 
 export function MeshComponent(
     props: {

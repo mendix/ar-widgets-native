@@ -1,7 +1,10 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebARSphereContainerProps } from "../typings/WebARSphereProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { MeshBuilder, Mesh, Scene, Texture } from "@babylonjs/core";
+import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { Scene } from "@babylonjs/core/scene";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 
 export function WebARSphere(props: WebARSphereContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;
