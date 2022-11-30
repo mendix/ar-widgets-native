@@ -12,7 +12,7 @@
     "scripts": {
         "buildComponentParent": "npm run --prefix \"./Shared/ComponentParent\" build",
         "buildAllNative": "npm run --prefix \"./Native/Container\" build & npm run --prefix \"./Native/3DObject\" build & npm run --prefix \"./Native/Cube\" build & npm run --prefix \"./Native/ImageTracker\" build &  npm run --prefix \"./Native/Node\" build &  npm run --prefix \"./Native/Sphere\" build &  npm run --prefix \"./Native/Square\" build",
-        "buildAllWeb": "npm run --prefix \"./Web/Container\" build & npm run --prefix \"./Web/Cube\" build & npm run --prefix \"./Web/Sphere\" build ",
+        "buildAllWeb": "npm run --prefix \"./Web/Container\" build & npm run --prefix \"./Web/Cube\" build & npm run --prefix \"./Web/Sphere\" build  & npm run --prefix \"./Web/Square\" build  & npm run --prefix \"./Web/Node\" build ",
         "postinstall": "cd ComponentParent && npm run build"
     },
     "license": "Apache-2.0",

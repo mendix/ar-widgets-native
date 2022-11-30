@@ -1,0 +1,27 @@
+{
+    "name": "webarnode",
+    "widgetName": "WebARNode",
+    "version": "1.0.0",
+    "description": "Node AR",
+    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "author": "Mendix",
+    "engines": {
+        "node": ">=12"
+    },
+    "license": "Apache-2.0",
+    "config": {
+        "projectPath": "../../../ARWebWidgetsTestProject/",
+        "mendixHost": "http://localhost:8080",
+        "developmentPort": 3000
+    },
+    "packagePath": "com.mendix.widget.web",
+    "scripts": {
+        "start": "pluggable-widgets-tools start:server",
+        "dev": "pluggable-widgets-tools start:web",
+        "build": "pluggable-widgets-tools build:web",
+        "lint": "pluggable-widgets-tools lint",
+        "lint:fix": "pluggable-widgets-tools lint:fix",
+        "prerelease": "npm run lint",
+        "release": "pluggable-widgets-tools release:web"
+    }
+}
