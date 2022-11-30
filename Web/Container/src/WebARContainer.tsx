@@ -4,14 +4,13 @@ import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/sr
 import { ValueStatus } from "mendix";
 import { Scene } from "@babylonjs/core/scene";
 import "@babylonjs/core/Helpers/sceneHelpers";
-import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { Mesh } from "@babylonjs/core/Meshes";
 import { Matrix, Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { WebXRFeatureName, WebXRFeaturesManager } from "@babylonjs/core/XR/webXRFeaturesManager";
+import { WebXRFeatureName, WebXRFeaturesManager } from "@babylonjs/core/XR";
 import { CubeTexture } from "@babylonjs/core/Materials/Textures/cubeTexture";
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { Tools } from "@babylonjs/core/Misc/tools";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-import { IWebXRTrackedImage, WebXRImageTracking } from "@babylonjs/core/XR/features/WebXRImageTracking";
 import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
 
 export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
@@ -60,46 +59,30 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         setParent(newParent);
         setParentID(newParent.uniqueId);
 
-        const xr = await newScene
+        await newScene
             .createDefaultXRExperienceAsync({
-                disableDefaultUI: true,
+                uiOptions: { sessionMode: "immersive-ar" },
                 disableTeleportation: true,
                 optionalFeatures: true
             })
             .catch(reason => {
                 console.log("Could not start AR. " + reason);
             });
-        if (xr) {
-            await xr.baseExperience.enterXRAsync("immersive-ar", "unbounded", xr.renderTarget);
-            // If any exist, add the images that need to be tracked. This has to happen here, because they need to be added before starting the XR session
-            if (imageTrackingOptions !== undefined) {
-                const convertedImageOptions = {
-                    images: imageTrackingOptions
-                };
-                const webXRImageTrackingModule = xr.baseExperience.featuresManager.enableFeature(
-                    WebXRFeatureName.IMAGE_TRACKING,
-                    "latest",
-                    convertedImageOptions
-                ) as WebXRImageTracking;
-                webXRImageTrackingModule.onUntrackableImageFoundObservable.add(event => {
-                    console.error(
-                        "Image provided is untrackable: " + webXRImageTrackingModule.options.images[event].src
-                    );
-                });
+        // .then(xr => {
+        //     if (
+        //         xr &&
+        //         WebXRFeaturesManager.GetAvailableFeatures().indexOf(WebXRFeatureName.LIGHT_ESTIMATION) !== -1
+        //     ) {
+        //         xr.baseExperience.featuresManager.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
+        //             setSceneEnvironmentTexture: true,
+        //             // cubeMapPollInterval: 1000,
+        //             createDirectionalLightSource: true
+        //             // reflectionFormat: 'srgba8',
+        //             // disableCubeMapReflection: true
+        //         });
+        //     }
+        // });
 
-                webXRImageTrackingModule.onTrackedImageUpdatedObservable.add((imageObject: IWebXRTrackedImage) => {
-                    if (!imageObject.emulated) {
-                        setTrackedImageLocation({
-                            src: convertedImageOptions.images[imageObject.id].src,
-                            matrix: imageObject.transformationMatrix
-                        });
-                    }
-                });
-            }
-            setFeaturesManager(xr.baseExperience.featuresManager);
-            newScene.activeCamera = xr.baseExperience.camera;
-            setXrActive(true);
-        }
         if (parent) {
             parent.rotation = Vector3.Zero();
         }
