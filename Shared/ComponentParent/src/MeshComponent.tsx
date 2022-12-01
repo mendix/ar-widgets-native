@@ -141,10 +141,12 @@ export function MeshComponent(
 
     //#region Translation(position, rotation, scale)
     useEffect(() => {
-        if (rootMesh && engineContext.scaleState === State.ACTIVE) {
+        console.log("scalestate changed: " + engineContext.scaleState);
+        if (rootMesh && engineContext.scaleState === State.BEGAN) {
+            console.log("SET SCALE OF ROOTMESH " + rootMesh.scaling);
             setStartScale(rootMesh.scaling.clone());
         }
-    }, [engineContext.scaleState]);
+    }, [engineContext.scaleState, rootMesh]);
 
     useEffect(() => {
         if (rootMesh) {

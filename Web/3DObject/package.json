@@ -22,6 +22,8 @@
         "lint": "pluggable-widgets-tools lint",
         "lint:fix": "pluggable-widgets-tools lint:fix",
         "prerelease": "npm run lint",
-        "release": "pluggable-widgets-tools release:web"
+        "release": "pluggable-widgets-tools release:web",
+        "prettier": "prettier --write ./src/*.tsx ./typings/*",
+        "releaseWithPrettier": "npm run prettier && npm run release"
     }
 }

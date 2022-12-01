@@ -15,8 +15,12 @@ export type EngineContext = {
     scaleState: State;
 };
 const enum State {
-    ACTIVE = 0,
-    NOT_ACTIVE = 1
+    UNDETERMINED = 0,
+    FAILED = 1,
+    BEGAN = 2,
+    CANCELLED = 3,
+    ACTIVE = 4,
+    END = 5
 }
 
 export type GlobalContext = {
