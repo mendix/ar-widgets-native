@@ -19,8 +19,6 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "noUnusedLocals": false,
-        // "jsxFactory": "React.createElement",
         "resolveJsonModule": true
-        // "jsxFragmentFactory": "React.Fragment"
     }
 }
