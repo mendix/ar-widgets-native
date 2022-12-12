@@ -6,5 +6,5 @@ tests/testProject/
 .DS_Store
 **/.DS_Store
 */package-lock.json
-ComponentParent/src/*.js*
-ComponentParent/utils/*.js*
+Shared/ComponentParent/src/*.js*
+Shared/ComponentParent/utils/*.js*

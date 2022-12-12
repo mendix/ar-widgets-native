@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget
+    id="com.mendix.widget.web.webarcontainer.WebARContainer"
+    pluginWidget="true"
+    needsEntityContext="true"
+    offlineCapable="true"
+    supportedPlatform="Web"
+    xmlns="http://www.mendix.com/widget/1.0/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
+>
+    <name>Container (AR) - Beta</name>
+    <description>The container used to start an AR experience</description>
+    <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
+    <properties>
+        <propertyGroup caption="General">
+            <propertyGroup caption="Preview">
+                <property key="mxContentWidget" type="widgets" required="false">
+                    <caption>Add AR widgets</caption>
+                    <description>Add an AR widget to go in the AR container.</description>
+                </property>
+                <property key="mxUsePreview" type="boolean" defaultValue="true">
+                    <caption>Show preview</caption>
+                    <description>If yes, a preview of the AR scene will be displayed first.</description>
+                </property>
+                <property key="mxPreviewCameraDistance" type="decimal" defaultValue="1.5">
+                    <caption>Camera distance</caption>
+                    <description>The distance in meters from the 3D objects to the preview camera.</description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Realistic lighting">
+                <property key="mxUsePBR" type="boolean" defaultValue="false">
+                    <caption>Add realistic lighting</caption>
+                    <description>If yes, a path to an environment map is required.</description>
+                </property>
+                <property key="mxHdrPath" type="expression" required="false">
+                    <caption>Environment map path</caption>
+                    <description>
+                        The environment map path used for realistic lighting. For more information on what a environment
+                        map is and how to create one please refer to
+                        https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment
+                    </description>
+                    <returnType type="String" />
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+    </properties>
+</widget>

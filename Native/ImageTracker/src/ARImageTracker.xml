@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget
+    id="com.mendix.widget.native.arimagetracker.ARImageTracker"
+    pluginWidget="true"
+    needsEntityContext="true"
+    offlineCapable="true"
+    supportedPlatform="Native"
+    xmlns="http://www.mendix.com/widget/1.0/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../imagetracker_modules/mendix/custom_widget.xsd"
+>
+    <name>ImageTracker (AR) - Beta</name>
+    <description>ImageTracker</description>
+    <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
+    <properties>
+        <propertyGroup caption="General">
+            <property key="mxImage" type="image" required="true">
+                <caption>Image</caption>
+                <description>Image to track</description>
+            </property>
+            <property key="mxOrientation" type="enumeration" defaultValue="Up">
+                <caption>Orientation</caption>
+                <description>
+                    The orientation that objects embedded in this widget should have. Up will make objects appear on top
+                    of the image tracker.
+                </description>
+                <enumerationValues>
+                    <enumerationValue key="Up">Up</enumerationValue>
+                    <enumerationValue key="Down">Down</enumerationValue>
+                    <enumerationValue key="Left">Left</enumerationValue>
+                    <enumerationValue key="Right">Right</enumerationValue>
+                </enumerationValues>
+            </property>
+            <property key="mxContent" type="widgets" required="false">
+                <caption>Add AR widgets</caption>
+                <description>Content to show on image tracker</description>
+            </property>
+            <property key="mxPhysicalMarkerSize" type="decimal" defaultValue="0.1">
+                <caption>Physical image size</caption>
+                <description>
+                    The size of the real life image in meters. This is used to calculate the depth the AR object should
+                    be placed at.
+                </description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Events">
+            <property key="mxOnAnchorFound" type="action" required="false">
+                <caption>On found</caption>
+                <description>Called when the image is found</description>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>

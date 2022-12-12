@@ -1,8 +1,7 @@
 {
     "compilerOptions": {
         "noEmitOnError": true,
-        "sourceMap": true,
-        "module": "esnext",
+        "module": "CommonJS",
         "target": "es6",
         "lib": ["esnext", "dom"],
         "types": ["jest", "node"],
@@ -16,12 +15,10 @@
         "strictFunctionTypes": false,
         "skipLibCheck": true,
         "noUnusedParameters": true,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "noUnusedLocals": false,
-        "jsxFactory": "React.createElement",
-        "resolveJsonModule": true,
-        "jsxFragmentFactory": "React.Fragment"
+        "resolveJsonModule": true
     }
 }
