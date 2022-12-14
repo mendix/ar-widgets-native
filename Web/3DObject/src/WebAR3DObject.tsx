@@ -1,10 +1,7 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebAR3DObjectContainerProps } from "../typings/WebAR3DObjectProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Mesh } from "@babylonjs/core/Meshes/mesh";
-import { Scene } from "@babylonjs/core/scene";
-import { Texture } from "@babylonjs/core/Materials/Textures/texture";
-import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import { Mesh, Scene, SceneLoader, Texture } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
 

@@ -8,3 +8,4 @@ tests/testProject/
 */package-lock.json
 Shared/ComponentParent/src/*.js*
 Shared/ComponentParent/utils/*.js*
+Web/Container/babylonjscore.js
