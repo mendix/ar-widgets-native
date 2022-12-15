@@ -9,3 +9,5 @@ tests/testProject/
 Shared/ComponentParent/src/*.js*
 Shared/ComponentParent/utils/*.js*
 Web/Container/babylonjscore.js
+Web/3DObject/babylonjsloadersGLTF.js
+Web/3DObject/babylonjsloadersOBJ.js
