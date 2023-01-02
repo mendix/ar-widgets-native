@@ -27,13 +27,11 @@ export default {
       shouldPrintComment: () => true,
       presets: [["@babel/preset-env", { targets: { safari: "12" } }]],
     }),
-    false
-      ? terser({
-          output: {
-            comments: /@preserve|@?copyright|@lic|@cc_on|licen[cs]e|^\**!/i,
-          },
-        })
-      : null,
+    terser({
+      output: {
+        comments: /@preserve|@?copyright|@lic|@cc_on|licen[cs]e|^\**!/i,
+      },
+    }),
     bundleSize(),
   ],
 };
