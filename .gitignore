@@ -8,6 +8,4 @@ tests/testProject/
 */package-lock.json
 Shared/ComponentParent/src/*.js*
 Shared/ComponentParent/utils/*.js*
-Web/Container/babylonjscore.js
-Web/3DObject/babylonjsloadersGLTF.js
-Web/3DObject/babylonjsloadersOBJ.js
+Web/Container/src/bundle/babylonjscore.js

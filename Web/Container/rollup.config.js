@@ -17,7 +17,7 @@ export default (args) => {
           copyOnce: true,
           targets: [
             {
-              src: "./babylonjscore.js",
+              src: "./src/bundle/babylonjscore.js",
               dest: "dist/tmp/widgets/com/mendix/shared",
             },
           ],

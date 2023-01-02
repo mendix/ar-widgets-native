@@ -18,7 +18,7 @@
         "@mendix/pluggable-widgets-tools": "9.18.0",
         "@react-navigation/native": "^6.0.4",
         "@rollup/plugin-node-resolve": "^15.0.1",
-        "@rollup/plugin-replace": "^5.0.1",
+        "@rollup/plugin-terser": "^0.2.0",
         "@types/base-64": "^1.0.0",
         "@types/big.js": "^6.0.2",
         "@types/react": "17.0.1",
@@ -35,15 +35,14 @@
         "react-navigation": "4.4.1",
         "rollup-plugin-bundle-size": "^1.0.3",
         "rollup-plugin-copy": "^3.4.0",
-        "utf-8-validate": "^5.0.5"
+        "rollup-plugin-analyzer": "^4.0.0",
+        "utf-8-validate": "^5.0.5",
+        "typescript-eslint": "^0.0.1-alpha.0"
     },
     "dependencies": {
         "@babylonjs/core": "5.2.0",
         "@babylonjs/loaders": "5.2.0",
         "@babylonjs/react-native": "1.1.0",
-        "@rollup/plugin-terser": "^0.2.0",
-        "babylonjs-hook": "^0.1.1",
-        "rollup-plugin-analyzer": "^4.0.0",
-        "typescript-eslint": "^0.0.1-alpha.0"
+        "babylonjs-hook": "^0.1.1"
     }
 }
