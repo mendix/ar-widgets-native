@@ -42,7 +42,6 @@
     "dependencies": {
         "@babylonjs/core": "5.2.0",
         "@babylonjs/loaders": "5.2.0",
-        "@babylonjs/react-native": "1.1.0",
-        "babylonjs-hook": "^0.1.1"
+        "@babylonjs/react-native": "1.1.0"
     }
 }

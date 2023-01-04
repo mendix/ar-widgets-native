@@ -18,7 +18,7 @@
   "scripts": {
     "start": "pluggable-widgets-tools start:server",
     "dev": "pluggable-widgets-tools start:web",
-    "build": "pluggable-widgets-tools build:web",
+    "build": "pluggable-widgets-tools build:web && date",
     "lint": "pluggable-widgets-tools lint",
     "lint:fix": "pluggable-widgets-tools lint:fix",
     "prerelease": "npm run lint",

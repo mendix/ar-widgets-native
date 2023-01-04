@@ -1,5 +1,5 @@
 import { createElement, ReactElement, useEffect, useState } from "react";
-import SceneComponent from "babylonjs-hook";
+import SceneComponent from "./SceneComponent";
 import {
   EngineContext,
   ParentContext,
@@ -53,7 +53,6 @@ export function WebARContainer(
     new HemisphericLight("light", Vector3.Up(), newScene);
     setScene(newScene);
     const canvas = newScene.getEngine().getRenderingCanvas();
-
     // This attaches the camera to the canvas
     camera.attachControl(canvas, true);
 
@@ -77,6 +76,14 @@ export function WebARContainer(
     }
   };
 
+  useEffect(() => {
+    if (props.mxHdrPath?.status === ValueStatus.Available) {
+      scene?.createDefaultEnvironment({
+        environmentTexture: props.mxHdrPath.value,
+      });
+    }
+  }, [props.mxHdrPath]);
+
   return (
     <EngineContext.Provider
       value={{
@@ -88,9 +95,8 @@ export function WebARContainer(
       </ParentContext.Provider>
       <SceneComponent
         antialias
-        style={{ height: "100%", width: "100%" }}
         onSceneReady={onSceneReady}
-        id="my-canvas"
+        adaptToDeviceRatio={false}
       />
     </EngineContext.Provider>
   );
