@@ -1,7 +1,7 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebAR3DObjectContainerProps } from "../typings/WebAR3DObjectProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Mesh, Scene, SceneLoader, Texture } from "@babylonjs/core";
+import { Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
 
@@ -14,9 +14,9 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {
-            if (typeof(mxMaterialTexture.value) === "string") {
+            if (typeof mxMaterialTexture.value === "string") {
                 setTexture(new Texture(mxMaterialTexture.value, scene));
-            } else if (typeof(mxMaterialTexture.value) === "object") {
+            } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(mxMaterialTexture.value.uri, scene));
             }
         }
@@ -37,6 +37,8 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
             SceneLoader.ImportMesh("", props.mxSourceExpr.value, "", scene, models => {
                 setRootMesh(models[0] as Mesh);
                 let castMeshes: Mesh[] = [];
+                models[0].rotationQuaternion = null;
+                models[0].scaling = Vector3.Zero();
                 models.forEach(abstractMesh => {
                     castMeshes = [...castMeshes, abstractMesh as Mesh];
                 });

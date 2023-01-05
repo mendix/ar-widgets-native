@@ -2,7 +2,7 @@ import React, { createElement, useEffect, useState } from "react";
 import { WebARSquareContainerProps } from "../typings/WebARSquareProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
-import { MeshBuilder, Scene, Texture } from "@babylonjs/core";
+import { MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 
 export function WebARSquare(
   props: WebARSquareContainerProps
@@ -11,7 +11,9 @@ export function WebARSquare(
   const [mesh, setMesh] = useState<Mesh>();
   const [scene, setScene] = useState<Scene>();
   const handleSceneLoaded = (scene: Scene) => {
-    setMesh(MeshBuilder.CreatePlane(props.name, { size: 1 }, scene));
+    const plane = MeshBuilder.CreatePlane(props.name, { size: 0 }, scene);
+    plane.scaling = Vector3.Zero();
+    setMesh(plane);
     setScene(scene);
   };
   const [texture, setTexture] = useState<Texture>();

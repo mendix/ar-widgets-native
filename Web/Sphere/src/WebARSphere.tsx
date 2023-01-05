@@ -1,7 +1,7 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebARSphereContainerProps } from "../typings/WebARSphereProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Mesh, MeshBuilder, Scene, Texture } from "@babylonjs/core";
+import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 
 export function WebARSphere(
   props: WebARSphereContainerProps
@@ -10,7 +10,9 @@ export function WebARSphere(
   const [mesh, setMesh] = useState<Mesh>();
   const [scene, setScene] = useState<Scene>();
   const handleSceneLoaded = (scene: Scene) => {
-    setMesh(MeshBuilder.CreateSphere(props.name, { diameter: 1 }, scene));
+    const sphere = MeshBuilder.CreateSphere(props.name, { diameter: 0 }, scene);
+    sphere.scaling = Vector3.Zero();
+    setMesh(sphere);
     setScene(scene);
   };
   const [texture, setTexture] = useState<Texture>();

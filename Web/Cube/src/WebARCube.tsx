@@ -10,7 +10,9 @@ export function WebARCube(
   const [mesh, setMesh] = useState<Mesh>();
   const [scene, setScene] = useState<Scene>();
   const handleSceneLoaded = (scene: Scene) => {
-    setMesh(MeshBuilder.CreateBox(props.name, { size: 1 }, scene));
+    const cube = MeshBuilder.CreateBox(props.name, { size: 0 }, scene);
+    cube.scaling = Vector3.Zero();
+    setMesh(cube);
     setScene(scene);
   };
   const [texture, setTexture] = useState<Texture>();
