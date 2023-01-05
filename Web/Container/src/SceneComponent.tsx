@@ -32,7 +32,6 @@ export default (props: BabylonjsProps) => {
     children,
   } = props;
   const reactCanvas = useRef(null);
-  const [parentSize, setParentSize] = useState({ width: 0, height: 0 });
 
   // set up basic engine and scene
   useEffect(() => {
@@ -51,26 +50,20 @@ export default (props: BabylonjsProps) => {
     } else {
       scene.onReadyObservable.addOnce((scene) => onSceneReady(scene));
     }
+
     engine.runRenderLoop(() => {
       if (typeof onRender === "function") onRender(scene);
-      scene.render();
+      if (scene.activeCamera !== null) {
+        scene.render();
+      }
     });
-    const resize = () => {
-      engine.setSize(
-        (canvas as any).parentNode.getBoundingClientRect().width,
-        (canvas as any).parentNode.getBoundingClientRect().height,
-        true
-      );
-    };
-    if (window) {
-      window.addEventListener("resize", resize);
-    }
-    resize();
+    engine.setSize(
+      (canvas as any).parentNode.getBoundingClientRect().width,
+      (canvas as any).parentNode.getBoundingClientRect().height,
+      true
+    );
     return () => {
       scene.getEngine().dispose();
-      if (window) {
-        window.removeEventListener("resize", resize);
-      }
     };
   }, [reactCanvas]);
 
