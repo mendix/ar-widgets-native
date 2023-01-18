@@ -2,6 +2,7 @@ import React, { createElement, useEffect, useState } from "react";
 import { WebARCubeContainerProps } from "../typings/WebARCubeProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
+import { AddGizmo } from "../../../Shared/ComponentParent/src/AddGizmo";
 
 export function WebARCube(
   props: WebARCubeContainerProps
@@ -25,7 +26,7 @@ export function WebARCube(
     }
   }, [mxMaterialTexture, scene]);
 
-  return (
+  return AddGizmo(
     <MeshComponent
       rootMesh={mesh}
       allMeshes={mesh ? [mesh] : undefined}

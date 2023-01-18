@@ -16,14 +16,7 @@ import {
     WebXRHitTest
 } from "@babylonjs/core";
 
-export function MeshComponent(
-    props: {
-        rootMesh?: Mesh;
-        allMeshes?: Mesh[];
-        texture?: Texture;
-        OnSceneLoaded: (scene: Scene) => void;
-    } & MeshComponentProps
-): React.ReactElement {
+export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     const {
         mxPositionType,
         mxPositionXStat,
