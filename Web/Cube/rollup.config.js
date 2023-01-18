@@ -1,13 +1,3 @@
-import typescript from "@rollup/plugin-typescript";
+import defaultConfig from "../rollup.config";
 
-export default args => {
-    const result = args.configDefaultConfig;
-    result.forEach(config => {
-        config.plugins.push(
-            typescript({
-                include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
-            })
-        );
-    });
-    return result;
-};
+export default defaultConfig;
