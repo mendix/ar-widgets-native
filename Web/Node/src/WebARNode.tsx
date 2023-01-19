@@ -1,8 +1,11 @@
-import React, { createElement, Context, useState } from "react";
-import { Mesh, Scene } from "@babylonjs/core";
+import React, { createElement, Context, useState, useEffect } from "react";
+import { ActionManager, ExecuteCodeAction, Mesh, Scene } from "@babylonjs/core";
 import { WebARNodeContainerProps } from "../typings/WebARNodeProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
+import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 import { GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
+import { ValueStatus } from "mendix";
+import Big from "big.js";
 
 export function WebARNode(
   props: WebARNodeContainerProps
@@ -12,6 +15,7 @@ export function WebARNode(
     .ParentContext;
   const [nodeParent, setNodeParent] = useState<Mesh>();
   const [parentID, setParentID] = useState<number>(NaN);
+  const [childrenActions, setChildrenActions] = useState<boolean>(false);
 
   const handleSceneLoaded = (scene: Scene) => {
     const localNode = new Mesh(props.name, scene);
@@ -28,12 +32,52 @@ export function WebARNode(
       default:
         break;
     }
+    localNode.showBoundingBox = true;
     setNodeParent(localNode);
     setParentID(localNode.uniqueId);
   };
 
+  useEffect(() => {
+    if (nodeParent !== undefined && childrenActions === false) {
+      const children = nodeParent.getChildMeshes();
+      children.forEach((child) => {
+        if (child.actionManager === null) {
+          child.actionManager = new ActionManager();
+        }
+        console.log("set child action");
+        child.actionManager.registerAction(
+          new ExecuteCodeAction(ActionManager.OnPickTrigger, () => {
+            if (props.mxOnClick?.canExecute) {
+              props.mxOnClick.execute();
+            }
+          })
+        );
+      });
+      setChildrenActions(true);
+    }
+  }, [nodeParent]);
+
+  useEffect(() => {
+    console.log(nodeParent?.getBoundingInfo());
+  }, [nodeParent]);
+
   return (
     <>
+      <GizmoComponent
+        mesh={nodeParent}
+        draggingEnabled={
+          props.mxDraggingEnabled.status === ValueStatus.Available
+            ? props.mxDraggingEnabled.value
+            : false
+        }
+        onScale={(newScale) => {
+          if (props.mxScaleType === "Attribute") {
+            props.mxScaleXAtt?.setValue(new Big(newScale.x));
+            props.mxScaleYAtt?.setValue(new Big(newScale.y));
+            props.mxScaleZAtt?.setValue(new Big(newScale.z));
+          }
+        }}
+      />
       <MeshComponent
         rootMesh={nodeParent}
         allMeshes={nodeParent ? [nodeParent] : undefined}

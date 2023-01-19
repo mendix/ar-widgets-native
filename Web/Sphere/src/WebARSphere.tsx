@@ -2,6 +2,9 @@ import React, { createElement, useEffect, useState } from "react";
 import { WebARSphereContainerProps } from "../typings/WebARSphereProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh, MeshBuilder, Scene, Texture } from "@babylonjs/core";
+import { ValueStatus } from "mendix";
+import Big from "big.js";
+import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 
 export function WebARSphere(
   props: WebARSphereContainerProps
@@ -26,58 +29,75 @@ export function WebARSphere(
   }, [mxMaterialTexture, scene]);
 
   return (
-    <MeshComponent
-      rootMesh={mesh}
-      allMeshes={mesh ? [mesh] : undefined}
-      mxPositionType={props.mxPositionType}
-      mxPositionXStat={props.mxPositionXStat}
-      mxPositionYStat={props.mxPositionYStat}
-      mxPositionZStat={props.mxPositionZStat}
-      mxPositionYAtt={props.mxPositionYAtt}
-      mxPositionXAtt={props.mxPositionXAtt}
-      mxPositionZAtt={props.mxPositionZAtt}
-      mxPositionXExpr={props.mxPositionXExpr}
-      mxPositionYExpr={props.mxPositionYExpr}
-      mxPositionZExpr={props.mxPositionZExpr}
-      mxRotationType={props.mxRotationType}
-      mxRotationXStat={props.mxRotationXStat}
-      mxRotationYStat={props.mxRotationYStat}
-      mxRotationZStat={props.mxRotationZStat}
-      mxRotationXAtt={props.mxRotationXAtt}
-      mxRotationYAtt={props.mxRotationYAtt}
-      mxRotationZAtt={props.mxRotationZAtt}
-      mxRotationXExpr={props.mxRotationXExpr}
-      mxRotationYExpr={props.mxRotationYExpr}
-      mxRotationZExpr={props.mxRotationZExpr}
-      mxScaleType={props.mxScaleType}
-      mxScaleXStat={props.mxScaleXStat}
-      mxScaleYStat={props.mxScaleYStat}
-      mxScaleZStat={props.mxScaleZStat}
-      mxScaleXAtt={props.mxScaleXAtt}
-      mxScaleYAtt={props.mxScaleYAtt}
-      mxScaleZAtt={props.mxScaleZAtt}
-      mxScaleXExpr={props.mxScaleXExpr}
-      mxScaleYExpr={props.mxScaleYExpr}
-      mxScaleZExpr={props.mxScaleZExpr}
-      OnSceneLoaded={handleSceneLoaded}
-      mxMaterialColor={props.mxMaterialColor.value ?? "#0CABF9"}
-      mxMaterialOption={props.mxMaterialOption}
-      texture={texture}
-      mxMetalness={props.mxMetalness}
-      mxOpacity={props.mxOpacity}
-      mxRoughness={props.mxRoughness}
-      mxLightingType={props.mxLightingType}
-      mxUseDraggingInteraction={props.mxUseDraggingInteraction}
-      mxUsePinchInteraction={props.mxUsePinchInteraction}
-      mxDraggingEnabled={props.mxDraggingEnabled.value ?? false}
-      mxDragType={props.mxDragType}
-      mxOnDrag={props.mxOnDrag}
-      mxPinchEnabled={props.mxPinchEnabled.value ?? false}
-      mxPinchToScaleEnabled={props.mxPinchToScaleEnabled}
-      mxOnPinchActionValue={props.mxOnPinchActionValue}
-      mxOnHoverEnter={props.mxOnHoverEnter}
-      mxOnHoverExit={props.mxOnHoverExit}
-      mxOnClick={props.mxOnClick}
-    />
+    <>
+      <GizmoComponent
+        mesh={mesh}
+        draggingEnabled={
+          props.mxDraggingEnabled.status === ValueStatus.Available
+            ? props.mxDraggingEnabled.value
+            : false
+        }
+        onScale={(newScale) => {
+          if (props.mxScaleType === "Attribute") {
+            props.mxScaleXAtt?.setValue(new Big(newScale.x));
+            props.mxScaleYAtt?.setValue(new Big(newScale.y));
+            props.mxScaleZAtt?.setValue(new Big(newScale.z));
+          }
+        }}
+      />
+      <MeshComponent
+        rootMesh={mesh}
+        allMeshes={mesh ? [mesh] : undefined}
+        mxPositionType={props.mxPositionType}
+        mxPositionXStat={props.mxPositionXStat}
+        mxPositionYStat={props.mxPositionYStat}
+        mxPositionZStat={props.mxPositionZStat}
+        mxPositionYAtt={props.mxPositionYAtt}
+        mxPositionXAtt={props.mxPositionXAtt}
+        mxPositionZAtt={props.mxPositionZAtt}
+        mxPositionXExpr={props.mxPositionXExpr}
+        mxPositionYExpr={props.mxPositionYExpr}
+        mxPositionZExpr={props.mxPositionZExpr}
+        mxRotationType={props.mxRotationType}
+        mxRotationXStat={props.mxRotationXStat}
+        mxRotationYStat={props.mxRotationYStat}
+        mxRotationZStat={props.mxRotationZStat}
+        mxRotationXAtt={props.mxRotationXAtt}
+        mxRotationYAtt={props.mxRotationYAtt}
+        mxRotationZAtt={props.mxRotationZAtt}
+        mxRotationXExpr={props.mxRotationXExpr}
+        mxRotationYExpr={props.mxRotationYExpr}
+        mxRotationZExpr={props.mxRotationZExpr}
+        mxScaleType={props.mxScaleType}
+        mxScaleXStat={props.mxScaleXStat}
+        mxScaleYStat={props.mxScaleYStat}
+        mxScaleZStat={props.mxScaleZStat}
+        mxScaleXAtt={props.mxScaleXAtt}
+        mxScaleYAtt={props.mxScaleYAtt}
+        mxScaleZAtt={props.mxScaleZAtt}
+        mxScaleXExpr={props.mxScaleXExpr}
+        mxScaleYExpr={props.mxScaleYExpr}
+        mxScaleZExpr={props.mxScaleZExpr}
+        OnSceneLoaded={handleSceneLoaded}
+        mxMaterialColor={props.mxMaterialColor.value ?? "#0CABF9"}
+        mxMaterialOption={props.mxMaterialOption}
+        texture={texture}
+        mxMetalness={props.mxMetalness}
+        mxOpacity={props.mxOpacity}
+        mxRoughness={props.mxRoughness}
+        mxLightingType={props.mxLightingType}
+        mxUseDraggingInteraction={props.mxUseDraggingInteraction}
+        mxUsePinchInteraction={props.mxUsePinchInteraction}
+        mxDraggingEnabled={props.mxDraggingEnabled.value ?? false}
+        mxDragType={props.mxDragType}
+        mxOnDrag={props.mxOnDrag}
+        mxPinchEnabled={props.mxPinchEnabled.value ?? false}
+        mxPinchToScaleEnabled={props.mxPinchToScaleEnabled}
+        mxOnPinchActionValue={props.mxOnPinchActionValue}
+        mxOnHoverEnter={props.mxOnHoverEnter}
+        mxOnHoverExit={props.mxOnHoverExit}
+        mxOnClick={props.mxOnClick}
+      />
+    </>
   );
 }
