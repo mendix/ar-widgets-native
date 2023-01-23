@@ -1,5 +1,5 @@
 import React, { createElement, Context, useState, useEffect } from "react";
-import { ActionManager, ExecuteCodeAction, Mesh, Scene } from "@babylonjs/core";
+import { Mesh, Scene } from "@babylonjs/core";
 import { WebARNodeContainerProps } from "../typings/WebARNodeProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
@@ -12,7 +12,6 @@ export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | 
     const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const [nodeParent, setNodeParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
-    const [childrenActions, setChildrenActions] = useState<boolean>(false);
 
     const handleSceneLoaded = (scene: Scene) => {
         const localNode = new Mesh(props.name, scene);
@@ -33,30 +32,6 @@ export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | 
         setNodeParent(localNode);
         setParentID(localNode.uniqueId);
     };
-
-    useEffect(() => {
-        if (nodeParent !== undefined && childrenActions === false) {
-            const children = nodeParent.getChildMeshes();
-            children.forEach(child => {
-                if (child.actionManager === null) {
-                    child.actionManager = new ActionManager();
-                }
-                console.log("set child action");
-                child.actionManager.registerAction(
-                    new ExecuteCodeAction(ActionManager.OnPickTrigger, () => {
-                        if (props.mxOnClick?.canExecute) {
-                            props.mxOnClick.execute();
-                        }
-                    })
-                );
-            });
-            setChildrenActions(true);
-        }
-    }, [nodeParent]);
-
-    useEffect(() => {
-        console.log(nodeParent?.getBoundingInfo());
-    }, [nodeParent]);
 
     return (
         <>

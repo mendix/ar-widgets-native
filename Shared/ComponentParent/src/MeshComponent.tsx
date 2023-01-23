@@ -81,6 +81,7 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         meshes?.forEach(mesh => {
             if (mesh.actionManager === null) {
                 mesh.actionManager = new ActionManager();
+                mesh.actionManager.isRecursive = true;
             }
             if (mesh.actionManager.actions.find(action => action.trigger === trigger) === undefined) {
                 mesh.actionManager.registerAction(
