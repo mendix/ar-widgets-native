@@ -31,6 +31,7 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
         <>
             <GizmoComponent
                 mesh={mesh}
+                color={props.mxGizmoColor}
                 draggingEnabled={
                     props.mxDraggingEnabled.status === ValueStatus.Available ? props.mxDraggingEnabled.value : false
                 }

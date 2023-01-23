@@ -52,10 +52,10 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
     return (
         <>
             <GizmoComponent
+                color={props.mxGizmoColor?.value ?? "#ffffff"}
                 mesh={rootMesh}
-                draggingEnabled={
-                    props.mxDraggingEnabled.status === ValueStatus.Available ? props.mxDraggingEnabled.value : false
-                }
+                draggingEnabled={props.mxDraggingEnabled.value ?? false}
+                pinchEnabled={props.mxPinchEnabled.value ?? false}
                 onScale={newScale => {
                     if (props.mxScaleType === "Attribute") {
                         props.mxScaleXAtt?.setValue(new Big(newScale.x));
@@ -111,7 +111,7 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
                 mxDragType={props.mxDragType}
                 mxOnDrag={props.mxOnDrag}
                 mxPinchEnabled={props.mxPinchEnabled.value ?? false}
-                mxPinchToScaleEnabled={props.mxPinchToScaleEnabled}
+                mxPinchToScaleEnabled={false}
                 mxOnPinchActionValue={props.mxOnPinchActionValue}
                 mxOnHoverEnter={props.mxOnHoverEnter}
                 mxOnHoverExit={props.mxOnHoverExit}

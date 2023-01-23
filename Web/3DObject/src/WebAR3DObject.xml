@@ -281,20 +281,28 @@
             </propertyGroup>
             <propertyGroup caption="Pinching">
                 <property key="mxUsePinchInteraction" type="boolean" defaultValue="false">
-                    <caption>Pinching:</caption>
+                    <caption>Scaling interaction:</caption>
                     <description />
                 </property>
                 <property key="mxPinchEnabled" type="expression" defaultValue="false">
-                    <caption>Enable pinching:</caption>
+                    <caption>Enable scaling interface:</caption>
                     <description />
                     <returnType type="Boolean" />
                 </property>
-                <property key="mxPinchToScaleEnabled" type="boolean" defaultValue="false">
+                <!-- <property key="mxPinchToScaleEnabled" type="boolean" defaultValue="false">
                     <caption>Enable pinch to scale:</caption>
                     <description />
+                </property> -->
+                <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
+                    <caption>Scaling interface color:</caption>
+                    <description>
+                        The color of the interface used for scaling and dragging the object. Using following format:
+                        #rrggbb
+                    </description>
+                    <returnType type="String" />
                 </property>
                 <property key="mxOnPinchActionValue" type="action" required="false">
-                    <caption>On pinch</caption>
+                    <caption>On scale</caption>
                     <description>Called when pinch gesture is performed on object.</description>
                 </property>
             </propertyGroup>

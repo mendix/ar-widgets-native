@@ -4,7 +4,9 @@ import { BoundingBoxGizmo, Color3, Mesh, Vector3 } from "@babylonjs/core";
 export function GizmoComponent(props: {
     mesh?: Mesh;
     draggingEnabled: boolean;
+    pinchEnabled: boolean;
     onScale: (newScale: Vector3) => void;
+    color: string;
 }): React.ReactElement {
     const [gizmo, setGizmo] = useState<BoundingBoxGizmo>();
     const gizmoRef = useRef<BoundingBoxGizmo>();
@@ -25,10 +27,11 @@ export function GizmoComponent(props: {
                     localGizmo.updateBoundingBox();
                 });
 
-                localGizmo.setColor(Color3.White());
-
-                localGizmo.rotationSphereSize = 0.05;
+                localGizmo.setColor(Color3.FromHexString(props.color));
+                localGizmo.setEnabledScaling(props.pinchEnabled);
                 localGizmo.scaleBoxSize = 0.05;
+                localGizmo.rotationSphereSize = 0;
+
                 localGizmo.attachedMesh = props.mesh;
                 setGizmo(localGizmo);
                 gizmoRef.current = localGizmo;
