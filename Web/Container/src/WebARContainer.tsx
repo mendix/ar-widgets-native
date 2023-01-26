@@ -1,9 +1,9 @@
 import { createElement, ReactElement, useEffect, useState } from "react";
-import SceneComponent from "babylonjs-hook";
 import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/src/EngineContext";
 import { ValueStatus } from "mendix";
 import { ArcRotateCamera, CubeTexture, HemisphericLight, Mesh, Scene, Tools, Vector3 } from "@babylonjs/core";
 import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
+import SceneComponent from "babylonjs-hook";
 
 export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
     const [scene, setScene] = useState<Scene>();
@@ -66,9 +66,9 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
             <SceneComponent
                 antialias
-                style={{ height: "100%", width: "100%" }}
+                adaptToDeviceRatio={true}
                 onSceneReady={onSceneReady}
-                id="my-canvas"
+                style={{ width: "100%", height: "100%" }}
             />
         </EngineContext.Provider>
     );

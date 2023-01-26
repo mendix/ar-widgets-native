@@ -68,7 +68,9 @@ export interface WebAR3DObjectContainerProps {
     mxOnDrag?: ActionValue;
     mxUsePinchInteraction: boolean;
     mxPinchEnabled: DynamicValue<boolean>;
+    mxPinchRotationEnabled: DynamicValue<boolean>;
     mxGizmoColor: DynamicValue<string>;
+    mxGizmoSize: DynamicValue<Big>;
     mxOnPinchActionValue?: ActionValue;
     mxOnClick?: ActionValue;
     mxOnHoverEnter?: ActionValue;
@@ -128,7 +130,9 @@ export interface WebAR3DObjectPreviewProps {
     mxOnDrag: {} | null;
     mxUsePinchInteraction: boolean;
     mxPinchEnabled: string;
+    mxPinchRotationEnabled: string;
     mxGizmoColor: string;
+    mxGizmoSize: string;
     mxOnPinchActionValue: {} | null;
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;

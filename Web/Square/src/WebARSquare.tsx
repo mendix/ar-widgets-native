@@ -31,10 +31,12 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
     return (
         <>
             <GizmoComponent
+                color={props.mxGizmoColor?.value ?? "#ffffff"}
                 mesh={mesh}
-                draggingEnabled={
-                    props.mxDraggingEnabled.status === ValueStatus.Available ? props.mxDraggingEnabled.value : false
-                }
+                gizmoSize={Number(props.mxGizmoSize.value) ?? 0.05}
+                draggingEnabled={props.mxDraggingEnabled.value ?? false}
+                pinchEnabled={props.mxPinchEnabled.value ?? false}
+                rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
                 onScale={newScale => {
                     if (props.mxScaleType === "Attribute") {
                         props.mxScaleXAtt?.setValue(new Big(newScale.x));
@@ -90,7 +92,7 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
                 mxDragType={props.mxDragType}
                 mxOnDrag={props.mxOnDrag}
                 mxPinchEnabled={props.mxPinchEnabled.value ?? false}
-                mxPinchToScaleEnabled={props.mxPinchToScaleEnabled}
+                mxPinchToScaleEnabled={false}
                 mxOnPinchActionValue={props.mxOnPinchActionValue}
                 mxOnHoverEnter={props.mxOnHoverEnter}
                 mxOnHoverExit={props.mxOnHoverExit}

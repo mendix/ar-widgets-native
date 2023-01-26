@@ -67,7 +67,9 @@ export interface WebARSphereContainerProps {
     mxOnDrag?: ActionValue;
     mxUsePinchInteraction: boolean;
     mxPinchEnabled: DynamicValue<boolean>;
-    mxPinchToScaleEnabled: boolean;
+    mxPinchRotationEnabled: DynamicValue<boolean>;
+    mxGizmoColor: DynamicValue<string>;
+    mxGizmoSize: DynamicValue<Big>;
     mxOnPinchActionValue?: ActionValue;
     mxOnClick?: ActionValue;
     mxOnHoverEnter?: ActionValue;
@@ -126,7 +128,9 @@ export interface WebARSpherePreviewProps {
     mxOnDrag: {} | null;
     mxUsePinchInteraction: boolean;
     mxPinchEnabled: string;
-    mxPinchToScaleEnabled: boolean;
+    mxPinchRotationEnabled: string;
+    mxGizmoColor: string;
+    mxGizmoSize: string;
     mxOnPinchActionValue: {} | null;
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;

@@ -289,10 +289,11 @@
                     <description />
                     <returnType type="Boolean" />
                 </property>
-                <!-- <property key="mxPinchToScaleEnabled" type="boolean" defaultValue="false">
-                    <caption>Enable pinch to scale:</caption>
+                <property key="mxPinchRotationEnabled" type="expression" defaultValue="false">
+                    <caption>Enable rotation interface:</caption>
                     <description />
-                </property> -->
+                    <returnType type="Boolean" />
+                </property>
                 <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
                     <caption>Scaling interface color:</caption>
                     <description>
@@ -300,6 +301,11 @@
                         #rrggbb
                     </description>
                     <returnType type="String" />
+                </property>
+                <property key="mxGizmoSize" type="expression" defaultValue="0.05">
+                    <caption>Scaling interface size:</caption>
+                    <description>The size of the scaling gizmo in meters</description>
+                    <returnType type="Decimal" />
                 </property>
                 <property key="mxOnPinchActionValue" type="action" required="false">
                     <caption>On scale</caption>

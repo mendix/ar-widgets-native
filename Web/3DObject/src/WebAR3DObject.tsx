@@ -5,7 +5,6 @@ import { Mesh, Scene, SceneLoader, Texture } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
-import { ValueStatus } from "mendix";
 import Big from "big.js";
 
 export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactElement | void {
@@ -54,8 +53,10 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
             <GizmoComponent
                 color={props.mxGizmoColor?.value ?? "#ffffff"}
                 mesh={rootMesh}
+                gizmoSize={Number(props.mxGizmoSize.value) ?? 0.05}
                 draggingEnabled={props.mxDraggingEnabled.value ?? false}
                 pinchEnabled={props.mxPinchEnabled.value ?? false}
+                rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
                 onScale={newScale => {
                     if (props.mxScaleType === "Attribute") {
                         props.mxScaleXAtt?.setValue(new Big(newScale.x));

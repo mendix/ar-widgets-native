@@ -5,6 +5,8 @@ export function GizmoComponent(props: {
     mesh?: Mesh;
     draggingEnabled: boolean;
     pinchEnabled: boolean;
+    rotationEnabled: boolean;
+    gizmoSize: number;
     onScale: (newScale: Vector3) => void;
     color: string;
 }): React.ReactElement {
@@ -29,8 +31,8 @@ export function GizmoComponent(props: {
 
                 localGizmo.setColor(Color3.FromHexString(props.color));
                 localGizmo.setEnabledScaling(props.pinchEnabled);
-                localGizmo.scaleBoxSize = 0.05;
-                localGizmo.rotationSphereSize = 0;
+                localGizmo.scaleBoxSize = props.gizmoSize;
+                localGizmo.rotationSphereSize = props.rotationEnabled ? props.gizmoSize : 0;
 
                 localGizmo.attachedMesh = props.mesh;
                 setGizmo(localGizmo);
@@ -41,6 +43,21 @@ export function GizmoComponent(props: {
             }
         }
     }, [props.draggingEnabled, props.mesh, gizmo]);
+
+    useEffect(() => {
+        if (gizmo !== undefined) {
+            gizmo.setColor(Color3.FromHexString(props.color));
+        }
+    }, [props.color, gizmo]);
+
+    useEffect(() => {
+        if (gizmo !== undefined) {
+            gizmo.setEnabledScaling(props.pinchEnabled);
+            gizmo.scaleBoxSize = props.gizmoSize;
+            gizmo.rotationSphereSize = props.rotationEnabled ? props.gizmoSize : 0;
+            gizmo.updateBoundingBox();
+        }
+    }, [props.pinchEnabled, props.rotationEnabled, props.gizmoSize, gizmo]);
 
     const refreshGizmo = () => {
         if (gizmo !== undefined) {
