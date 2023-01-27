@@ -1,10 +1,9 @@
-import React, { createElement, Context, useState, useEffect } from "react";
+import React, { createElement, Context, useState } from "react";
 import { Mesh, Scene } from "@babylonjs/core";
 import { WebARNodeContainerProps } from "../typings/WebARNodeProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 import { GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { ValueStatus } from "mendix";
 import Big from "big.js";
 
 export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | void {

@@ -4,7 +4,6 @@ import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { MeshBuilder, Scene, Texture } from "@babylonjs/core";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
-import { ValueStatus } from "mendix";
 import Big from "big.js";
 
 export function WebARSquare(props: WebARSquareContainerProps): React.ReactElement | void {

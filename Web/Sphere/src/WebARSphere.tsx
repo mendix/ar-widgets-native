@@ -2,7 +2,6 @@ import React, { createElement, useEffect, useState } from "react";
 import { WebARSphereContainerProps } from "../typings/WebARSphereProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh, MeshBuilder, Scene, Texture } from "@babylonjs/core";
-import { ValueStatus } from "mendix";
 import Big from "big.js";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 
