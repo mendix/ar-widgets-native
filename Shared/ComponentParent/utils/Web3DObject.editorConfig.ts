@@ -1,5 +1,5 @@
-import { hidePropertiesIn, hidePropertyIn, Problem, Properties, PropertyGroup } from "@mendix/pluggable-widgets-tools";
-import { MxBaseProps, PosRotScaleTypeEnum } from "../typings/MxBaseProps";
+import { hidePropertiesIn, Problem, Properties, PropertyGroup } from "@mendix/pluggable-widgets-tools";
+import { MxBaseProps } from "../typings/MxBaseProps";
 import { MxWebBaseProps } from "../typings/MxWebBaseProps";
 import { getPropertiesBase as Base, checkBase as Check } from "./3DObject.editorConfig";
 
