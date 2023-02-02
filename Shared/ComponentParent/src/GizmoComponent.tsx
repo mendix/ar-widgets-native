@@ -1,5 +1,17 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { BoundingBoxGizmo, Color3, Mesh, Vector3 } from "@babylonjs/core";
+import {
+    ActionManager,
+    BoundingBoxGizmo,
+    Color3,
+    ExecuteCodeAction,
+    Mesh,
+    Nullable,
+    Observer,
+    Quaternion,
+    Tools,
+    TransformNode,
+    Vector3
+} from "@babylonjs/core";
 
 export function GizmoComponent(props: {
     mesh?: Mesh;
@@ -8,10 +20,15 @@ export function GizmoComponent(props: {
     rotationEnabled: boolean;
     gizmoSize: number;
     onScale: (newScale: Vector3) => void;
+    onDrag: (newPosition: Vector3) => void;
+    onRotate: (newRotation: Vector3) => void;
     color: string;
 }): React.ReactElement {
     const [gizmo, setGizmo] = useState<BoundingBoxGizmo>();
     const gizmoRef = useRef<BoundingBoxGizmo>();
+    const callbackRef = useRef<Nullable<Observer<TransformNode>>>();
+    const meshRef = useRef<Mesh>();
+
     useEffect(() => {
         return () => {
             gizmoRef.current?.dispose();
@@ -22,19 +39,37 @@ export function GizmoComponent(props: {
             if (gizmo === undefined && props.draggingEnabled === true) {
                 const localGizmo = new BoundingBoxGizmo();
                 localGizmo.enableDragBehavior();
-                localGizmo.onScaleBoxDragObservable.add(() => {
-                    props.onScale(props.mesh!.scaling.clone());
-                });
+                meshRef.current = props.mesh;
                 localGizmo.onScaleBoxDragEndObservable.add(() => {
+                    props.onScale(props.mesh!.scaling.clone());
                     localGizmo.updateBoundingBox();
                 });
-
+                props.mesh.actionManager?.registerAction(
+                    new ExecuteCodeAction(ActionManager.OnPickUpTrigger, () => {
+                        console.log(props.mesh?.position);
+                        if (props.mesh) props.onDrag(props.mesh.position);
+                    })
+                );
+                localGizmo.onRotationSphereDragEndObservable.add(() => {
+                    console.log(meshRef.current);
+                    console.log(props.mesh?.rotationQuaternion);
+                    if (meshRef.current?.rotationQuaternion) {
+                        const euler = meshRef.current.rotationQuaternion?.toEulerAngles();
+                        const angles = new Vector3(
+                            Tools.ToDegrees(euler.x),
+                            Tools.ToDegrees(euler.y),
+                            Tools.ToDegrees(euler.z)
+                        );
+                        console.log("angles: " + angles);
+                        props.onRotate(angles);
+                    }
+                });
                 localGizmo.setColor(Color3.FromHexString(props.color));
                 localGizmo.setEnabledScaling(props.pinchEnabled);
                 localGizmo.scaleBoxSize = props.gizmoSize;
                 localGizmo.rotationSphereSize = props.rotationEnabled ? props.gizmoSize : 0;
-
                 localGizmo.attachedMesh = props.mesh;
+
                 setGizmo(localGizmo);
                 gizmoRef.current = localGizmo;
             }
@@ -62,6 +97,7 @@ export function GizmoComponent(props: {
     const refreshGizmo = () => {
         if (gizmo !== undefined) {
             gizmo.dispose();
+            if (callbackRef.current) props.mesh?.onAfterWorldMatrixUpdateObservable.remove(callbackRef.current);
             setGizmo(undefined);
         }
     };

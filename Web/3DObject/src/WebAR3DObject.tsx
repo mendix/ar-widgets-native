@@ -38,6 +38,7 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
     const handleMesh = (scene: Scene) => {
         if (props.mxSourceExpr.value) {
             SceneLoader.ImportMesh("", props.mxSourceExpr.value, "", scene, models => {
+                models[0].rotationQuaternion = null;
                 setRootMesh(models[0] as Mesh);
                 let castMeshes: Mesh[] = [];
                 models.forEach(abstractMesh => {
@@ -58,10 +59,25 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
                 pinchEnabled={props.mxPinchEnabled.value ?? false}
                 rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
                 onScale={newScale => {
+                    console.log(props.mxScaleType);
                     if (props.mxScaleType === "Attribute") {
-                        props.mxScaleXAtt?.setValue(new Big(newScale.x));
-                        props.mxScaleYAtt?.setValue(new Big(newScale.y));
-                        props.mxScaleZAtt?.setValue(new Big(newScale.z));
+                        props.mxScaleXAtt?.setValue(Big(newScale.x.toPrecision(4)));
+                        props.mxScaleYAtt?.setValue(Big(newScale.y.toPrecision(4)));
+                        props.mxScaleZAtt?.setValue(Big(newScale.z.toPrecision(4)));
+                    }
+                }}
+                onDrag={newPosition => {
+                    if (props.mxPositionType === "Attribute") {
+                        props.mxPositionXAtt?.setValue(Big(newPosition.x.toPrecision(4)));
+                        props.mxPositionYAtt?.setValue(Big(newPosition.y.toPrecision(4)));
+                        props.mxPositionZAtt?.setValue(Big(newPosition.z.toPrecision(4)));
+                    }
+                }}
+                onRotate={newRotation => {
+                    if (props.mxRotationType === "Attribute") {
+                        props.mxRotationXAtt?.setValue(Big(newRotation.x.toPrecision(4)));
+                        props.mxRotationYAtt?.setValue(Big(newRotation.y.toPrecision(4)));
+                        props.mxRotationZAtt?.setValue(Big(newRotation.z.toPrecision(4)));
                     }
                 }}
             />

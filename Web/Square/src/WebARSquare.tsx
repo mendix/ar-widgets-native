@@ -1,4 +1,4 @@
-import React, { createElement, useEffect, useState } from "react";
+import React, { createElement, useEffect, useRef, useState } from "react";
 import { WebARSquareContainerProps } from "../typings/WebARSquareProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
@@ -9,9 +9,15 @@ import Big from "big.js";
 export function WebARSquare(props: WebARSquareContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
+    const meshRef = useRef<Mesh>();
     const [scene, setScene] = useState<Scene>();
     const handleSceneLoaded = (scene: Scene) => {
-        setMesh(MeshBuilder.CreatePlane(props.name, { size: 1 }, scene));
+        const planeMesh = MeshBuilder.CreatePlane(props.name, { size: 1 }, scene);
+        const invisibleBox = MeshBuilder.CreateBox("invisibleBox" + props.name, { size: 1 }, scene);
+        invisibleBox.visibility = 0;
+        invisibleBox.scaling.z = 0.1;
+        invisibleBox.setParent(planeMesh);
+        setMesh(planeMesh);
         setScene(scene);
     };
     const [texture, setTexture] = useState<Texture>();
@@ -27,6 +33,10 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
         }
     }, [mxMaterialTexture, scene]);
 
+    useEffect(() => {
+        console.log(props.mxScaleXAtt);
+    }, [props.mxScaleXAtt]);
+
     return (
         <>
             <GizmoComponent
@@ -38,9 +48,23 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
                 rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
                 onScale={newScale => {
                     if (props.mxScaleType === "Attribute") {
-                        props.mxScaleXAtt?.setValue(new Big(newScale.x));
-                        props.mxScaleYAtt?.setValue(new Big(newScale.y));
-                        props.mxScaleZAtt?.setValue(new Big(newScale.z));
+                        props.mxScaleXAtt?.setValue(Big(newScale.x.toPrecision(4)));
+                        props.mxScaleYAtt?.setValue(Big(newScale.y.toPrecision(4)));
+                        props.mxScaleZAtt?.setValue(Big(newScale.z.toPrecision(4)));
+                    }
+                }}
+                onDrag={newPosition => {
+                    if (props.mxPositionType === "Attribute") {
+                        props.mxPositionXAtt?.setValue(Big(newPosition.x.toPrecision(4)));
+                        props.mxPositionYAtt?.setValue(Big(newPosition.y.toPrecision(4)));
+                        props.mxPositionZAtt?.setValue(Big(newPosition.z.toPrecision(4)));
+                    }
+                }}
+                onRotate={newRotation => {
+                    if (props.mxRotationType === "Attribute") {
+                        props.mxRotationXAtt?.setValue(Big(newRotation.x.toPrecision(4)));
+                        props.mxRotationYAtt?.setValue(Big(newRotation.y.toPrecision(4)));
+                        props.mxRotationZAtt?.setValue(Big(newRotation.z.toPrecision(4)));
                     }
                 }}
             />

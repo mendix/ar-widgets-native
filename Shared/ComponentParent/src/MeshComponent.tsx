@@ -152,6 +152,7 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     useEffect(() => {
         if (rootMesh) {
+            console.log("Set rotation");
             rootMesh.rotation.x = rotation.x * (Math.PI / 180);
             rootMesh.rotation.y = rotation.y * (Math.PI / 180);
             rootMesh.rotation.z = rotation.z * (Math.PI / 180);
@@ -208,7 +209,8 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxPositionXExpr,
         mxPositionYExpr,
         mxPositionZExpr,
-        engineContext.scene
+        engineContext.scene,
+        rootMesh
     ]);
 
     useEffect(() => {
@@ -253,7 +255,8 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxRotationXExpr,
         mxRotationYExpr,
         mxRotationZExpr,
-        engineContext.scene
+        engineContext.scene,
+        rootMesh
     ]);
 
     useEffect(() => {
@@ -288,7 +291,8 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxScaleXExpr,
         mxScaleYExpr,
         mxScaleZExpr,
-        engineContext.scene
+        engineContext.scene,
+        rootMesh
     ]);
     //#endregion
 
