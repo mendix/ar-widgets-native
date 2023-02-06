@@ -1,14 +1,18 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebARCubeContainerProps } from "../typings/WebARCubeProps";
-import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
+import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
-import { Mesh, MeshBuilder, Scene, Texture } from "@babylonjs/core";
-import Big from "big.js";
+import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 
 export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
+    const [rotationSet, setRotationSet] = useState<boolean>(false);
+    const [position, setPosition] = useState<Vector3>();
+    const [rotation, setRotation] = useState<Vector3>();
+    const [scale, setScale] = useState<Vector3>();
+
     const handleSceneLoaded = (scene: Scene) => {
         setMesh(MeshBuilder.CreateBox(props.name, { size: 1 }, scene));
         setScene(scene);
@@ -26,36 +30,41 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
         }
     }, [mxMaterialTexture, scene]);
 
+    useEffect(() => {
+        if (position) {
+            setAttributes(position, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
+        }
+    }, [position]);
+
+    useEffect(() => {
+        if (rotation) {
+            setAttributes(rotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
+        }
+    }, [rotation]);
+
+    useEffect(() => {
+        if (scale) {
+            setAttributes(scale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        }
+    }, [scale]);
+
     return (
         <>
             <GizmoComponent
                 color={props.mxGizmoColor?.value ?? "#ffffff"}
-                mesh={mesh}
+                mesh={rotationSet ? mesh : undefined}
                 gizmoSize={Number(props.mxGizmoSize.value) ?? 0.05}
                 draggingEnabled={props.mxDraggingEnabled.value ?? false}
                 pinchEnabled={props.mxPinchEnabled.value ?? false}
                 rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
                 onScale={newScale => {
-                    console.log(props.mxScaleType);
-                    if (props.mxScaleType === "Attribute") {
-                        props.mxScaleXAtt?.setValue(Big(newScale.x.toPrecision(4)));
-                        props.mxScaleYAtt?.setValue(Big(newScale.y.toPrecision(4)));
-                        props.mxScaleZAtt?.setValue(Big(newScale.z.toPrecision(4)));
-                    }
+                    setScale(newScale);
                 }}
                 onDrag={newPosition => {
-                    if (props.mxPositionType === "Attribute") {
-                        props.mxPositionXAtt?.setValue(Big(newPosition.x.toPrecision(4)));
-                        props.mxPositionYAtt?.setValue(Big(newPosition.y.toPrecision(4)));
-                        props.mxPositionZAtt?.setValue(Big(newPosition.z.toPrecision(4)));
-                    }
+                    setPosition(newPosition);
                 }}
                 onRotate={newRotation => {
-                    if (props.mxRotationType === "Attribute") {
-                        props.mxRotationXAtt?.setValue(Big(newRotation.x.toPrecision(4)));
-                        props.mxRotationYAtt?.setValue(Big(newRotation.y.toPrecision(4)));
-                        props.mxRotationZAtt?.setValue(Big(newRotation.z.toPrecision(4)));
-                    }
+                    setRotation(newRotation);
                 }}
             />
             <MeshComponent
@@ -92,6 +101,7 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
                 mxScaleYExpr={props.mxScaleYExpr}
                 mxScaleZExpr={props.mxScaleZExpr}
                 OnSceneLoaded={handleSceneLoaded}
+                OnRotationSet={() => setRotationSet(true)}
                 mxMaterialColor={props.mxMaterialColor.value ?? "#0CABF9"}
                 mxMaterialOption={props.mxMaterialOption}
                 texture={texture}

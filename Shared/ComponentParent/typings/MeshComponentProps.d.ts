@@ -11,6 +11,7 @@ export type MeshComponentProps = {
     allMeshes?: Mesh[];
     texture?: Texture;
     OnSceneLoaded: (scene: Scene) => void;
+    OnRotationSet?: () => void;
     mxPositionType: MxTypeEnum;
     mxPositionXStat: Big;
     mxPositionYStat: Big;

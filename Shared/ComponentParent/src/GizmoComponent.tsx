@@ -1,15 +1,13 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
+    Action,
     ActionManager,
     BoundingBoxGizmo,
     Color3,
     ExecuteCodeAction,
     Mesh,
-    Nullable,
-    Observer,
-    Quaternion,
+    PointerDragBehavior,
     Tools,
-    TransformNode,
     Vector3
 } from "@babylonjs/core";
 
@@ -25,43 +23,34 @@ export function GizmoComponent(props: {
     color: string;
 }): React.ReactElement {
     const [gizmo, setGizmo] = useState<BoundingBoxGizmo>();
+    const [dragBehaviour, setDragBehaviour] = useState<PointerDragBehavior>();
     const gizmoRef = useRef<BoundingBoxGizmo>();
-    const callbackRef = useRef<Nullable<Observer<TransformNode>>>();
+    const [action, setAction] = useState<Action>();
     const meshRef = useRef<Mesh>();
 
     useEffect(() => {
+        setAction(new ExecuteCodeAction(ActionManager.OnPickUpTrigger, () => props.onDrag(meshRef.current!.position)));
         return () => {
             gizmoRef.current?.dispose();
         };
     }, []);
+
     useEffect(() => {
         if (props.mesh !== undefined) {
             if (gizmo === undefined && props.draggingEnabled === true) {
                 const localGizmo = new BoundingBoxGizmo();
-                localGizmo.enableDragBehavior();
                 meshRef.current = props.mesh;
                 localGizmo.onScaleBoxDragEndObservable.add(() => {
                     props.onScale(props.mesh!.scaling.clone());
                     localGizmo.updateBoundingBox();
                 });
-                props.mesh.actionManager?.registerAction(
-                    new ExecuteCodeAction(ActionManager.OnPickUpTrigger, () => {
-                        console.log(props.mesh?.position);
-                        if (props.mesh) props.onDrag(props.mesh.position);
-                    })
-                );
+                if (action !== undefined) props.mesh.actionManager?.registerAction(action);
                 localGizmo.onRotationSphereDragEndObservable.add(() => {
-                    console.log(meshRef.current);
-                    console.log(props.mesh?.rotationQuaternion);
                     if (meshRef.current?.rotationQuaternion) {
                         const euler = meshRef.current.rotationQuaternion?.toEulerAngles();
-                        const angles = new Vector3(
-                            Tools.ToDegrees(euler.x),
-                            Tools.ToDegrees(euler.y),
-                            Tools.ToDegrees(euler.z)
+                        props.onRotate(
+                            new Vector3(Tools.ToDegrees(euler.x), Tools.ToDegrees(euler.y), Tools.ToDegrees(euler.z))
                         );
-                        console.log("angles: " + angles);
-                        props.onRotate(angles);
                     }
                 });
                 localGizmo.setColor(Color3.FromHexString(props.color));
@@ -70,10 +59,21 @@ export function GizmoComponent(props: {
                 localGizmo.rotationSphereSize = props.rotationEnabled ? props.gizmoSize : 0;
                 localGizmo.attachedMesh = props.mesh;
 
+                if (dragBehaviour === undefined) {
+                    const pointerDragBehaviour = new PointerDragBehavior();
+                    pointerDragBehaviour.attach(props.mesh);
+                    pointerDragBehaviour.onDragEndObservable.add(() => {
+                        props.onDrag(props.mesh!.position.clone());
+                    });
+                    setDragBehaviour(pointerDragBehaviour);
+                } else {
+                    dragBehaviour.enabled = true;
+                }
                 setGizmo(localGizmo);
                 gizmoRef.current = localGizmo;
             }
             if (gizmo !== undefined && props.draggingEnabled === false) {
+                if (dragBehaviour) dragBehaviour.enabled = false;
                 refreshGizmo();
             }
         }
@@ -97,7 +97,7 @@ export function GizmoComponent(props: {
     const refreshGizmo = () => {
         if (gizmo !== undefined) {
             gizmo.dispose();
-            if (callbackRef.current) props.mesh?.onAfterWorldMatrixUpdateObservable.remove(callbackRef.current);
+            if (action !== undefined && props.mesh !== undefined) props.mesh.actionManager?.unregisterAction(action);
             setGizmo(undefined);
         }
     };

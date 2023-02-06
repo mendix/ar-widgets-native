@@ -15,6 +15,8 @@ import {
     WebXRFeatureName,
     WebXRHitTest
 } from "@babylonjs/core";
+import Big from "big.js";
+import { EditableValue } from "mendix";
 
 export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     const {
@@ -67,7 +69,8 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxPinchToScaleEnabled,
         rootMesh,
         allMeshes,
-        OnSceneLoaded
+        OnSceneLoaded,
+        OnRotationSet
     } = props;
     const global = globalThis;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
@@ -152,10 +155,10 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     useEffect(() => {
         if (rootMesh) {
-            console.log("Set rotation");
             rootMesh.rotation.x = rotation.x * (Math.PI / 180);
             rootMesh.rotation.y = rotation.y * (Math.PI / 180);
             rootMesh.rotation.z = rotation.z * (Math.PI / 180);
+            if (OnRotationSet) OnRotationSet();
         }
     }, [rotation, engineContext.xrActive, rootMesh]);
 
@@ -436,3 +439,29 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     return <Fragment />;
 }
+
+export const setAttributes = (
+    NewValue: Vector3,
+    AttributeX?: EditableValue<Big>,
+    AttributeY?: EditableValue<Big>,
+    AttributeZ?: EditableValue<Big>
+) => {
+    if (AttributeX?.status == ValueStatus.Available) AttributeX?.setValue(Big(NewValue.x.toPrecision(4)));
+    else console.warn(`Attribute unavailable ${AttributeX}`);
+    if (AttributeY?.status == ValueStatus.Available) AttributeY?.setValue(Big(NewValue.y.toPrecision(4)));
+    else console.warn(`Attribute unavailable ${AttributeY}`);
+    if (AttributeZ?.status == ValueStatus.Available) AttributeZ?.setValue(Big(NewValue.z.toPrecision(4)));
+    else console.warn(`Attribute unavailable ${AttributeZ}`);
+};
+
+export const AttributesAvailable = (
+    AttributeX?: EditableValue<Big>,
+    AttributeY?: EditableValue<Big>,
+    AttributeZ?: EditableValue<Big>
+): boolean => {
+    return (
+        AttributeX?.status === ValueStatus.Available &&
+        AttributeY?.status === ValueStatus.Available &&
+        AttributeZ?.status === ValueStatus.Available
+    );
+};

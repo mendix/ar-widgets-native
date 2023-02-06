@@ -1,16 +1,15 @@
-import React, { createElement, useEffect, useRef, useState } from "react";
+import React, { createElement, useEffect, useState } from "react";
 import { WebARSquareContainerProps } from "../typings/WebARSquareProps";
-import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
+import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
-import { MeshBuilder, Scene, Texture } from "@babylonjs/core";
+import { MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
-import Big from "big.js";
 
 export function WebARSquare(props: WebARSquareContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
-    const meshRef = useRef<Mesh>();
     const [scene, setScene] = useState<Scene>();
+    const [rotationSet, setRotationSet] = useState<boolean>(false);
     const handleSceneLoaded = (scene: Scene) => {
         const planeMesh = MeshBuilder.CreatePlane(props.name, { size: 1 }, scene);
         const invisibleBox = MeshBuilder.CreateBox("invisibleBox" + props.name, { size: 1 }, scene);
@@ -21,6 +20,9 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
         setScene(scene);
     };
     const [texture, setTexture] = useState<Texture>();
+    const [position, setPosition] = useState<Vector3>();
+    const [rotation, setRotation] = useState<Vector3>();
+    const [scale, setScale] = useState<Vector3>();
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {
@@ -34,38 +36,40 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
     }, [mxMaterialTexture, scene]);
 
     useEffect(() => {
-        console.log(props.mxScaleXAtt);
-    }, [props.mxScaleXAtt]);
+        if (position) {
+            setAttributes(position, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
+        }
+    }, [position]);
+
+    useEffect(() => {
+        if (rotation) {
+            setAttributes(rotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
+        }
+    }, [rotation]);
+
+    useEffect(() => {
+        if (scale) {
+            setAttributes(scale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        }
+    }, [scale]);
 
     return (
         <>
             <GizmoComponent
                 color={props.mxGizmoColor?.value ?? "#ffffff"}
-                mesh={mesh}
+                mesh={rotationSet ? mesh : undefined}
                 gizmoSize={Number(props.mxGizmoSize.value) ?? 0.05}
                 draggingEnabled={props.mxDraggingEnabled.value ?? false}
                 pinchEnabled={props.mxPinchEnabled.value ?? false}
                 rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
                 onScale={newScale => {
-                    if (props.mxScaleType === "Attribute") {
-                        props.mxScaleXAtt?.setValue(Big(newScale.x.toPrecision(4)));
-                        props.mxScaleYAtt?.setValue(Big(newScale.y.toPrecision(4)));
-                        props.mxScaleZAtt?.setValue(Big(newScale.z.toPrecision(4)));
-                    }
+                    setScale(newScale);
                 }}
                 onDrag={newPosition => {
-                    if (props.mxPositionType === "Attribute") {
-                        props.mxPositionXAtt?.setValue(Big(newPosition.x.toPrecision(4)));
-                        props.mxPositionYAtt?.setValue(Big(newPosition.y.toPrecision(4)));
-                        props.mxPositionZAtt?.setValue(Big(newPosition.z.toPrecision(4)));
-                    }
+                    setPosition(newPosition);
                 }}
                 onRotate={newRotation => {
-                    if (props.mxRotationType === "Attribute") {
-                        props.mxRotationXAtt?.setValue(Big(newRotation.x.toPrecision(4)));
-                        props.mxRotationYAtt?.setValue(Big(newRotation.y.toPrecision(4)));
-                        props.mxRotationZAtt?.setValue(Big(newRotation.z.toPrecision(4)));
-                    }
+                    setRotation(newRotation);
                 }}
             />
             <MeshComponent
@@ -102,6 +106,7 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
                 mxScaleYExpr={props.mxScaleYExpr}
                 mxScaleZExpr={props.mxScaleZExpr}
                 OnSceneLoaded={handleSceneLoaded}
+                OnRotationSet={() => setRotationSet(true)}
                 mxMaterialColor={props.mxMaterialColor.value ?? "#0CABF9"}
                 mxMaterialOption={props.mxMaterialOption}
                 texture={texture}
