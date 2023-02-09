@@ -446,22 +446,7 @@ export const setAttributes = (
     AttributeY?: EditableValue<Big>,
     AttributeZ?: EditableValue<Big>
 ) => {
-    if (AttributeX?.status == ValueStatus.Available) AttributeX?.setValue(Big(NewValue.x.toPrecision(4)));
-    else console.warn(`Attribute unavailable ${AttributeX}`);
-    if (AttributeY?.status == ValueStatus.Available) AttributeY?.setValue(Big(NewValue.y.toPrecision(4)));
-    else console.warn(`Attribute unavailable ${AttributeY}`);
-    if (AttributeZ?.status == ValueStatus.Available) AttributeZ?.setValue(Big(NewValue.z.toPrecision(4)));
-    else console.warn(`Attribute unavailable ${AttributeZ}`);
-};
-
-export const AttributesAvailable = (
-    AttributeX?: EditableValue<Big>,
-    AttributeY?: EditableValue<Big>,
-    AttributeZ?: EditableValue<Big>
-): boolean => {
-    return (
-        AttributeX?.status === ValueStatus.Available &&
-        AttributeY?.status === ValueStatus.Available &&
-        AttributeZ?.status === ValueStatus.Available
-    );
+    if (AttributeX?.status === ValueStatus.Available) AttributeX?.setValue(Big(NewValue.x.toPrecision(4)));
+    if (AttributeY?.status === ValueStatus.Available) AttributeY?.setValue(Big(NewValue.y.toPrecision(4)));
+    if (AttributeZ?.status === ValueStatus.Available) AttributeZ?.setValue(Big(NewValue.z.toPrecision(4)));
 };
