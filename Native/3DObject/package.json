@@ -1,5 +1,5 @@
 {
-    "name": "ar3dobject",
+    "name": "@mendix/ar3dobject",
     "widgetName": "AR3DObject",
     "version": "1.0.0",
     "description": "The container used to start an AR experience",

@@ -1,5 +1,5 @@
 {
-    "name": "arcontainer",
+    "name": "@mendix/arcontainer",
     "widgetName": "ARContainer",
     "version": "1.0.0",
     "description": "The container used to start an AR experience",

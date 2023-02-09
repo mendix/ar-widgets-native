@@ -1,5 +1,5 @@
 {
-    "name": "arimagetracker",
+    "name": "@mendix/arimagetracker",
     "widgetName": "ARImageTracker",
     "version": "1.0.0",
     "description": "ImageTracker AR",

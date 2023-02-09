@@ -1,5 +1,5 @@
 {
-    "name": "ar-widgets-native",
+    "name": "@mendix/ar-widgets-native",
     "description": "The container used to start an AR experience",
     "copyright": "© Mendix Technology BV 2022. All rights reserved.",
     "author": "Mendix",

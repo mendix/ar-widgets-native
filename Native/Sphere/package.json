@@ -1,5 +1,5 @@
 {
-    "name": "arsphere",
+    "name": "@mendix/arsphere",
     "widgetName": "ARSphere",
     "version": "1.0.0",
     "description": "AR Sphere",

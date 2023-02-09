@@ -1,29 +1,29 @@
 {
-  "name": "webarsphere",
-  "widgetName": "WebARSphere",
-  "version": "1.0.0",
-  "description": "A sphere",
-  "copyright": "© Mendix Technology BV 2022. All rights reserved.",
-  "author": "Mendix",
-  "engines": {
-    "node": ">=12"
-  },
-  "license": "Apache-2.0",
-  "config": {
-    "projectPath": "../../../ARWebWidgetsTestProject/",
-    "mendixHost": "http://localhost:8080",
-    "developmentPort": 3000
-  },
-  "packagePath": "com.mendix.widget.web",
-  "scripts": {
-    "start": "pluggable-widgets-tools start:server",
-    "dev": "pluggable-widgets-tools start:web",
-    "build": "pluggable-widgets-tools build:web",
-    "lint": "pluggable-widgets-tools lint",
-    "lint:fix": "pluggable-widgets-tools lint:fix",
-    "prerelease": "npm run lint",
-    "release": "pluggable-widgets-tools release:web",
-    "prettier": "prettier --write ./src/*.tsx ./typings/*",
-    "releaseWithPrettier": "npm run prettier && npm run release"
-  }
+    "name": "@mendix/webarsphere",
+    "widgetName": "WebARSphere",
+    "version": "1.0.0",
+    "description": "A sphere",
+    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "author": "Mendix",
+    "engines": {
+        "node": ">=12"
+    },
+    "license": "Apache-2.0",
+    "config": {
+        "projectPath": "../../../ARWebWidgetsTestProject/",
+        "mendixHost": "http://localhost:8080",
+        "developmentPort": 3000
+    },
+    "packagePath": "com.mendix.widget.web",
+    "scripts": {
+        "start": "pluggable-widgets-tools start:server",
+        "dev": "pluggable-widgets-tools start:web",
+        "build": "pluggable-widgets-tools build:web",
+        "lint": "pluggable-widgets-tools lint",
+        "lint:fix": "pluggable-widgets-tools lint:fix",
+        "prerelease": "npm run lint",
+        "release": "pluggable-widgets-tools release:web",
+        "prettier": "prettier --write ./src/*.tsx ./typings/*",
+        "releaseWithPrettier": "npm run prettier && npm run release"
+    }
 }
