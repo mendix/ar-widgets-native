@@ -33,7 +33,7 @@ export function GizmoComponent(props: {
 
     useEffect(() => {
         if (props.mesh !== undefined) {
-            if (gizmo === undefined && props.draggingEnabled === true) {
+            if (gizmo === undefined && props.draggingEnabled) {
                 const localGizmo = new BoundingBoxGizmo();
                 meshRef.current = props.mesh;
                 localGizmo.onScaleBoxDragEndObservable.add(() => {
@@ -67,7 +67,7 @@ export function GizmoComponent(props: {
                 }
                 setGizmo(localGizmo);
             }
-            if (gizmo !== undefined && props.draggingEnabled === false) {
+            if (gizmo !== undefined && !props.draggingEnabled) {
                 if (dragBehaviour) dragBehaviour.enabled = false;
                 refreshGizmo();
             }
