@@ -24,15 +24,11 @@ export function GizmoComponent(props: {
 }): React.ReactElement {
     const [gizmo, setGizmo] = useState<BoundingBoxGizmo>();
     const [dragBehaviour, setDragBehaviour] = useState<PointerDragBehavior>();
-    const gizmoRef = useRef<BoundingBoxGizmo>();
     const [action, setAction] = useState<Action>();
     const meshRef = useRef<Mesh>();
 
     useEffect(() => {
         setAction(new ExecuteCodeAction(ActionManager.OnPickUpTrigger, () => props.onDrag(meshRef.current!.position)));
-        return () => {
-            gizmoRef.current?.dispose();
-        };
     }, []);
 
     useEffect(() => {
@@ -70,7 +66,6 @@ export function GizmoComponent(props: {
                     dragBehaviour.enabled = true;
                 }
                 setGizmo(localGizmo);
-                gizmoRef.current = localGizmo;
             }
             if (gizmo !== undefined && props.draggingEnabled === false) {
                 if (dragBehaviour) dragBehaviour.enabled = false;
@@ -78,6 +73,12 @@ export function GizmoComponent(props: {
             }
         }
     }, [props.draggingEnabled, props.mesh, gizmo]);
+
+    useEffect(() => {
+        return () => {
+            gizmo?.dispose();
+        };
+    }, [gizmo]);
 
     useEffect(() => {
         if (gizmo !== undefined) {
