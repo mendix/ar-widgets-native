@@ -69,8 +69,7 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxPinchToScaleEnabled,
         rootMesh,
         allMeshes,
-        OnSceneLoaded,
-        OnRotationSet
+        OnSceneLoaded
     } = props;
     const global = globalThis;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
@@ -158,7 +157,6 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
             rootMesh.rotation.x = rotation.x * (Math.PI / 180);
             rootMesh.rotation.y = rotation.y * (Math.PI / 180);
             rootMesh.rotation.z = rotation.z * (Math.PI / 180);
-            if (OnRotationSet) OnRotationSet();
         }
     }, [rotation, engineContext.xrActive, rootMesh]);
 

@@ -1,17 +1,7 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import {
-    Action,
-    ActionManager,
-    BoundingBoxGizmo,
-    Color3,
-    ExecuteCodeAction,
-    Mesh,
-    PointerDragBehavior,
-    Tools,
-    Vector3
-} from "@babylonjs/core";
+import { BoundingBoxGizmo, Color3, Mesh, PointerDragBehavior, Tools, Vector3 } from "@babylonjs/core";
 
-export function GizmoComponent(props: {
+export type Gizmo = {
     mesh?: Mesh;
     draggingEnabled: boolean;
     pinchEnabled: boolean;
@@ -21,87 +11,93 @@ export function GizmoComponent(props: {
     onDrag: (newPosition: Vector3) => void;
     onRotate: (newRotation: Vector3) => void;
     color: string;
-}): React.ReactElement {
+};
+
+export function useGizmoComponent(gizmoProps: Gizmo) {
+    const { mesh, draggingEnabled, pinchEnabled, rotationEnabled, gizmoSize, onScale, onDrag, onRotate, color } =
+        gizmoProps;
     const [gizmo, setGizmo] = useState<BoundingBoxGizmo>();
     const [dragBehaviour, setDragBehaviour] = useState<PointerDragBehavior>();
-    const [action, setAction] = useState<Action>();
     const meshRef = useRef<Mesh>();
 
     useEffect(() => {
-        setAction(new ExecuteCodeAction(ActionManager.OnPickUpTrigger, () => props.onDrag(meshRef.current!.position)));
-    }, []);
-
-    useEffect(() => {
-        if (props.mesh !== undefined) {
-            if (gizmo === undefined && props.draggingEnabled) {
-                const localGizmo = new BoundingBoxGizmo();
-                meshRef.current = props.mesh;
-                localGizmo.onScaleBoxDragEndObservable.add(() => {
-                    props.onScale(props.mesh!.scaling.clone());
-                    localGizmo.updateBoundingBox();
-                });
-                if (action !== undefined) props.mesh.actionManager?.registerAction(action);
-                localGizmo.onRotationSphereDragEndObservable.add(() => {
-                    if (meshRef.current?.rotationQuaternion) {
-                        const euler = meshRef.current.rotationQuaternion?.toEulerAngles();
-                        props.onRotate(
-                            new Vector3(Tools.ToDegrees(euler.x), Tools.ToDegrees(euler.y), Tools.ToDegrees(euler.z))
-                        );
-                    }
-                });
-                localGizmo.setColor(Color3.FromHexString(props.color));
-                localGizmo.setEnabledScaling(props.pinchEnabled);
-                localGizmo.scaleBoxSize = props.gizmoSize;
-                localGizmo.rotationSphereSize = props.rotationEnabled ? props.gizmoSize : 0;
-                localGizmo.attachedMesh = props.mesh;
-
-                if (dragBehaviour === undefined) {
-                    const pointerDragBehaviour = new PointerDragBehavior();
-                    pointerDragBehaviour.attach(props.mesh);
-                    pointerDragBehaviour.onDragEndObservable.add(() => {
-                        props.onDrag(props.mesh!.position.clone());
-                    });
-                    setDragBehaviour(pointerDragBehaviour);
-                } else {
-                    dragBehaviour.enabled = true;
-                }
-                setGizmo(localGizmo);
+        if (draggingEnabled && mesh && gizmo === undefined) {
+            setGizmo(createGizmo(mesh));
+            if (dragBehaviour === undefined) {
+                setDragBehaviour(createDragBehaviour(mesh));
+            } else {
+                dragBehaviour.enabled = true;
             }
-            if (gizmo !== undefined && !props.draggingEnabled) {
-                if (dragBehaviour) dragBehaviour.enabled = false;
-                refreshGizmo();
-            }
+            meshRef.current = mesh;
         }
-    }, [props.draggingEnabled, props.mesh, gizmo]);
+        if (gizmo !== undefined && !draggingEnabled) {
+            if (dragBehaviour) dragBehaviour.enabled = false;
+            refreshGizmo();
+        }
+    }, [draggingEnabled, mesh]);
 
     useEffect(() => {
-        return () => {
-            gizmo?.dispose();
-        };
+        if (gizmo) {
+            setUpGizmoCallbacks(gizmo);
+            setGizmoVariables(gizmo, Color3.FromHexString(color), pinchEnabled, gizmoSize, draggingEnabled);
+
+            return () => {
+                gizmo.dispose();
+            };
+        }
     }, [gizmo]);
 
     useEffect(() => {
         if (gizmo !== undefined) {
-            gizmo.setColor(Color3.FromHexString(props.color));
+            setGizmoVariables(gizmo, Color3.FromHexString(color), pinchEnabled, gizmoSize, rotationEnabled);
         }
-    }, [props.color, gizmo]);
+    }, [pinchEnabled, rotationEnabled, gizmoSize, color]);
 
-    useEffect(() => {
-        if (gizmo !== undefined) {
-            gizmo.setEnabledScaling(props.pinchEnabled);
-            gizmo.scaleBoxSize = props.gizmoSize;
-            gizmo.rotationSphereSize = props.rotationEnabled ? props.gizmoSize : 0;
-            gizmo.updateBoundingBox();
-        }
-    }, [props.pinchEnabled, props.rotationEnabled, props.gizmoSize, gizmo]);
+    const setGizmoVariables = (
+        newGizmo: BoundingBoxGizmo,
+        gizmoColor: Color3,
+        gizmoPinchEnabled: boolean,
+        gizmoSize: number,
+        gizmoRotationEnabled: boolean
+    ) => {
+        newGizmo.setColor(gizmoColor);
+        newGizmo.setEnabledScaling(gizmoPinchEnabled);
+        newGizmo.scaleBoxSize = gizmoSize;
+        newGizmo.rotationSphereSize = gizmoRotationEnabled ? gizmoSize : 0;
+    };
+
+    const setUpGizmoCallbacks = (newGizmo: BoundingBoxGizmo) => {
+        newGizmo.onScaleBoxDragEndObservable.add(() => {
+            onScale(mesh!.scaling.clone());
+            newGizmo.updateBoundingBox();
+        });
+        newGizmo.onRotationSphereDragEndObservable.add(() => {
+            if (meshRef.current?.rotationQuaternion) {
+                const euler = meshRef.current.rotationQuaternion?.toEulerAngles();
+                onRotate(new Vector3(Tools.ToDegrees(euler.x), Tools.ToDegrees(euler.y), Tools.ToDegrees(euler.z)));
+            }
+        });
+    };
+
+    const createGizmo = (mesh: Mesh): BoundingBoxGizmo => {
+        const returnGizmo = new BoundingBoxGizmo();
+        returnGizmo.attachedMesh = mesh;
+        return returnGizmo;
+    };
+
+    const createDragBehaviour = (mesh: Mesh): PointerDragBehavior => {
+        const returnDragBehaviour = new PointerDragBehavior();
+        returnDragBehaviour.attach(mesh);
+        returnDragBehaviour.onDragEndObservable.add(() => {
+            onDrag(mesh!.position.clone());
+        });
+        return returnDragBehaviour;
+    };
 
     const refreshGizmo = () => {
         if (gizmo !== undefined) {
             gizmo.dispose();
-            if (action !== undefined && props.mesh !== undefined) props.mesh.actionManager?.unregisterAction(action);
             setGizmo(undefined);
         }
     };
-
-    return <Fragment />;
 }

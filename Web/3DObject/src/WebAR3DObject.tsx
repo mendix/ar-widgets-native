@@ -1,10 +1,10 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebAR3DObjectContainerProps } from "../typings/WebAR3DObjectProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
+import { Color3, Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
-import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { Gizmo, useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 
 export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;
@@ -16,6 +16,23 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
     const [position, setPosition] = useState<Vector3>();
     const [rotation, setRotation] = useState<Vector3>();
     const [scale, setScale] = useState<Vector3>();
+    const gizmo = useGizmoComponent({
+        mesh: rootMesh,
+        draggingEnabled: props.mxDraggingEnabled.value ?? false,
+        pinchEnabled: props.mxPinchEnabled.value ?? false,
+        rotationEnabled: props.mxPinchRotationEnabled.value ?? false,
+        gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
+        color: props.mxGizmoColor.value ?? "#ffffff",
+        onDrag: newPosition => {
+            setAttributes(newPosition, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
+        },
+        onRotate: newRotation => {
+            setAttributes(newRotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
+        },
+        onScale: newScale => {
+            setAttributes(newScale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        }
+    });
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {
@@ -38,24 +55,6 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
         if (scene) handleMesh(scene);
     }, [props.mxSourceExpr.value]);
 
-    useEffect(() => {
-        if (position) {
-            setAttributes(position, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
-        }
-    }, [position]);
-
-    useEffect(() => {
-        if (rotation) {
-            setAttributes(rotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
-        }
-    }, [rotation]);
-
-    useEffect(() => {
-        if (scale) {
-            setAttributes(scale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
-        }
-    }, [scale]);
-
     const handleMesh = (scene: Scene) => {
         if (props.mxSourceExpr.value) {
             SceneLoader.ImportMesh("", props.mxSourceExpr.value, "", scene, models => {
@@ -72,23 +71,6 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
 
     return (
         <>
-            <GizmoComponent
-                color={props.mxGizmoColor?.value ?? "#ffffff"}
-                mesh={rotationSet ? rootMesh : undefined}
-                gizmoSize={Number(props.mxGizmoSize.value) ?? 0.05}
-                draggingEnabled={props.mxDraggingEnabled.value ?? false}
-                pinchEnabled={props.mxPinchEnabled.value ?? false}
-                rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
-                onScale={newScale => {
-                    setScale(newScale);
-                }}
-                onDrag={newPosition => {
-                    setPosition(newPosition);
-                }}
-                onRotate={newRotation => {
-                    setRotation(newRotation);
-                }}
-            />
             <MeshComponent
                 rootMesh={rootMesh}
                 allMeshes={allMeshes}
