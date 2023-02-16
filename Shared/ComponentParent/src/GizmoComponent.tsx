@@ -68,8 +68,8 @@ export function useGizmoComponent(gizmoProps: Gizmo): GizmoReturn {
         if (gizmo) {
             gizmo.setColor(gizmoColor);
             gizmo.setEnabledScaling(gizmoPinchEnabled);
-            gizmo.scaleBoxSize = gizmoSize;
-            gizmo.rotationSphereSize = gizmoRotationEnabled ? gizmoSize : 0;
+            gizmo.scaleBoxSize = Math.abs(gizmoSize);
+            gizmo.rotationSphereSize = gizmoRotationEnabled ? Math.abs(gizmoSize) : 0;
             gizmo.updateBoundingBox();
         }
     };
@@ -77,6 +77,7 @@ export function useGizmoComponent(gizmoProps: Gizmo): GizmoReturn {
     const setUpGizmoCallbacks = (newGizmo: BoundingBoxGizmo) => {
         newGizmo.onScaleBoxDragEndObservable.add(() => {
             setReturnScale(mesh!.scaling.clone());
+            setReturnPosition(mesh!.position.clone());
         });
         newGizmo.onRotationSphereDragEndObservable.add(() => {
             const rotationQuat = mesh!.rotationQuaternion?.toEulerAngles();
