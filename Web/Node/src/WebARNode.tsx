@@ -1,20 +1,23 @@
 import React, { createElement, Context, useState, useEffect } from "react";
-import { Mesh, Scene, Vector3 } from "@babylonjs/core";
+import { Mesh, Scene } from "@babylonjs/core";
 import { WebARNodeContainerProps } from "../typings/WebARNodeProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { GizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 import { GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import Big from "big.js";
 
 export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | void {
     const global = globalThis;
     const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const [nodeParent, setNodeParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
-    const [rotationSet, setRotationSet] = useState<boolean>(false);
-    const [position, setPosition] = useState<Vector3>();
-    const [rotation, setRotation] = useState<Vector3>();
-    const [scale, setScale] = useState<Vector3>();
+    const gizmoTransform = useGizmoComponent({
+        mesh: nodeParent,
+        draggingEnabled: props.mxDraggingEnabled.value ?? false,
+        pinchEnabled: props.mxPinchEnabled.value ?? false,
+        rotationEnabled: props.mxPinchRotationEnabled.value ?? false,
+        gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
+        color: props.mxGizmoColor.value ?? "#ffffff"
+    });
 
     const handleSceneLoaded = (scene: Scene) => {
         const localNode = new Mesh(props.name, scene);
@@ -35,43 +38,27 @@ export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | 
         setNodeParent(localNode);
         setParentID(localNode.uniqueId);
     };
-    useEffect(() => {
-        if (position) {
-            setAttributes(position, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
-        }
-    }, [position]);
 
     useEffect(() => {
-        if (rotation) {
-            setAttributes(rotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
+        if (gizmoTransform.newPosition) {
+            setAttributes(gizmoTransform.newPosition, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
         }
-    }, [rotation]);
+    }, [gizmoTransform.newPosition]);
 
     useEffect(() => {
-        if (scale) {
-            setAttributes(scale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        if (gizmoTransform.newRotation) {
+            setAttributes(gizmoTransform.newRotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
         }
-    }, [scale]);
+    }, [gizmoTransform.newRotation]);
+
+    useEffect(() => {
+        if (gizmoTransform.newScale) {
+            setAttributes(gizmoTransform.newScale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        }
+    }, [gizmoTransform.newScale]);
 
     return (
         <>
-            <GizmoComponent
-                color={props.mxGizmoColor?.value ?? "#ffffff"}
-                mesh={rotationSet ? nodeParent : undefined}
-                gizmoSize={Number(props.mxGizmoSize.value) ?? 0.05}
-                draggingEnabled={props.mxDraggingEnabled.value ?? false}
-                pinchEnabled={props.mxPinchEnabled.value ?? false}
-                rotationEnabled={props.mxPinchRotationEnabled.value ?? false}
-                onScale={newScale => {
-                    setScale(newScale);
-                }}
-                onDrag={newPosition => {
-                    setPosition(newPosition);
-                }}
-                onRotate={newRotation => {
-                    setRotation(newRotation);
-                }}
-            />
             <MeshComponent
                 rootMesh={nodeParent}
                 allMeshes={nodeParent ? [nodeParent] : undefined}
@@ -106,7 +93,6 @@ export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | 
                 mxScaleYExpr={props.mxScaleYExpr}
                 mxScaleZExpr={props.mxScaleZExpr}
                 OnSceneLoaded={handleSceneLoaded}
-                OnRotationSet={() => setRotationSet(true)}
                 mxUseDraggingInteraction={props.mxUseDraggingInteraction}
                 mxUsePinchInteraction={props.mxUsePinchInteraction}
                 mxDraggingEnabled={props.mxDraggingEnabled.value ?? false}

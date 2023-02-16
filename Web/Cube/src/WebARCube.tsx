@@ -8,23 +8,13 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
-
-    const gizmo = useGizmoComponent({
+    const gizmoTransform = useGizmoComponent({
         mesh: mesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
         pinchEnabled: props.mxPinchEnabled.value ?? false,
         rotationEnabled: props.mxPinchRotationEnabled.value ?? false,
         gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
-        color: props.mxGizmoColor.value ?? "#ffffff",
-        onDrag: newPosition => {
-            setAttributes(newPosition, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
-        },
-        onRotate: newRotation => {
-            setAttributes(newRotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
-        },
-        onScale: newScale => {
-            setAttributes(newScale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
-        }
+        color: props.mxGizmoColor.value ?? "#ffffff"
     });
 
     const handleSceneLoaded = (scene: Scene) => {
@@ -32,6 +22,24 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
         setScene(scene);
     };
     const [texture, setTexture] = useState<Texture>();
+
+    useEffect(() => {
+        if (gizmoTransform.newPosition) {
+            setAttributes(gizmoTransform.newPosition, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
+        }
+    }, [gizmoTransform.newPosition]);
+
+    useEffect(() => {
+        if (gizmoTransform.newRotation) {
+            setAttributes(gizmoTransform.newRotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
+        }
+    }, [gizmoTransform.newRotation]);
+
+    useEffect(() => {
+        if (gizmoTransform.newScale) {
+            setAttributes(gizmoTransform.newScale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        }
+    }, [gizmoTransform.newScale]);
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {

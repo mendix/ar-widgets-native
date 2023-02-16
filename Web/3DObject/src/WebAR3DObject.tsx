@@ -12,26 +12,13 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
     const [allMeshes, setAllMeshes] = useState<Mesh[] | undefined>();
     const [scene, setScene] = useState<Scene>();
     const [texture, setTexture] = useState<Texture>();
-    const [rotationSet, setRotationSet] = useState<boolean>(false);
-    const [position, setPosition] = useState<Vector3>();
-    const [rotation, setRotation] = useState<Vector3>();
-    const [scale, setScale] = useState<Vector3>();
-    const gizmo = useGizmoComponent({
+    const gizmoTransform = useGizmoComponent({
         mesh: rootMesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
         pinchEnabled: props.mxPinchEnabled.value ?? false,
         rotationEnabled: props.mxPinchRotationEnabled.value ?? false,
         gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
-        color: props.mxGizmoColor.value ?? "#ffffff",
-        onDrag: newPosition => {
-            setAttributes(newPosition, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
-        },
-        onRotate: newRotation => {
-            setAttributes(newRotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
-        },
-        onScale: newScale => {
-            setAttributes(newScale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
-        }
+        color: props.mxGizmoColor.value ?? "#ffffff"
     });
 
     useEffect(() => {
@@ -69,6 +56,24 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
         }
     };
 
+    useEffect(() => {
+        if (gizmoTransform.newPosition) {
+            setAttributes(gizmoTransform.newPosition, props.mxPositionXAtt, props.mxPositionYAtt, props.mxPositionZAtt);
+        }
+    }, [gizmoTransform.newPosition]);
+
+    useEffect(() => {
+        if (gizmoTransform.newRotation) {
+            setAttributes(gizmoTransform.newRotation, props.mxRotationXAtt, props.mxRotationYAtt, props.mxRotationZAtt);
+        }
+    }, [gizmoTransform.newRotation]);
+
+    useEffect(() => {
+        if (gizmoTransform.newScale) {
+            setAttributes(gizmoTransform.newScale, props.mxScaleXAtt, props.mxScaleYAtt, props.mxScaleZAtt);
+        }
+    }, [gizmoTransform.newScale]);
+
     return (
         <>
             <MeshComponent
@@ -105,7 +110,6 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
                 mxScaleYExpr={props.mxScaleYExpr}
                 mxScaleZExpr={props.mxScaleZExpr}
                 OnSceneLoaded={handleSceneLoaded}
-                OnRotationSet={() => setRotationSet(true)}
                 mxMaterialColor={props.mxMaterialColor.value ?? "#0CABF9"}
                 mxMaterialOption={props.mxMaterialOption}
                 texture={texture}
