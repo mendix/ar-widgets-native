@@ -9,7 +9,9 @@ export function WebARSphere(props: WebARSphereContainerProps): React.ReactElemen
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
     const handleSceneLoaded = (scene: Scene) => {
-        setMesh(MeshBuilder.CreateSphere(props.name, { diameter: 1 }, scene));
+        const newSphere = MeshBuilder.CreateSphere(props.name, { diameter: 1 }, scene);
+        newSphere.scaling = Vector3.Zero();
+        setMesh(newSphere);
         setScene(scene);
     };
     const [texture, setTexture] = useState<Texture>();

@@ -18,7 +18,9 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
     });
 
     const handleSceneLoaded = (scene: Scene) => {
-        setMesh(MeshBuilder.CreateBox(props.name, { size: 1 }, scene));
+        const newMesh = MeshBuilder.CreateBox(props.name, { size: 0 }, scene);
+        newMesh.scaling = Vector3.Zero();
+        setMesh(newMesh);
         setScene(scene);
     };
     const [texture, setTexture] = useState<Texture>();

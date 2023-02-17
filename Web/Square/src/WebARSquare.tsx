@@ -2,7 +2,7 @@ import React, { createElement, useEffect, useState } from "react";
 import { WebARSquareContainerProps } from "../typings/WebARSquareProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
-import { MeshBuilder, Scene, Texture } from "@babylonjs/core";
+import { MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
 
 export function WebARSquare(props: WebARSquareContainerProps): React.ReactElement | void {
@@ -10,11 +10,12 @@ export function WebARSquare(props: WebARSquareContainerProps): React.ReactElemen
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
     const handleSceneLoaded = (scene: Scene) => {
-        const planeMesh = MeshBuilder.CreatePlane(props.name, { size: 1 }, scene);
+        const planeMesh = MeshBuilder.CreatePlane(props.name, { size: 0 }, scene);
         const invisibleBox = MeshBuilder.CreateBox("invisibleBox" + props.name, { size: 1 }, scene);
         invisibleBox.visibility = 0;
         invisibleBox.scaling.z = 0.1;
         invisibleBox.setParent(planeMesh);
+        planeMesh.scaling = Vector3.Zero();
         setMesh(planeMesh);
         setScene(scene);
     };
