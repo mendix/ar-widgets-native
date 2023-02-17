@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { BoundingBoxGizmo, Color3, Mesh, PointerDragBehavior, Tools, Vector3 } from "@babylonjs/core";
+import React, { useEffect, useState } from "react";
+import { BoundingBoxGizmo, Color3, Mesh, PointerDragBehavior, Vector3 } from "@babylonjs/core";
 
 export type Gizmo = {
     mesh?: Mesh;
