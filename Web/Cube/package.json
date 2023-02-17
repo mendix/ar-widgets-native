@@ -1,5 +1,5 @@
 {
-    "name": "webarcube",
+    "name": "@mendix/webarcube",
     "widgetName": "WebARCube",
     "version": "1.0.0",
     "description": "A cube",

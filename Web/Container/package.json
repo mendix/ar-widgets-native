@@ -1,5 +1,5 @@
 {
-    "name": "webarcontainer",
+    "name": "@mendix/webarcontainer",
     "widgetName": "WebARContainer",
     "version": "1.0.0",
     "description": "The container used to start an AR experience",
