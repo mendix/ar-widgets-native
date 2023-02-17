@@ -95,6 +95,7 @@ export function useGizmoComponent(gizmoProps: Gizmo): GizmoReturn {
 
     const createGizmo = (mesh: Mesh): BoundingBoxGizmo => {
         const newGizmo = new BoundingBoxGizmo();
+        newGizmo.scaleBoxSize = 0;
         newGizmo.rotationSphereSize = rotationEnabled ? gizmoSize : 0;
         newGizmo.attachedMesh = mesh;
         newGizmo.updateBoundingBox();
