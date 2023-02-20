@@ -14,9 +14,9 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {
-            if (typeof(mxMaterialTexture.value) === "string") {
+            if (typeof mxMaterialTexture.value === "string") {
                 setTexture(new Texture(mxMaterialTexture.value, scene));
-            } else if (typeof(mxMaterialTexture.value) === "object") {
+            } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(mxMaterialTexture.value.uri, scene));
             }
         }
@@ -28,8 +28,12 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
     };
 
     useEffect(() => {
-        if (rootMesh) rootMesh.dispose();
-        if (scene) handleMesh(scene);
+        if (rootMesh) {
+            rootMesh.dispose();
+        }
+        if (scene) {
+            handleMesh(scene);
+        }
     }, [props.mxSourceExpr.value]);
 
     const handleMesh = (scene: Scene) => {
