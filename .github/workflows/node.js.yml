@@ -5,7 +5,8 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    tags:
+      - 'web-v*.*.*'
 
 jobs:
   build:
@@ -32,4 +33,4 @@ jobs:
       with:
         files: 
             ./Web/Release/*
-        tag_name: "test-tag"
+        tag_name: ${{github.ref_name}}
