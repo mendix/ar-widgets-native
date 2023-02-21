@@ -30,5 +30,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: 
-            ./Web/Release
+            ./Web/Release/*
         tag_name: "test-tag"
