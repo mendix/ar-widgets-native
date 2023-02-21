@@ -26,9 +26,10 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run buildReleaseWeb
+    - run: npm run moveReleasesWeb
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: 
-            ./Web/Release/**
+            ./Web/Release/*
         tag_name: "test-tag"
