@@ -30,5 +30,9 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-            Web/Release/*
+            Web/Release/com.mendix.widget.web.WebAR3DObject.mpk
+            Web/Release/com.mendix.widget.web.WebARContainer.mpk
+            Web/Release/com.mendix.widget.web.WebARNode.mpk
+            Web/Release/com.mendix.widget.web.WebARSphere.mpk
+            Web/Release/com.mendix.widget.web.WebARSquare.mpk
         tag_name: "test-tag"
