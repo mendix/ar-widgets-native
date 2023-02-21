@@ -29,10 +29,6 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        files: |
-            Web/Release/com.mendix.widget.web.WebAR3DObject.mpk
-            Web/Release/com.mendix.widget.web.WebARContainer.mpk
-            Web/Release/com.mendix.widget.web.WebARNode.mpk
-            Web/Release/com.mendix.widget.web.WebARSphere.mpk
-            Web/Release/com.mendix.widget.web.WebARSquare.mpk
+        files: 
+            ./Web/Release
         tag_name: "test-tag"
