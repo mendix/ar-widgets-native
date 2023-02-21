@@ -25,6 +25,6 @@
     "release": "pluggable-widgets-tools release:web",
     "prettier": "prettier --write ./src/*.ts* ./typings/*",
     "releaseWithPrettier": "npm run prettier && npm run release",
-        "moveRelease": "cp dist/1.0.0/* ../Release/"
+    "moveRelease": "cp ./dist/1.0.0/* ../Release/"
   }
 }
