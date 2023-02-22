@@ -1,12 +1,12 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Build AR Web Widgets Release
+name: Build BabylonJS bundle file
 
 on:
     push:
-        tags:
-            - web-v*.*.*
+        paths:
+            - package.json
 
 jobs:
     build:
@@ -25,11 +25,5 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
             - run: npm ci
-            - run: npm run buildReleaseWeb
-            - run: npm run moveReleasesWeb
-            - name: Release
-              uses: softprops/action-gh-release@v1
-              with:
-                  files: ./Web/Release/*
-            - name: Clean Release folder
-            - run: rm -rf ./Web/Release
+            - run: test -e ./Web/Container/src/bundle/babylonjscore.js && echo file exists || echo file not found
+            - run: npm run --prefix \"./Web/Container\" rollupBabylon

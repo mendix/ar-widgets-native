@@ -24,7 +24,7 @@
         "prerelease": "npm run lint",
         "release": "pluggable-widgets-tools release:web",
         "prettier": "prettier --write ./src/*.tsx ./typings/*",
-        "releaseWithPrettier": "npm run rollupBabylon && npm run prettier && npm run release",
+        "releaseWithPrettier": "npm run prettier && npm run release",
         "moveRelease": "cp ./dist/1.0.0/* ../Release/",
         "rollupBabylon": "npx rollup --config rollupBabylon.config.js"
     }
