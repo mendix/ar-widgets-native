@@ -32,4 +32,4 @@ jobs:
               with:
                   files: ./Native/Release/*
             - name: Clean Release folder
-            - run: rm -rf ./Native/Release
+              run: rm -rf ./Native/Release

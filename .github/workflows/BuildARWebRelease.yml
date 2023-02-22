@@ -32,4 +32,4 @@ jobs:
               with:
                   files: ./Web/Release/*
             - name: Clean Release folder
-            - run: rm -rf ./Web/Release
+              run: rm -rf ./Web/Release
