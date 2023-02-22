@@ -31,3 +31,5 @@ jobs:
               uses: softprops/action-gh-release@v1
               with:
                   files: ./Web/Release/*
+            - name: Clean Release folder
+              run: rm -rf ./Web/Release

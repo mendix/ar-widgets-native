@@ -1,11 +1,12 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Check Pull Request
+name: Build AR Native Widgets Release
 
 on:
-    pull_request:
-        types: [opened]
+    push:
+        tags:
+            - native-v*.*.*
 
 jobs:
     build:
@@ -24,5 +25,11 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
             - run: npm ci
-            - run: npm run buildReleaseWeb
             - run: npm run buildReleaseNative
+            - run: npm run moveReleasesNative
+            - name: Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: ./Native/Release/*
+            - name: Clean Release folder
+              run: rm -rf ./Native/Release
