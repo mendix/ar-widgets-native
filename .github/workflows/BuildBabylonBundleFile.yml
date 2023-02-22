@@ -26,4 +26,4 @@ jobs:
                   cache: "npm"
             - run: npm ci
             - run: test -e ./Web/Container/src/bundle/babylonjscore.js && echo file exists || echo file not found
-            - run: npm run --prefix \"./Web/Container\" rollupBabylon
+            - run: npm run --prefix ./Web/Container rollupBabylon
