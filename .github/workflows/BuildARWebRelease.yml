@@ -25,6 +25,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
             - run: npm ci
+            - run: npm run --prefix ./Web/Container rollupBabylon
             - run: npm run buildReleaseWeb
             - run: npm run moveReleasesWeb
             - name: Release
