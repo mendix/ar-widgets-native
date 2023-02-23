@@ -2,7 +2,7 @@ import React, { createElement, Context, useState, useEffect } from "react";
 import { Mesh, Scene } from "@babylonjs/core";
 import { WebARNodeContainerProps } from "../typings/WebARNodeProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 
 export function WebARNode(props: WebARNodeContainerProps): React.ReactElement | void {

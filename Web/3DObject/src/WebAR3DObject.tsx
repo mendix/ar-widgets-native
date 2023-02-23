@@ -4,7 +4,7 @@ import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/sr
 import { Color3, Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
-import { Gizmo, useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { Gizmo, useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 
 export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;

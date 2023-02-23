@@ -2,7 +2,7 @@ import React, { createElement, useEffect, useState } from "react";
 import { WebARSphereContainerProps } from "../typings/WebARSphereProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
-import { useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 
 export function WebARSphere(props: WebARSphereContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;

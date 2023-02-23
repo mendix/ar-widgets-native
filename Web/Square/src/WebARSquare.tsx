@@ -3,7 +3,7 @@ import { WebARSquareContainerProps } from "../typings/WebARSquareProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
-import { useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 
 export function WebARSquare(props: WebARSquareContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;

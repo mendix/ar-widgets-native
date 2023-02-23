@@ -1,7 +1,7 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebARCubeContainerProps } from "../typings/WebARCubeProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { useGizmoComponent } from "../../../Shared/ComponentParent/src/GizmoComponent";
+import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 
 export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
