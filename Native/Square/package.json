@@ -22,7 +22,8 @@
         "prerelease": "npm run lint",
         "prettier": "prettier --write ./typings/*",
         "release": "pluggable-widgets-tools release:native",
-        "releaseWithPrettier": "npm run prettier && npm run release"
+        "releaseWithPrettier": "npm run prettier && npm run release",
+        "moveRelease": "cp ./dist/1.0.0/* ../Release/"
     },
     "license": "Apache-2.0"
 }

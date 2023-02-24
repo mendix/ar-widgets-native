@@ -24,6 +24,7 @@
         "prerelease": "npm run lint",
         "release": "pluggable-widgets-tools release:web",
         "prettier": "prettier --write ./src/*.ts* ./typings/*",
+        "moveRelease": "cp ./dist/1.0.0/* ../Release/",
         "releaseWithPrettier": "npm run prettier && npm run release"
     }
 }
