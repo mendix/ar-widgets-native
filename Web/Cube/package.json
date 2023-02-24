@@ -1,29 +1,29 @@
 {
-  "name": "webarcube",
-  "widgetName": "WebARCube",
-  "version": "1.0.0",
-  "description": "A cube",
-  "copyright": "© Mendix Technology BV 2022. All rights reserved.",
-  "author": "Mendix",
-  "engines": {
-    "node": ">=12"
-  },
-  "license": "Apache-2.0",
-  "config": {
-    "projectPath": "../../../ARWebWidgetsTestProject/",
-    "mendixHost": "http://localhost:8080",
-    "developmentPort": 3000
-  },
-  "packagePath": "com.mendix.widget.web",
-  "scripts": {
-    "start": "pluggable-widgets-tools start:server",
-    "dev": "pluggable-widgets-tools start:web",
-    "build": "pluggable-widgets-tools build:web",
-    "lint": "pluggable-widgets-tools lint",
-    "lint:fix": "pluggable-widgets-tools lint:fix",
-    "prerelease": "npm run lint",
-    "release": "pluggable-widgets-tools release:web",
-    "prettier": "prettier --write ./src/*.ts* ./typings/*",
-    "releaseWithPrettier": "npm run prettier && npm run release"
-  }
+    "name": "@mendix/webarcube",
+    "widgetName": "WebARCube",
+    "version": "1.0.0",
+    "description": "A cube",
+    "copyright": "© Mendix Technology BV 2023. All rights reserved.",
+    "author": "Mendix",
+    "engines": {
+        "node": ">=12"
+    },
+    "license": "Apache-2.0",
+    "config": {
+        "projectPath": "../../../ARWebWidgetsTestProject/",
+        "mendixHost": "http://localhost:8080",
+        "developmentPort": 3000
+    },
+    "packagePath": "com.mendix.widget.web",
+    "scripts": {
+        "start": "pluggable-widgets-tools start:server",
+        "dev": "pluggable-widgets-tools start:web",
+        "build": "pluggable-widgets-tools build:web",
+        "lint": "pluggable-widgets-tools lint",
+        "lint:fix": "pluggable-widgets-tools lint:fix",
+        "prerelease": "npm run lint",
+        "release": "pluggable-widgets-tools release:web",
+        "prettier": "prettier --write ./src/*.ts* ./typings/*",
+        "releaseWithPrettier": "npm run prettier && npm run release"
+    }
 }

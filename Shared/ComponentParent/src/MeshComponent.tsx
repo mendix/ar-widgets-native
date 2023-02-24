@@ -15,15 +15,10 @@ import {
     WebXRFeatureName,
     WebXRHitTest
 } from "@babylonjs/core";
+import Big from "big.js";
+import { EditableValue } from "mendix";
 
-export function MeshComponent(
-    props: {
-        rootMesh?: Mesh;
-        allMeshes?: Mesh[];
-        texture?: Texture;
-        OnSceneLoaded: (scene: Scene) => void;
-    } & MeshComponentProps
-): React.ReactElement {
+export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     const {
         mxPositionType,
         mxPositionXStat,
@@ -88,6 +83,7 @@ export function MeshComponent(
         meshes?.forEach(mesh => {
             if (mesh.actionManager === null) {
                 mesh.actionManager = new ActionManager();
+                mesh.actionManager.isRecursive = true;
             }
             if (mesh.actionManager.actions.find(action => action.trigger === trigger) === undefined) {
                 mesh.actionManager.registerAction(
@@ -214,7 +210,8 @@ export function MeshComponent(
         mxPositionXExpr,
         mxPositionYExpr,
         mxPositionZExpr,
-        engineContext.scene
+        engineContext.scene,
+        rootMesh
     ]);
 
     useEffect(() => {
@@ -259,7 +256,8 @@ export function MeshComponent(
         mxRotationXExpr,
         mxRotationYExpr,
         mxRotationZExpr,
-        engineContext.scene
+        engineContext.scene,
+        rootMesh
     ]);
 
     useEffect(() => {
@@ -294,7 +292,8 @@ export function MeshComponent(
         mxScaleXExpr,
         mxScaleYExpr,
         mxScaleZExpr,
-        engineContext.scene
+        engineContext.scene,
+        rootMesh
     ]);
     //#endregion
 
@@ -438,3 +437,14 @@ export function MeshComponent(
 
     return <Fragment />;
 }
+
+export const setAttributes = (
+    NewValue: Vector3,
+    AttributeX?: EditableValue<Big>,
+    AttributeY?: EditableValue<Big>,
+    AttributeZ?: EditableValue<Big>
+) => {
+    if (AttributeX?.status === ValueStatus.Available) AttributeX?.setValue(Big(NewValue.x.toPrecision(4)));
+    if (AttributeY?.status === ValueStatus.Available) AttributeY?.setValue(Big(NewValue.y.toPrecision(4)));
+    if (AttributeZ?.status === ValueStatus.Available) AttributeZ?.setValue(Big(NewValue.z.toPrecision(4)));
+};

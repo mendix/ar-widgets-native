@@ -1,9 +1,9 @@
 {
-    "name": "webar3dobject",
+    "name": "@mendix/webar3dobject",
     "widgetName": "WebAR3DObject",
     "version": "1.0.0",
     "description": "A cube",
-    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
     "engines": {
         "node": ">=12"

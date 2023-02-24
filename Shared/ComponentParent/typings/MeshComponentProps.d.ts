@@ -7,6 +7,10 @@ export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";
 export type MxTypeEnum = "Expression" | "Attribute" | "Static";
 
 export type MeshComponentProps = {
+    rootMesh?: Mesh;
+    allMeshes?: Mesh[];
+    texture?: Texture;
+    OnSceneLoaded: (scene: Scene) => void;
     mxPositionType: MxTypeEnum;
     mxPositionXStat: Big;
     mxPositionYStat: Big;

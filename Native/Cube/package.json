@@ -1,9 +1,9 @@
 {
-    "name": "arcube",
+    "name": "@mendix/arcube",
     "widgetName": "ARCube",
     "version": "1.0.0",
     "description": "AR Cube",
-    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
     "engines": {
         "node": ">=12"

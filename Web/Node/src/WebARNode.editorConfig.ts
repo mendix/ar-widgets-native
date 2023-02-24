@@ -1,10 +1,10 @@
 import { Problem, Properties } from "@mendix/pluggable-widgets-tools";
-import { MxBaseProps } from "../../../Shared/ComponentParent/typings/MxBaseProps";
-import { getPropertiesBase, checkBase } from "../../../Shared/ComponentParent/utils/3DObject.editorConfig";
+import { MxWebBaseProps } from "../../../Shared/ComponentParent/typings/MxWebBaseProps";
+import { getPropertiesBase, checkBase } from "../../../Shared/ComponentParent/utils/Web3DObject.editorConfig";
 
-export function getProperties(values: MxBaseProps, defaultProperties: Properties): Properties {
+export function getProperties(values: MxWebBaseProps, defaultProperties: Properties): Properties {
     return getPropertiesBase(values, defaultProperties);
 }
-export function check(values: MxBaseProps): Problem[] {
+export function check(values: MxWebBaseProps): Problem[] {
     return checkBase(values);
 }

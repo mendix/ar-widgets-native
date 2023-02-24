@@ -1,8 +1,8 @@
 {
-    "name": "componentparent",
+    "name": "@mendix/componentparent",
     "version": "1.0.0",
     "description": "The container used to start an AR experience",
-    "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+    "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
     "config": {
         "projectPath": "../../ARWidgetsTestProject-main/"
