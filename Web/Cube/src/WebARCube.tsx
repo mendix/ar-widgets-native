@@ -9,7 +9,7 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
     const gizmoTransform = useGizmoComponent({
-        mesh: mesh,
+        mesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
         pinchEnabled: props.mxPinchEnabled.value ?? false,
         rotationEnabled: props.mxPinchRotationEnabled.value ?? false,
@@ -46,7 +46,7 @@ export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
     useEffect(() => {
         if (mxMaterialTexture && scene) {
             if (typeof mxMaterialTexture.value === "string") {
-                //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
+                // @ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(mxMaterialTexture.value.uri, scene));
