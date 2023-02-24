@@ -66,7 +66,7 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
             <SceneComponent
                 antialias
-                adaptToDeviceRatio={true}
+                adaptToDeviceRatio
                 onSceneReady={onSceneReady}
                 style={{ width: "100%", height: "100%" }}
             />
