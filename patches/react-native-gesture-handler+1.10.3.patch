@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-gesture-handler/lib/typescript/handlers/gestureHandlers.d.ts b/node_modules/react-native-gesture-handler/lib/typescript/handlers/gestureHandlers.d.ts
+index 0ad6d92..f138058 100644
+--- a/node_modules/react-native-gesture-handler/lib/typescript/handlers/gestureHandlers.d.ts
++++ b/node_modules/react-native-gesture-handler/lib/typescript/handlers/gestureHandlers.d.ts
+@@ -144,7 +144,7 @@ export declare type PinchGestureHandlerEventPayload = {
+ export interface PinchGestureHandlerProps extends BaseGestureHandlerProps<PinchGestureHandlerEventPayload> {
+ }
+ export declare type PinchGestureHandler = typeof PinchGestureHandler;
+-export declare const PinchGestureHandler: React.ComponentType<PinchGestureHandlerProps & React.RefAttributes<any>>;
++export declare const PinchGestureHandler: React.ComponentType<React.PropsWithChildren<PinchGestureHandlerProps & React.RefAttributes<any>>>;
+ export declare type RotationGestureHandlerEventPayload = {
+     rotation: number;
+     anchorX: number;
