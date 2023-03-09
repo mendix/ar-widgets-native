@@ -229,18 +229,12 @@
                 </property>
                 <property key="mxRoughness" type="expression" defaultValue="1">
                     <caption>Roughness:</caption>
-                    <description>
-                        Takes a value from 0.0 - 1.0. The higher the value, the rougher the object's surface. The lower
-                        the value, the more shiny the object's surface.
-                    </description>
+                    <description>Takes a value from 0.0 - 1.0. The higher the value, the rougher the object's surface. The lower the value, the more shiny the object's surface.</description>
                     <returnType type="Decimal" />
                 </property>
                 <property key="mxMetalness" type="expression" defaultValue="1">
                     <caption>Metalness:</caption>
-                    <description>
-                        Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance.
-                        The lower the value, the more plastic the object's appearance.
-                    </description>
+                    <description> Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance. The lower the value, the more plastic the object's appearance.</description>
                     <returnType type="Decimal" />
                 </property>
             </propertyGroup>
@@ -258,9 +252,7 @@
                 </property>
                 <property key="mxDragType" type="enumeration" required="true" defaultValue="FixedDistance">
                     <caption>Type:</caption>
-                    <description>
-                        Objects should only be draggable if they are not embedded in an image tracker.
-                    </description>
+                    <description></description>
                     <enumerationValues>
                         <enumerationValue key="FixedDistance">Fixed distance</enumerationValue>
                         <enumerationValue key="FixedToWorld">Fixed to world</enumerationValue>
@@ -288,10 +280,7 @@
                 </property>
                 <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
                     <caption>Scaling interface color:</caption>
-                    <description>
-                        The color of the interface used for scaling and dragging the object. Using following format:
-                        #rrggbb
-                    </description>
+                    <description>The color of the interface used for scaling and dragging the object. Using following format: #rrggbb</description>
                     <returnType type="String" />
                 </property>
                 <property key="mxGizmoSize" type="expression" defaultValue="0.05">

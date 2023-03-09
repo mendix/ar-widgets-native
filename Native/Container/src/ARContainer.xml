@@ -36,11 +36,7 @@
                 </property>
                 <property key="mxHdrPath" type="expression" required="false">
                     <caption>Environment map path</caption>
-                    <description>
-                        The environment map path used for realistic lighting. For more information on what a environment
-                        map is and how to create one please refer to
-                        https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment
-                    </description>
+                    <description> The environment map path used for realistic lighting. For more information on what a environment map is and how to create one please refer to https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment</description>
                     <returnType type="String" />
                 </property>
             </propertyGroup>

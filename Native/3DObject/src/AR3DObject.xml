@@ -237,18 +237,12 @@
                 </property>
                 <property key="mxRoughness" type="expression" defaultValue="1">
                     <caption>Roughness:</caption>
-                    <description>
-                        Takes a value from 0.0 - 1.0. The higher the value, the rougher the object's surface. The lower
-                        the value, the more shiny the object's surface.
-                    </description>
+                    <description>Takes a value from 0.0 - 1.0. The higher the value, the rougher the object's surface. The lower the value, the more shiny the object's surface.</description>
                     <returnType type="Decimal" />
                 </property>
                 <property key="mxMetalness" type="expression" defaultValue="1">
                     <caption>Metalness:</caption>
-                    <description>
-                        Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance.
-                        The lower the value, the more plastic the object's appearance.
-                    </description>
+                    <description>Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance. The lower the value, the more plastic the object's appearance.</description>
                     <returnType type="Decimal" />
                 </property>
             </propertyGroup>

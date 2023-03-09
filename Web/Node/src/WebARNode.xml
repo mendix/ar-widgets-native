@@ -222,9 +222,7 @@
                 </property>
                 <property key="mxDragType" type="enumeration" required="true" defaultValue="FixedDistance">
                     <caption>Type:</caption>
-                    <description>
-                        Objects should only be draggable if they are not embedded in an image tracker.
-                    </description>
+                    <description></description>
                     <enumerationValues>
                         <enumerationValue key="FixedDistance">Fixed distance</enumerationValue>
                         <enumerationValue key="FixedToWorld">Fixed to world</enumerationValue>
@@ -252,10 +250,7 @@
                 </property>
                 <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
                     <caption>Scaling interface color:</caption>
-                    <description>
-                        The color of the interface used for scaling and dragging the object. Using following format:
-                        #rrggbb
-                    </description>
+                    <description>The color of the interface used for scaling and dragging the object. Using following format: #rrggbb</description>
                     <returnType type="String" />
                 </property>
                 <property key="mxGizmoSize" type="expression" defaultValue="0.05">
