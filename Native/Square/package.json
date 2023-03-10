@@ -9,7 +9,7 @@
         "node": ">=12"
     },
     "config": {
-        "projectPath": "../../../DisposableTestProjects/testreactnative070/"
+        "projectPath": "../../../ARWidgetsTestProject-main/"
     },
     "packagePath": "com.mendix.widget.native",
     "scripts": {
