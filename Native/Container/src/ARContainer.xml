@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget
-    id="com.mendix.widget.native.arcontainer.ARContainer"
-    pluginWidget="true"
-    needsEntityContext="true"
-    offlineCapable="true"
-    supportedPlatform="Native"
-    xmlns="http://www.mendix.com/widget/1.0/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.mendix.com/widget/1.0/../node_modules/mendix/custom_widget.xsd"
->
+<widget id="com.mendix.widget.native.arcontainer.ARContainer" pluginWidget="true" needsEntityContext="true" offlineCapable="true" supportedPlatform="Native" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/../node_modules/mendix/custom_widget.xsd">
     <name>Container (AR) - Beta</name>
     <description>AR widget that can contain other AR widgets</description>
     <studioProCategory>Augmented Reality</studioProCategory>
@@ -36,11 +27,7 @@
                 </property>
                 <property key="mxHdrPath" type="expression" required="false">
                     <caption>Environment map path</caption>
-                    <description>
-                        The environment map path used for realistic lighting. For more information on what a environment
-                        map is and how to create one please refer to
-                        https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment
-                    </description>
+                    <description>The environment map path used for realistic lighting. For more information on what a environment map is and how to create one please refer to https://doc.babylonjs.com/divingDeeper/materials/using/HDREnvironment</description>
                     <returnType type="String" />
                 </property>
             </propertyGroup>

@@ -1,6 +1,7 @@
 import { ActionValue, EditableValue, DynamicValue, NativeImage } from "mendix";
 import { Big } from "Big.js";
 import { MaterialOptionEnum } from "./MxBaseProps";
+import { Mesh } from "@babylonjs/core";
 export type MxPhysicsTypeEnum = "Kinematic" | "Dynamic" | "Static";
 export type MxLightingTypeEnum = "Simple" | "PBR";
 export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";

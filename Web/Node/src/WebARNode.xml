@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget
-    id="com.mendix.widget.web.webarnode.WebARNode"
-    pluginWidget="true"
-    needsEntityContext="true"
-    offlineCapable="true"
-    supportedPlatform="Web"
-    xmlns="http://www.mendix.com/widget/1.0/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
->
+<widget id="com.mendix.widget.web.webarnode.WebARNode" pluginWidget="true" needsEntityContext="true" offlineCapable="true" supportedPlatform="Web" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>Node (AR) - Beta</name>
     <description>Node</description>
     <studioProCategory>Augmented Reality</studioProCategory>
@@ -22,9 +13,7 @@
                 </property>
                 <property key="mxBillboard" type="enumeration" defaultValue="none">
                     <caption>Billboard rotation</caption>
-                    <description>
-                        Enabling a billboard option will make embedded widgets face the user on either all or one axes.
-                    </description>
+                    <description>Enabling a billboard option will make embedded widgets face the user on either all or one axes.</description>
                     <enumerationValues>
                         <enumerationValue key="none">None</enumerationValue>
                         <enumerationValue key="billboard">Billboard</enumerationValue>
@@ -222,9 +211,7 @@
                 </property>
                 <property key="mxDragType" type="enumeration" required="true" defaultValue="FixedDistance">
                     <caption>Type:</caption>
-                    <description>
-                        Objects should only be draggable if they are not embedded in an image tracker.
-                    </description>
+                    <description />
                     <enumerationValues>
                         <enumerationValue key="FixedDistance">Fixed distance</enumerationValue>
                         <enumerationValue key="FixedToWorld">Fixed to world</enumerationValue>
@@ -252,10 +239,7 @@
                 </property>
                 <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
                     <caption>Scaling interface color:</caption>
-                    <description>
-                        The color of the interface used for scaling and dragging the object. Using following format:
-                        #rrggbb
-                    </description>
+                    <description>The color of the interface used for scaling and dragging the object. Using following format: #rrggbb</description>
                     <returnType type="String" />
                 </property>
                 <property key="mxGizmoSize" type="expression" defaultValue="0.05">
