@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget
-    id="com.mendix.widget.web.webarsphere.WebARSphere"
-    pluginWidget="true"
-    needsEntityContext="true"
-    offlineCapable="true"
-    supportedPlatform="Web"
-    xmlns="http://www.mendix.com/widget/1.0/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
->
+<widget id="com.mendix.widget.web.webarsphere.WebARSphere" pluginWidget="true" needsEntityContext="true" offlineCapable="true" supportedPlatform="Web" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>Sphere (AR) - Beta</name>
     <description>Add an AR Sphere</description>
     <studioProCategory>Augmented Reality</studioProCategory>
@@ -234,7 +225,7 @@
                 </property>
                 <property key="mxMetalness" type="expression" defaultValue="1">
                     <caption>Metalness:</caption>
-                    <description> Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance. The lower the value, the more plastic the object's appearance.</description>
+                    <description>Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance. The lower the value, the more plastic the object's appearance.</description>
                     <returnType type="Decimal" />
                 </property>
             </propertyGroup>

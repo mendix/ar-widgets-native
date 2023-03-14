@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget
-    id="com.mendix.widget.native.arcube.ARCube"
-    pluginWidget="true"
-    needsEntityContext="true"
-    offlineCapable="true"
-    supportedPlatform="Native"
-    xmlns="http://www.mendix.com/widget/1.0/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
->
+<widget id="com.mendix.widget.native.arcube.ARCube" pluginWidget="true" needsEntityContext="true" offlineCapable="true" supportedPlatform="Native" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>Cube (AR) - Beta</name>
     <description>Add an AR Cube</description>
     <studioProCategory>Augmented Reality</studioProCategory>
@@ -252,9 +243,7 @@
                 </property>
                 <property key="mxDragType" type="enumeration" required="true" defaultValue="FixedDistance">
                     <caption>Type:</caption>
-                    <description>
-                        Objects should only be draggable if they are not embedded in an image tracker.
-                    </description>
+                    <description>Objects should only be draggable if they are not embedded in an image tracker.</description>
                     <enumerationValues>
                         <enumerationValue key="FixedDistance">Fixed distance</enumerationValue>
                         <enumerationValue key="FixedToWorld">Fixed to world</enumerationValue>

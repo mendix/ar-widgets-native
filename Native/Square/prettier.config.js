@@ -1,1 +1,1 @@
-module.exports = require("@mendix/pluggable-widgets-tools/configs/prettier.base.json");
+module.exports = require("../../prettier.config.js");
