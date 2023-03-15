@@ -9,3 +9,5 @@ tests/testProject/
 Shared/ComponentParent/src/*.js*
 Shared/ComponentParent/utils/*.js*
 Web/Container/src/bundle/babylonjscore.js
+Native/Release
+Web/Release

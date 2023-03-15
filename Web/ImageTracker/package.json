@@ -1,12 +1,12 @@
 {
-    "name": "@mendix/webarcontainer",
-    "widgetName": "WebARContainer",
+    "name": "@mendix/webarimagetracker",
+    "widgetName": "WebARImageTracker",
     "version": "1.0.0",
-    "description": "The container used to start an AR experience",
+    "description": "ImageTracker AR",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
     "engines": {
-        "node": ">=12"
+        "imagetracker": ">=12"
     },
     "license": "Apache-2.0",
     "config": {
@@ -24,9 +24,6 @@
         "prerelease": "npm run lint",
         "release": "pluggable-widgets-tools release:web",
         "prettier": "prettier --write ./src/*.tsx ./typings/*",
-        "releaseWithPrettier": "npm run prettier && npm run release",
-        "moveRelease": "cp ./dist/1.0.0/* ../Release/",
-        "rollupBabylon": "npx rollup --config rollupBabylon.config.js",
-        "rolluphtmlqrcode": "npx rollup --config rolluphtmlqrcode.config.js"
+        "releaseWithPrettier": "npm run prettier && npm run release"
     }
 }

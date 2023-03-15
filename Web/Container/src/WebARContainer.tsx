@@ -4,6 +4,7 @@ import { ValueStatus } from "mendix";
 import { ArcRotateCamera, CubeTexture, HemisphericLight, Mesh, Scene, Tools, Vector3 } from "@babylonjs/core";
 import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
 import SceneComponent from "babylonjs-hook";
+import { Html5Qrcode } from "html5-qrcode";
 
 export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
     const [scene, setScene] = useState<Scene>();
@@ -63,6 +64,7 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                 scene
             }}
         >
+            <div id="reader" />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
             <SceneComponent
                 antialias

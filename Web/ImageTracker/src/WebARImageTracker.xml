@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="com.mendix.widget.web.webarimagetracker.WebARImageTracker" pluginWidget="true" needsEntityContext="true" offlineCapable="true" supportedPlatform="Web" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../imagetracker_modules/mendix/custom_widget.xsd">
+    <name>ImageTracker (AR) - Beta</name>
+    <description>ImageTracker</description>
+    <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
+    <properties>
+        <propertyGroup caption="General">
+            <property key="mxContentWidget" type="widgets" required="false">
+                <caption>Add AR widgets</caption>
+                <description>Add an AR widget to go in the ImageTracker AR container</description>
+            </property>
+            <property key="mxContentWidget" type="widgets" required="false">
+                <caption>Add AR widgets</caption>
+                <description>Add an AR widget to go in the ImageTracker AR container</description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Events">
+            <property key="mxOnClick" type="action" required="false">
+                <caption>On click</caption>
+                <description>Called when the object is clicked.</description>
+            </property>
+            <property key="mxOnHoverEnter" type="action" required="false">
+                <caption>On hover enter</caption>
+                <description>Called when the object is in the middle of the screen.</description>
+            </property>
+            <property key="mxOnHoverExit" type="action" required="false">
+                <caption>On hover exit</caption>
+                <description>Called when the object is in the middle of the screen.</description>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>
