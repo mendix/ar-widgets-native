@@ -4,7 +4,7 @@ const copy = require("rollup-plugin-copy");
 export default args => {
     const result = args.configDefaultConfig;
     result.forEach((config, index) => {
-        const external = [/^@babylonjs\/core($|\/)/, /^html5-qrcode($|\/)/];
+        const external = [/^@babylonjs\/core($|\/)/];
 
         config.external = [...config.external, ...external];
 
@@ -20,10 +20,6 @@ export default args => {
                             src: "./src/bundle/babylonjscore.js",
                             dest: "dist/tmp/widgets/com/mendix/shared"
                         },
-                        {
-                            src: "./src/bundle/htmlqrcode.js",
-                            dest: "dist/tmp/widgets/com/mendix/shared"
-                        }
                     ]
                 })
             ];
@@ -33,7 +29,6 @@ export default args => {
             "@babylonjs/core": "../../../shared/babylonjscore.js",
             "@babylonjs/core/Engines/engine.js": "../../../shared/babylonjscore.js",
             "@babylonjs/core/scene.js": "../../../shared/babylonjscore.js",
-            "html5-qrcode": "../../../shared/htmlqrcode.js"
         };
         config.plugins.push(
             typescript({

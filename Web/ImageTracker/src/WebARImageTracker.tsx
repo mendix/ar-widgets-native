@@ -1,4 +1,4 @@
-import React, { createElement, Context, useState, useEffect } from "react";
+import React, { createElement, Context, useState, useEffect, useRef } from "react";
 import { DynamicTexture, Mesh, Scene } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
@@ -12,6 +12,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
     const [engineContext, setEngineContext] = useState<EngineContext>();
+    const videoRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         Html5Qrcode.getCameras()
@@ -55,74 +56,21 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             });
     }, []);
 
-    const handleSceneLoaded = (scene: Scene) => {
-        const localImageTracker = new Mesh(props.name, scene);
-        switch (props.mxBillboard) {
-            case "billboard":
-                localImageTracker.billboardMode = Mesh.BILLBOARDMODE_ALL;
-                break;
-            case "billboardX":
-                localImageTracker.billboardMode = Mesh.BILLBOARDMODE_X;
-                break;
-            case "billboardY":
-                localImageTracker.billboardMode = Mesh.BILLBOARDMODE_Y;
-                break;
-            default:
-                break;
+    useEffect(() => {
+        if (engineContext?.scene) {
+            const localImageTracker = new Mesh(props.name, engineContext?.scene);
+            setImageTrackerParent(localImageTracker);
+            setParentID(localImageTracker.uniqueId);
         }
+    }, [engineContext]);
 
-        setImageTrackerParent(localImageTracker);
-        setParentID(localImageTracker.uniqueId);
-    };
+    useEffect(() => {
+        console.log(videoRef.current);
+    }, [videoRef]);
 
     return (
         <>
-            <MeshComponent
-                rootMesh={imagetrackerParent}
-                allMeshes={imagetrackerParent ? [imagetrackerParent] : undefined}
-                mxPositionType={props.mxPositionType}
-                mxPositionXStat={props.mxPositionXStat}
-                mxPositionYStat={props.mxPositionYStat}
-                mxPositionZStat={props.mxPositionZStat}
-                mxPositionYAtt={props.mxPositionYAtt}
-                mxPositionXAtt={props.mxPositionXAtt}
-                mxPositionZAtt={props.mxPositionZAtt}
-                mxPositionXExpr={props.mxPositionXExpr}
-                mxPositionYExpr={props.mxPositionYExpr}
-                mxPositionZExpr={props.mxPositionZExpr}
-                mxRotationType={props.mxRotationType}
-                mxRotationXStat={props.mxRotationXStat}
-                mxRotationYStat={props.mxRotationYStat}
-                mxRotationZStat={props.mxRotationZStat}
-                mxRotationXAtt={props.mxRotationXAtt}
-                mxRotationYAtt={props.mxRotationYAtt}
-                mxRotationZAtt={props.mxRotationZAtt}
-                mxRotationXExpr={props.mxRotationXExpr}
-                mxRotationYExpr={props.mxRotationYExpr}
-                mxRotationZExpr={props.mxRotationZExpr}
-                mxScaleType={props.mxScaleType}
-                mxScaleXStat={props.mxScaleXStat}
-                mxScaleYStat={props.mxScaleYStat}
-                mxScaleZStat={props.mxScaleZStat}
-                mxScaleXAtt={props.mxScaleXAtt}
-                mxScaleYAtt={props.mxScaleYAtt}
-                mxScaleZAtt={props.mxScaleZAtt}
-                mxScaleXExpr={props.mxScaleXExpr}
-                mxScaleYExpr={props.mxScaleYExpr}
-                mxScaleZExpr={props.mxScaleZExpr}
-                OnSceneLoaded={handleSceneLoaded}
-                mxUseDraggingInteraction={props.mxUseDraggingInteraction}
-                mxUsePinchInteraction={props.mxUsePinchInteraction}
-                mxDraggingEnabled={props.mxDraggingEnabled.value ?? false}
-                mxDragType={props.mxDragType}
-                mxOnDrag={props.mxOnDrag}
-                mxPinchEnabled={props.mxPinchEnabled.value ?? false}
-                mxPinchToScaleEnabled={false}
-                mxOnPinchActionValue={props.mxOnPinchActionValue}
-                mxOnHoverEnter={props.mxOnHoverEnter}
-                mxOnHoverExit={props.mxOnHoverExit}
-                mxOnClick={props.mxOnClick}
-            />
+            <div ref={videoRef} id="reader" />
             <EngineContext.Provider value={engineContext!} />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
