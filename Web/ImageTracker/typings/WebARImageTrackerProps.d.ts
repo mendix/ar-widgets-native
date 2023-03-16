@@ -12,7 +12,6 @@ export interface WebARImageTrackerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     mxContentWidget?: ReactNode;
-    mxContentWidget?: ReactNode;
     mxOnClick?: ActionValue;
     mxOnHoverEnter?: ActionValue;
     mxOnHoverExit?: ActionValue;
@@ -27,7 +26,6 @@ export interface WebARImageTrackerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;

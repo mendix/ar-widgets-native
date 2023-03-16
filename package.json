@@ -53,6 +53,7 @@
         "@babylonjs/react-native": "1.5.1",
         "@babylonjs/react-native-iosandroid-0-70": "1.5.1",
         "babylonjs-gltf2interface": "^5.49.0",
+        "@zxing/library": "^0.19.2",
         "babylonjs-hook": "^0.1.1",
         "patch-package": "^6.5.1"
     }

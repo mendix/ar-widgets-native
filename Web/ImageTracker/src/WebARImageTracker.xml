@@ -10,10 +10,6 @@
                 <caption>Add AR widgets</caption>
                 <description>Add an AR widget to go in the ImageTracker AR container</description>
             </property>
-            <property key="mxContentWidget" type="widgets" required="false">
-                <caption>Add AR widgets</caption>
-                <description>Add an AR widget to go in the ImageTracker AR container</description>
-            </property>
         </propertyGroup>
         <propertyGroup caption="Events">
             <property key="mxOnClick" type="action" required="false">
