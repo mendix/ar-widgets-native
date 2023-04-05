@@ -14,7 +14,16 @@ import {
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { BrowserMultiFormatReader, NotFoundException, QRCodeReader, ResultPoint } from "@zxing/library";
+import {
+    BinaryBitmap,
+    BrowserMultiFormatReader,
+    HTMLCanvasElementLuminanceSource,
+    HybridBinarizer,
+    NotFoundException,
+    QRCodeReader,
+    Result,
+    ResultPoint
+} from "@zxing/library/cjs";
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
@@ -23,24 +32,83 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
-    const [deviceID, setDeviceID] = useState<string>();
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh }[]>([]);
+    const [videoElement, setVideoElement] = useState<HTMLVideoElement>();
+    const scale = 0.3;
+    const stopped = useRef<Boolean>(false);
+    const scanWithCropOnce = (reader: BrowserMultiFormatReader, videoRef: HTMLVideoElement): Promise<Result> => {
+        const cropWidth = videoRef!.videoWidth * scale;
+        const captureCanvas = reader.createCaptureCanvas(videoRef!);
+        captureCanvas.width = cropWidth;
+        captureCanvas.height = cropWidth;
+        const loop = (resolve: (value: Result) => void, reject: (reason?: Error) => void) => {
+            try {
+                const canvasContext = captureCanvas.getContext("2d");
+                if (canvasContext !== null) {
+                    canvasContext.drawImage(
+                        videoRef!,
+                        (videoRef!.videoWidth * (1 - scale)) / 2,
+                        (videoRef!.videoHeight - cropWidth) / 2,
+                        cropWidth,
+                        cropWidth,
+                        0,
+                        0,
+                        captureCanvas.width,
+                        captureCanvas.width
+                    );
+                    const luminanceSource = new HTMLCanvasElementLuminanceSource(captureCanvas);
+                    const binaryBitmap = new BinaryBitmap(new HybridBinarizer(luminanceSource));
+                    const result = reader.decodeBitmap(binaryBitmap);
+                    resolve(result);
+                }
+            } catch (error: any) {
+                if (error instanceof NotFoundException && !stopped.current) {
+                    console.log("Not found");
+                    setTimeout(() => loop(resolve, reject), reader.timeBetweenDecodingAttempts);
+                } else {
+                    reject(error);
+                }
+            }
+        };
+        return new Promise(loop);
+    };
 
     useEffect(() => {
-        let selectedDeviceId;
+        stopped.current = false;
         const codeReader = new BrowserMultiFormatReader();
-        codeReader
-            .listVideoInputDevices()
-            .then(videoInputDevices => {
-                console.log(videoInputDevices);
-                selectedDeviceId = videoInputDevices.find(input => input.label.includes("back"))?.deviceId;
-                if (selectedDeviceId === null || selectedDeviceId === undefined) {
-                    selectedDeviceId = videoInputDevices[0].deviceId;
-                }
-                setDeviceID(selectedDeviceId);
-                codeReader.decodeFromVideoDevice(selectedDeviceId, null, (result, err) => {
-                    if (result) {
+        const mediaStreamConstraints: MediaStreamConstraints = {
+            audio: false,
+            video: {
+                facingMode: "environment",
+                width: { min: 1280, ideal: 1920, max: 2560 },
+                height: { min: 720, ideal: 1080, max: 1440 }
+            }
+        };
+
+        let videoRef = document.createElement("video");
+        setVideoElement(videoRef);
+
+        const stop = (): void => {
+            stopped.current = true;
+            codeReader.stopAsyncDecode();
+            codeReader.reset();
+        };
+
+        const start = async (): Promise<void> => {
+            let stream;
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
+                codeReader.timeBetweenDecodingAttempts = 500;
+
+                if (videoRef) {
+                    videoRef.srcObject = stream;
+                    videoRef.autofocus = true;
+                    videoRef.playsInline = true; // Fix error in Safari
+                    await videoRef.play();
+                    while (!stopped.current) {
+                        const result = await scanWithCropOnce(codeReader, videoRef);
                         setResultsMap(oldResults => {
                             if (oldResults.find(old => old.id === result.getText())) {
                                 const changedResult = oldResults.slice(0);
@@ -66,16 +134,24 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                             }
                         });
                     }
-                    if (err && !(err instanceof NotFoundException)) {
-                        console.error(err);
+                }
+            } catch (error) {
+                // Suppress not found error if widget is closed normally (eg. leaving page);
+                const isNotFound = error instanceof NotFoundException;
+                if (!isNotFound && !stopped.current) {
+                    if (error instanceof Error) {
+                        console.error(error.message);
                     }
-                });
-                console.log(`Started continous decode from camera with id ${selectedDeviceId}`);
-            })
-            .catch(err => {
-                console.error(err);
-            });
+                }
+            } finally {
+                stop();
+                stream?.getVideoTracks().forEach(track => track.stop());
+            }
+        };
+        start();
+
         return () => {
+            stop();
             codeReader.stopAsyncDecode();
         };
     }, []);
@@ -89,10 +165,21 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
                 if (pickResult?.ray) {
                     if (foundIndex !== -1 && cubes[foundIndex].mesh) {
-                        cubes[foundIndex].mesh.position = pickResult.ray.origin;
+                        console.log(cubes[foundIndex].mesh.position);
+                        cubes;
+                        setCubes(oldcubes => {
+                            oldcubes[foundIndex].mesh.position = pickResult!.ray!.origin;
+                            return oldcubes;
+                        });
                     } else {
-                        cubes[foundIndex].mesh = MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene);
-                        cubes[foundIndex].mesh.position = pickResult.ray.origin;
+                        const newCubes = cubes.slice(0);
+                        const newCube = {
+                            mesh: MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene),
+                            id: result.id
+                        };
+                        newCube.mesh.position = pickResult.ray.origin;
+                        newCubes.push(newCube);
+                        setCubes(newCubes);
                     }
                 }
             }
@@ -107,38 +194,8 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         }
     }, [engineContext]);
 
-    useEffect(() => {
-        if (engineContext?.scene && deviceID) {
-            var planeOpts = {
-                height: 1,
-                width: 1,
-                sideOrientation: Mesh.DOUBLESIDE
-            };
-            console.log("Create plane wiith video!");
-            var ANote0Video = MeshBuilder.CreatePlane("plane", planeOpts, engineContext?.scene);
-            var vidPos = new Vector3(0, 0, 1);
-            ANote0Video.position = vidPos;
-            var ANote0VideoMat = new StandardMaterial("m", engineContext?.scene);
-            VideoTexture.CreateFromWebCam(
-                engineContext?.scene,
-                function (videoTexture) {
-                    ANote0VideoMat.diffuseTexture = videoTexture;
-                },
-                {
-                    minWidth: 256 * 2,
-                    minHeight: 256 * 2,
-                    maxWidth: 256 * 2,
-                    maxHeight: 256 * 2,
-                    deviceId: deviceID
-                }
-            );
-            ANote0Video.material = ANote0VideoMat;
-        }
-    }, [engineContext?.scene, deviceID]);
-
     return (
         <>
-            <div id="reader" />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );

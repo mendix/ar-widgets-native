@@ -7,10 +7,10 @@ import analyze from "rollup-plugin-analyzer";
 import bundleSize from "rollup-plugin-bundle-size";
 
 export default {
-    input: "../../node_modules/html5-qrcode/esm/index.js",
+    input: "../../node_modules/@zxing/library/cjs/index.js",
     output: {
         format: "amd",
-        file: "./src/bundle/htmlqrcode.js"
+        file: "./src/bundle/zxinglibrary.js"
     },
 
     plugins: [
