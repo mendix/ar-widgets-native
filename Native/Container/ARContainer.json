@@ -1,6 +1,7 @@
 {
     "nativeDependencies":{
-        "@babylonjs/react-native": "1.5.1"
+        "@babylonjs/react-native": "1.5.1",
+        "@babylonjs/react-native-iosandroid-0-70": "1.5.1"
     }
 
 }
