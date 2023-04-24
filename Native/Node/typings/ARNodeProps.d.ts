@@ -71,7 +71,7 @@ export interface ARNodePreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxBillboard: MxBillboardEnum;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: number | null;

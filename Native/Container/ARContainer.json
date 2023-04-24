@@ -1,0 +1,6 @@
+{
+    "nativeDependencies":{
+        "@babylonjs/react-native": "1.5.1"
+    }
+
+}

@@ -26,7 +26,7 @@ export interface ARContainerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxUsePreview: boolean;
     mxPreviewCameraDistance: number | null;
     mxUsePBR: boolean;

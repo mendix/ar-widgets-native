@@ -30,7 +30,7 @@ export interface ARImageTrackerPreviewProps {
     readOnly: boolean;
     mxImage: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
     mxOrientation: MxOrientationEnum;
-    mxContent: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    mxContent: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxPhysicalMarkerSize: number | null;
     mxOnAnchorFound: {} | null;
 }
