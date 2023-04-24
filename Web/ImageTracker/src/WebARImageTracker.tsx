@@ -5,6 +5,8 @@ import {
     Matrix,
     Mesh,
     MeshBuilder,
+    Ray,
+    RayHelper,
     Scene,
     StandardMaterial,
     Vector2,
@@ -33,10 +35,36 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
-    const [cubes, setCubes] = useState<{ id: string; mesh: Mesh }[]>([]);
-    const [videoElement, setVideoElement] = useState<HTMLVideoElement>();
+    const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
     const scale = 0.3;
     const stopped = useRef<Boolean>(false);
+
+
+    const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
+        const lineVec1: Vector3 = ray1.direction;
+        const lineVec2: Vector3 = ray2.direction;
+        const linePoint1: Vector3 = ray1.origin;
+        const linePoint2: Vector3 = ray2.origin;
+    
+        const a = Vector3.Dot(lineVec1, lineVec1);
+        const b = Vector3.Dot(lineVec1, lineVec2);
+        const e = Vector3.Dot(lineVec2, lineVec2);
+        const d = a * e - b * b;
+        if (d !== 0.0) {
+          const r = linePoint1.subtract(linePoint2);
+          const c = Vector3.Dot(lineVec1, r);
+          const f = Vector3.Dot(lineVec2, r);
+          const s = (b * f - c * e) / d;
+          const t = (a * f - c * b) / d;
+          const resultLine1 = linePoint1.add(lineVec1.scale(s));
+          const resultLine2 = linePoint2.add(lineVec2.scale(t));
+          const result: Vector3 = resultLine1.add(resultLine2).scale(0.5);
+          return result;
+        } else {
+          return Vector3.Zero();
+        }
+      };
+
     const scanWithCropOnce = (reader: BrowserMultiFormatReader, videoRef: HTMLVideoElement): Promise<Result> => {
         const cropWidth = videoRef!.videoWidth * scale;
         const captureCanvas = reader.createCaptureCanvas(videoRef!);
@@ -87,7 +115,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         };
 
         let videoRef = document.createElement("video");
-        setVideoElement(videoRef);
+        // setVideoElement(videoRef);
 
         const stop = (): void => {
             stopped.current = true;
@@ -157,27 +185,38 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, []);
 
     useEffect(() => {
-        console.log(resultsMap);
         resultsMap.forEach(result => {
             const foundIndex = cubes.findIndex(cube => cube.id === result.id);
             if (engineContext.scene) {
-                var pickResult = engineContext.scene.pick(engineContext.scene.pointerX, engineContext.scene.pointerY);
-
-                if (pickResult?.ray) {
+                var rays: Ray[] = [];
+                result.result.forEach((point, index) => {
+                    const ray = engineContext.scene!.pick(point.getX(), point.getY())
+                    if(ray?.ray){
+                        var rayhelper = new RayHelper(ray.ray)
+                        rayhelper.show(engineContext.scene!)
+                        rays[index] = ray.ray;
+                    }
+                });
+                if (rays.length !== 0) {
                     if (foundIndex !== -1 && cubes[foundIndex].mesh) {
-                        console.log(cubes[foundIndex].mesh.position);
-                        cubes;
-                        setCubes(oldcubes => {
-                            oldcubes[foundIndex].mesh.position = pickResult!.ray!.origin;
-                            return oldcubes;
-                        });
+                        const newPosition = ClosestPointOnTwoLines( cubes[foundIndex].previousRays[0], rays[0]);
+                        console.log("newPosition" + newPosition);
+                        console.log(Vector3.Distance(newPosition, Vector3.Zero()));
+                        if (Vector3.Distance(newPosition, Vector3.Zero()) > 0.001) {
+                            console.log("Current cube position" + cubes[foundIndex].mesh.position + " new " + newPosition)
+                            setCubes(oldcubes => {
+                                oldcubes[foundIndex].mesh.position = ClosestPointOnTwoLines(rays[0], oldcubes[foundIndex].previousRays[0]);
+                                oldcubes[foundIndex].previousRays[0] = rays[0];
+                                return oldcubes;
+                            });
+                        }
                     } else {
                         const newCubes = cubes.slice(0);
                         const newCube = {
                             mesh: MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene),
-                            id: result.id
+                            id: result.id,
+                            previousRays: rays
                         };
-                        newCube.mesh.position = pickResult.ray.origin;
                         newCubes.push(newCube);
                         setCubes(newCubes);
                     }
