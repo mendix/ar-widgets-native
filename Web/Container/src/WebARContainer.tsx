@@ -44,9 +44,10 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
 
         await newScene
             .createDefaultXRExperienceAsync({
-                uiOptions: { sessionMode: "immersive-ar" },
+                uiOptions: { sessionMode: "immersive-ar",  requiredFeatures: ["camera-access"] },
                 disableTeleportation: true,
-                optionalFeatures: true
+                optionalFeatures: true,
+                
             })
             .catch(reason => {
                 console.log("Could not start AR. " + reason);

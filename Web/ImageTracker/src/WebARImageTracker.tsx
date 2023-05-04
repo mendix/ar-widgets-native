@@ -1,4 +1,4 @@
-import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback } from "react";
+import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback, MutableRefObject } from "react";
 import {
     Color3,
     DynamicTexture,
@@ -31,12 +31,13 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const global = globalThis;
     const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
+    let canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
-    const scale = 0.3;
+    const scale = 0.5;
     const stopped = useRef<Boolean>(false);
 
 
@@ -68,10 +69,12 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const scanWithCropOnce = (reader: BrowserMultiFormatReader, videoRef: HTMLVideoElement): Promise<Result> => {
         const cropWidth = videoRef!.videoWidth * scale;
         const captureCanvas = reader.createCaptureCanvas(videoRef!);
+        //canvasRef.current = captureCanvas;
         captureCanvas.width = cropWidth;
         captureCanvas.height = cropWidth;
         const loop = (resolve: (value: Result) => void, reject: (reason?: Error) => void) => {
             try {
+                console.log("stopped: " + stopped.current);
                 const canvasContext = captureCanvas.getContext("2d");
                 if (canvasContext !== null) {
                     canvasContext.drawImage(
@@ -85,6 +88,17 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                         captureCanvas.width,
                         captureCanvas.width
                     );
+                    canvasRef.current?.getContext("2d")?.drawImage(
+                        videoRef!,
+                        (videoRef!.videoWidth * (1 - scale)) / 2,
+                        (videoRef!.videoHeight - cropWidth) / 2,
+                        cropWidth,
+                        cropWidth,
+                        0,
+                        0,
+                        captureCanvas.width,
+                        captureCanvas.width)
+                        console.log(canvasRef.current?.getContext("2d")?.getImageData(10,10,1,1))
                     const luminanceSource = new HTMLCanvasElementLuminanceSource(captureCanvas);
                     const binaryBitmap = new BinaryBitmap(new HybridBinarizer(luminanceSource));
                     const result = reader.decodeBitmap(binaryBitmap);
@@ -129,7 +143,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             try {
                 stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
                 codeReader.timeBetweenDecodingAttempts = 500;
-
+                
                 if (videoRef) {
                     videoRef.srcObject = stream;
                     videoRef.autofocus = true;
@@ -235,6 +249,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     return (
         <>
+        <canvas ref={canvasRef} width="300" height="300"/>
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );
