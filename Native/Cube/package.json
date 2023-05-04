@@ -1,7 +1,7 @@
 {
     "name": "@mendix/arcube",
     "widgetName": "ARCube",
-    "version": "1.0.0",
+    "version": "3.1.0",
     "description": "AR Cube",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
