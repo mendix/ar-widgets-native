@@ -6,6 +6,8 @@ export default args => {
     const dependencies = [
         "@babylonjs/core",
         "@babylonjs/loaders",
+        "@babylonjs/react-native-iosandroid-0-70",
+        "@babylonjs/react-native",
         "react-native-permissions",
         "tslib",
         "semver",
@@ -30,7 +32,13 @@ export default args => {
             targets: dependencies.map(d => ({
                 src: `../../node_modules/${d}/*`,
                 dest: `dist/tmp/widgets/node_modules/${d}`
-            }))
+            })), 
+        }),
+        copy({
+            targets:[{
+                src: './ARContainer.json',
+                dest: 'dist/tmp/widgets'
+            }]
         })
     );
 

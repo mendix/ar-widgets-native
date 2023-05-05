@@ -1,7 +1,7 @@
 /**
  * This file was generated from WebARContainer.xml
  * WARNING: All changes made to this file will be overwritten
- * @author Mendix UI Content Team
+ * @author Mendix Widgets Framework Team
  */
 import { ComponentType, CSSProperties, ReactNode } from "react";
 import { DynamicValue } from "mendix";

@@ -1,7 +1,7 @@
 /**
  * This file was generated from ARSquare.xml
  * WARNING: All changes made to this file will be overwritten
- * @author Mendix UI Content Team
+ * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
 import { ActionValue, DynamicValue, EditableValue, NativeImage } from "mendix";

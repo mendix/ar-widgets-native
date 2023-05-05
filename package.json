@@ -8,29 +8,37 @@
     },
     "packagePath": "mendix",
     "scripts": {
-        "buildAllNative": "npm run --prefix \"./Native/3DObject\" build & npm run --prefix \"./Native/Cube\" build & npm run --prefix \"./Native/ImageTracker\" build &  npm run --prefix \"./Native/Node\" build &  npm run --prefix \"./Native/Sphere\" build &  npm run --prefix \"./Native/Square\" build & npm run --prefix \"./Native/Container\" build",
-        "buildAllWeb": "npm run --prefix \"./Web/Cube\" build & npm run --prefix \"./Web/Sphere\" build  & npm run --prefix \"./Web/Square\" build  & npm run --prefix \"./Web/Node\" build & npm run --prefix \"./Web/Container\" build & npm run --prefix \"./Web/3DObject\" build"
+        "postinstall": "patch-package",
+        "buildAllNative": "npm run --prefix \"./Native/3DObject\" build && npm run --prefix \"./Native/Cube\" build && npm run --prefix \"./Native/ImageTracker\" build && npm run --prefix \"./Native/Node\" build && npm run --prefix \"./Native/Sphere\" build && npm run --prefix \"./Native/Square\" build && npm run --prefix \"./Native/Container\" build && npm run --prefix \"./Native/ImageTracker\" build",
+        "buildReleaseNative": "npm run --prefix \"./Native/Cube\" releaseWithPrettier && npm run --prefix \"./Native/Sphere\" releaseWithPrettier && npm run --prefix \"./Native/Square\" releaseWithPrettier && npm run --prefix \"./Native/Node\" releaseWithPrettier && npm run --prefix \"./Native/Container\" releaseWithPrettier && npm run --prefix \"./Native/3DObject\" releaseWithPrettier && npm run --prefix \"./Native/ImageTracker\" releaseWithPrettier",
+        "moveReleasesNative": "mkdir Native/Release && npm run --prefix \"./Native/Cube\" moveRelease && npm run --prefix \"./Native/Sphere\" moveRelease && npm run --prefix \"./Native/Square\" moveRelease && npm run --prefix \"./Native/Node\" moveRelease && npm run --prefix \"./Native/Container\" moveRelease && npm run --prefix \"./Native/3DObject\" moveRelease && npm run --prefix \"./Native/ImageTracker\" moveRelease",
+        "buildAllWeb": "npm run --prefix \"./Web/Cube\" build && npm run --prefix \"./Web/Sphere\" build && npm run --prefix \"./Web/Square\" build && npm run --prefix \"./Web/Node\" build && npm run --prefix \"./Web/Container\" build && npm run --prefix \"./Web/3DObject\" build",
+        "buildReleaseWeb": "npm run --prefix \"./Web/Cube\" releaseWithPrettier && npm run --prefix \"./Web/Sphere\" releaseWithPrettier && npm run --prefix \"./Web/Square\" releaseWithPrettier && npm run --prefix \"./Web/Node\" releaseWithPrettier && npm run --prefix \"./Web/Container\" releaseWithPrettier && npm run --prefix \"./Web/3DObject\" releaseWithPrettier",
+        "moveReleasesWeb": "mkdir Web/Release && npm run --prefix \"./Web/Cube\" moveRelease && npm run --prefix \"./Web/Sphere\" moveRelease && npm run --prefix \"./Web/Square\" moveRelease && npm run --prefix \"./Web/Node\" moveRelease && npm run --prefix \"./Web/Container\" moveRelease && npm run --prefix \"./Web/3DObject\" moveRelease"
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "@mendix/pluggable-widgets-tools": "9.18.0",
+        "@mendix/pluggable-widgets-tools": "9.24.0",
         "@react-navigation/native": "^6.0.4",
         "@prettier/plugin-xml": "^2.2.0",
         "@rollup/plugin-node-resolve": "^15.0.1",
         "@rollup/plugin-terser": "^0.2.0",
         "@types/base-64": "^1.0.0",
         "@types/big.js": "^6.0.2",
-        "@types/react": "17.0.1",
-        "@types/react-native": "0.64.1",
+        "@types/jest": "^29.0.0",
+        "@types/react": "~18.0.0",
+        "@types/react-dom": "~18.0.0",
+        "@types/react-native": "~0.70.0",
+        "@types/react-test-renderer": "~18.0.0",
         "@types/semver": "^7.3.6",
         "bufferutil": "^4.0.3",
         "eslint": "^7.32.0",
         "lodash": "^4.17.20",
-        "react": "17.0.1",
-        "react-native": "0.64.1",
+        "react": "18.2.0",
+        "react-native": "0.70.7",
         "react-native-gesture-handler": "1.10.3",
         "react-native-permissions": "3.0.0",
-        "react-native-windows": "^0.65.1",
+        "react-native-windows": "0.70.7",
         "react-navigation": "4.4.1",
         "rollup-plugin-analyzer": "^4.0.0",
         "rollup-plugin-bundle-size": "^1.0.3",
@@ -39,9 +47,12 @@
         "utf-8-validate": "^5.0.5"
     },
     "dependencies": {
-        "@babylonjs/core": "5.2.0",
-        "@babylonjs/loaders": "5.2.0",
-        "@babylonjs/react-native": "1.1.0",
-        "babylonjs-hook": "^0.1.1"
+        "@babylonjs/core": "5.46.0",
+        "@babylonjs/loaders": "5.46.0",
+        "@babylonjs/react-native": "1.5.1",
+        "@babylonjs/react-native-iosandroid-0-70": "1.5.1",
+        "babylonjs-gltf2interface": "^5.49.0",
+        "babylonjs-hook": "^0.1.1",
+        "patch-package": "^6.5.1"
     }
 }

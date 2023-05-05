@@ -1,7 +1,7 @@
 /**
  * This file was generated from ARImageTracker.xml
  * WARNING: All changes made to this file will be overwritten
- * @author Mendix UI Content Team
+ * @author Mendix Widgets Framework Team
  */
 import { ComponentType, CSSProperties, ReactNode } from "react";
 import { ActionValue, DynamicValue, NativeImage } from "mendix";
@@ -30,7 +30,7 @@ export interface ARImageTrackerPreviewProps {
     readOnly: boolean;
     mxImage: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
     mxOrientation: MxOrientationEnum;
-    mxContent: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    mxContent: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxPhysicalMarkerSize: number | null;
     mxOnAnchorFound: {} | null;
 }

@@ -1,7 +1,7 @@
 /**
  * This file was generated from ARNode.xml
  * WARNING: All changes made to this file will be overwritten
- * @author Mendix UI Content Team
+ * @author Mendix Widgets Framework Team
  */
 import { ComponentType, CSSProperties, ReactNode } from "react";
 import { ActionValue, DynamicValue, EditableValue } from "mendix";
@@ -71,7 +71,7 @@ export interface ARNodePreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxBillboard: MxBillboardEnum;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: number | null;

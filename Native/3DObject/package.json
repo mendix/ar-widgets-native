@@ -1,7 +1,7 @@
 {
     "name": "@mendix/ar3dobject",
     "widgetName": "AR3DObject",
-    "version": "1.0.0",
+    "version": "3.1.0",
     "description": "The container used to start an AR experience",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
@@ -22,7 +22,8 @@
         "prerelease": "npm run lint",
         "prettier": "prettier --write ./typings/*",
         "release": "pluggable-widgets-tools release:native",
-        "releaseWithPrettier": "npm run prettier && npm run release"
+        "releaseWithPrettier": "npm run prettier && npm run release",
+        "moveRelease": "cp ./dist/1.0.0/* ../Release/"
     },
     "license": "Apache-2.0"
 }

@@ -276,9 +276,6 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
                 <View style={styles.container}>
                     <EngineView style={{ flex: 1 }} camera={camera} />
                     <FocusDetectingNavigator OnNavigationLoaded={handleNavigationLoaded} />
-                    <Text style={styles.debugText}>
-                        {trackingState === undefined ? "" : WebXRTrackingState[trackingState]}
-                    </Text>
                 </View>
             </PinchGestureHandler>
         </EngineContext.Provider>
