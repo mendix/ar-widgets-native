@@ -1,7 +1,7 @@
 /**
  * This file was generated from WebARImageTracker.xml
  * WARNING: All changes made to this file will be overwritten
- * @author Mendix UI Content Team
+ * @author Mendix Widgets Framework Team
  */
 import { ComponentType, CSSProperties, ReactNode } from "react";
 import { ActionValue } from "mendix";
@@ -26,7 +26,7 @@ export interface WebARImageTrackerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;
     mxOnHoverExit: {} | null;

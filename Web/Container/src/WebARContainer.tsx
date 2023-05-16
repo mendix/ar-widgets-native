@@ -1,14 +1,15 @@
-import { createElement, ReactElement, useEffect, useState } from "react";
+import { createElement, ReactElement, useEffect, useRef, useState } from "react";
 import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/src/EngineContext";
 import { ValueStatus } from "mendix";
-import { ArcRotateCamera, CubeTexture, HemisphericLight, Mesh, Scene, Tools, Vector3 } from "@babylonjs/core";
+import { ArcRotateCamera, Color3, Color4, CubeTexture, Engine, HemisphericLight, Mesh, Scene, SceneLoader, Tools, Vector3, WebXRExperienceHelper, WebXRSessionManager } from "@babylonjs/core";
 import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
-import SceneComponent from "babylonjs-hook";
+// import SceneComponent from "babylonjs-hook";
 
 export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
     const [scene, setScene] = useState<Scene>();
     const [parent, setParent] = useState<Mesh | undefined>();
     const [parentID, setParentID] = useState<number>(NaN);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         // If we want realistic lighting, use the provided environment map
@@ -18,8 +19,19 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         }
     }, [scene, props.mxHdrPath]);
 
-    const onSceneReady = async (newScene: Scene) => {
-        // This creates and positions a free camera (non-mesh)
+    useEffect(() => {
+        if(scene === undefined){
+        const engine = new Engine(canvasRef.current, true, {xrCompatible: true}, true);
+        function updateSize() {
+            console.log("Resize")
+            engine.resize();
+          }
+          
+        window.addEventListener('resize', updateSize);
+        const newScene = new Scene(engine);
+        
+        newScene.clearColor = new Color4(0.5,0.5,0.5,1);
+        // newScene.createDefaultEnvironment();
         const camera = new ArcRotateCamera(
             "MainCamera",
             Tools.ToRadians(-90),
@@ -32,31 +44,48 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         // This targets the camera to scene origin
         new HemisphericLight("light", Vector3.Up(), newScene);
         setScene(newScene);
-        const canvas = newScene.getEngine().getRenderingCanvas();
 
         // This attaches the camera to the canvas
-        camera.attachControl(canvas, true);
+        camera.attachControl(canvasRef.current, true);
 
         // Add a parent so scene can be rotated in preview mode.
         const newParent = new Mesh("ContainerARParent", newScene);
+
         setParent(newParent);
         setParentID(newParent.uniqueId);
-
-        await newScene
-            .createDefaultXRExperienceAsync({
-                uiOptions: { sessionMode: "immersive-ar",  requiredFeatures: ["camera-access"] },
-                disableTeleportation: true,
-                optionalFeatures: true,
-                
-            })
-            .catch(reason => {
-                console.log("Could not start AR. " + reason);
-            });
+        engine.runRenderLoop(function () {
+            newScene.render();
+          });
 
         if (parent) {
             parent.rotation = Vector3.Zero();
         }
-    };
+
+        const instantiateWebXR = async () => {
+            const supported = await WebXRSessionManager.IsSessionSupportedAsync('immersive-vr');
+            console.log("is immersive-vr supported? " + supported)
+            var defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
+                uiOptions: {
+                    sessionMode: 'immersive-vr'
+                }
+            } );
+            if(!defaultXRExperience.baseExperience){
+                console.log("No XR support")
+            } else {
+                // defaultXRExperience.baseExperience.enterXRAsync("immersive-ar", "unbounded")
+                console.log("XR supported, state: " + defaultXRExperience.baseExperience.state)
+            }
+        }
+        instantiateWebXR();
+
+        
+    }
+
+    }, [canvasRef.current])
+    // const onSceneReady = async (newScene: Scene) => {
+    //     // This creates and positions a free camera (non-mesh)
+       
+    // };
 
     return (
         <EngineContext.Provider
@@ -66,12 +95,13 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         >
             <div id="reader" />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
-            <SceneComponent
+            <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }}/>
+            {/* <SceneComponent
                 antialias
                 adaptToDeviceRatio={true}
                 onSceneReady={onSceneReady}
                 style={{ width: "100%", height: "100%" }}
-            />
+            /> */}
         </EngineContext.Provider>
     );
 }

@@ -1,10 +1,12 @@
 import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback, MutableRefObject } from "react";
 import {
+    ActionManager,
     Color3,
     DynamicTexture,
     Matrix,
     Mesh,
     MeshBuilder,
+    PointerEventTypes,
     Ray,
     RayHelper,
     Scene,
@@ -32,6 +34,8 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
+    let codeReaderRef = useRef<BrowserMultiFormatReader>();
+    let videoRef = useRef<HTMLVideoElement>();
 
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
@@ -39,8 +43,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
     const scale = 0.5;
     const stopped = useRef<Boolean>(false);
-
-
+    
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
         const lineVec1: Vector3 = ray1.direction;
         const lineVec2: Vector3 = ray2.direction;
@@ -69,7 +72,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const scanWithCropOnce = (reader: BrowserMultiFormatReader, videoRef: HTMLVideoElement): Promise<Result> => {
         const cropWidth = videoRef!.videoWidth * scale;
         const captureCanvas = reader.createCaptureCanvas(videoRef!);
-        //canvasRef.current = captureCanvas;
         captureCanvas.width = cropWidth;
         captureCanvas.height = cropWidth;
         const loop = (resolve: (value: Result) => void, reject: (reason?: Error) => void) => {
@@ -119,17 +121,11 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     useEffect(() => {
         stopped.current = false;
         const codeReader = new BrowserMultiFormatReader();
-        const mediaStreamConstraints: MediaStreamConstraints = {
-            audio: false,
-            video: {
-                facingMode: "environment",
-                width: { min: 1280, ideal: 1920, max: 2560 },
-                height: { min: 720, ideal: 1080, max: 1440 }
-            }
-        };
+        codeReaderRef.current = codeReader;
 
-        let videoRef = document.createElement("video");
-        // setVideoElement(videoRef);
+
+        let videoElement = document.createElement("video");
+        videoRef.current = videoElement;
 
         const stop = (): void => {
             stopped.current = true;
@@ -140,55 +136,33 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         const start = async (): Promise<void> => {
             let stream;
 
-            try {
-                stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-                codeReader.timeBetweenDecodingAttempts = 500;
+            // try {
+            //     stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
+            //     codeReader.timeBetweenDecodingAttempts = 500;
                 
-                if (videoRef) {
-                    videoRef.srcObject = stream;
-                    videoRef.autofocus = true;
-                    videoRef.playsInline = true; // Fix error in Safari
-                    await videoRef.play();
-                    while (!stopped.current) {
-                        const result = await scanWithCropOnce(codeReader, videoRef);
-                        setResultsMap(oldResults => {
-                            if (oldResults.find(old => old.id === result.getText())) {
-                                const changedResult = oldResults.slice(0);
-                                let indexToChange: number | undefined;
-                                changedResult.forEach((element, index) => {
-                                    if (element.id === result.getText()) {
-                                        indexToChange = index;
-                                    }
-                                });
-                                if (indexToChange !== undefined) {
-                                    changedResult[indexToChange] = {
-                                        id: result.getText(),
-                                        result: result.getResultPoints()
-                                    };
-                                }
-                                return changedResult;
-                            } else {
-                                const newArray = [
-                                    ...oldResults,
-                                    { id: result.getText(), result: result.getResultPoints() }
-                                ];
-                                return newArray;
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                // Suppress not found error if widget is closed normally (eg. leaving page);
-                const isNotFound = error instanceof NotFoundException;
-                if (!isNotFound && !stopped.current) {
-                    if (error instanceof Error) {
-                        console.error(error.message);
-                    }
-                }
-            } finally {
-                stop();
-                stream?.getVideoTracks().forEach(track => track.stop());
-            }
+            //     if (videoElement) {
+            //         videoElement.srcObject = stream;
+            //         videoElement.autofocus = true;
+            //         videoElement.playsInline = true; // Fix error in Safari
+            //         await videoElement.play();
+            //     //     while (!stopped.current) {
+                        
+            //     //         // const result = await scanWithCropOnce(codeReader, videoElement);
+                       
+            //     //     }
+            //     }
+            // } catch (error) {
+            //     // Suppress not found error if widget is closed normally (eg. leaving page);
+            //     const isNotFound = error instanceof NotFoundException;
+            //     if (!isNotFound && !stopped.current) {
+            //         if (error instanceof Error) {
+            //             console.error(error.message);
+            //         }
+            //     }
+            // } finally {
+            //     stop();
+            //     stream?.getVideoTracks().forEach(track => track.stop());
+            // }
         };
         start();
 
@@ -199,6 +173,73 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, []);
 
     useEffect(() => {
+        if(engineContext.scene){
+            const scan = async () => {
+                if(codeReaderRef.current && videoRef.current && stopped.current){
+                    stopped.current = false;
+                const mediaStreamConstraints: MediaStreamConstraints = {
+                    audio: false,
+                    video: {
+                        facingMode: "environment",
+                        width: { min: 1280, ideal: 1920, max: 2560 },
+                        height: { min: 720, ideal: 1080, max: 1440 }
+                    }
+                };
+                let stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
+                codeReaderRef.current.timeBetweenDecodingAttempts = 500;
+                
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    videoRef.current.autofocus = true;
+                    videoRef.current.playsInline = true; // Fix error in Safari
+                    
+                    await videoRef.current.play();
+               
+                const result = await codeReaderRef.current.decodeOnce(videoRef.current)
+                setResultsMap(oldResults => {
+                    if (oldResults.find(old => old.id === result.getText())) {
+                        const changedResult = oldResults.slice(0);
+                        let indexToChange: number | undefined;
+                        changedResult.forEach((element, index) => {
+                            if (element.id === result.getText()) {
+                                indexToChange = index;
+                            }
+                        });
+                        if (indexToChange !== undefined) {
+                            changedResult[indexToChange] = {
+                                id: result.getText(),
+                                result: result.getResultPoints()
+                            };
+                        }
+                        return changedResult;
+                    } else {
+                        const newArray = [
+                            ...oldResults,
+                            { id: result.getText(), result: result.getResultPoints() }
+                        ];
+                        return newArray;
+                    }
+                });
+                }
+                codeReaderRef.current?.stopAsyncDecode();
+                codeReaderRef.current?.reset();
+                videoRef.current.pause();
+                stream?.getVideoTracks().forEach(track => track.stop());
+                stopped.current = true;   
+            }}
+
+            engineContext.scene.onPointerObservable.add((pointerInfo) => {
+                switch (pointerInfo.type) {
+                  case PointerEventTypes.POINTERDOWN:
+                    console.log("POINTERDOWN")
+                    scan();
+                    break;
+                }
+            });
+        }
+    }, [])
+
+    useEffect(() => {
         resultsMap.forEach(result => {
             const foundIndex = cubes.findIndex(cube => cube.id === result.id);
             if (engineContext.scene) {
@@ -206,24 +247,21 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 result.result.forEach((point, index) => {
                     const ray = engineContext.scene!.pick(point.getX(), point.getY())
                     if(ray?.ray){
-                        var rayhelper = new RayHelper(ray.ray)
-                        rayhelper.show(engineContext.scene!)
                         rays[index] = ray.ray;
                     }
                 });
                 if (rays.length !== 0) {
                     if (foundIndex !== -1 && cubes[foundIndex].mesh) {
-                        const newPosition = ClosestPointOnTwoLines( cubes[foundIndex].previousRays[0], rays[0]);
-                        console.log("newPosition" + newPosition);
-                        console.log(Vector3.Distance(newPosition, Vector3.Zero()));
-                        if (Vector3.Distance(newPosition, Vector3.Zero()) > 0.001) {
-                            console.log("Current cube position" + cubes[foundIndex].mesh.position + " new " + newPosition)
-                            setCubes(oldcubes => {
-                                oldcubes[foundIndex].mesh.position = ClosestPointOnTwoLines(rays[0], oldcubes[foundIndex].previousRays[0]);
-                                oldcubes[foundIndex].previousRays[0] = rays[0];
-                                return oldcubes;
-                            });
-                        }
+                        rays.forEach((currentRay, index) => {
+                            const closestPoint =  ClosestPointOnTwoLines( cubes[foundIndex].previousRays[index], currentRay);
+                            if(closestPoint !== Vector3.Zero()) {
+                                setCubes(oldcubes => {
+                                    oldcubes[foundIndex].mesh.position = closestPoint;
+                                    oldcubes[foundIndex].previousRays[index] = currentRay;
+                                    return oldcubes;
+                                });
+                            }
+                        });
                     } else {
                         const newCubes = cubes.slice(0);
                         const newCube = {
