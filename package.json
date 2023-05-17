@@ -47,8 +47,8 @@
         "utf-8-validate": "^5.0.5"
     },
     "dependencies": {
-        "@babylonjs/core": "6.2.0",
-        "@babylonjs/loaders": "6.2.0",
+        "@babylonjs/core": "5.46.0",
+        "@babylonjs/loaders": "5.46.0",
         "@babylonjs/react-native": "1.5.1",
         "@babylonjs/react-native-iosandroid-0-70": "1.5.1",
         "@zxing/library": "^0.19.2",
