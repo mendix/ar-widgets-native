@@ -1,31 +1,15 @@
-import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback, MutableRefObject } from "react";
+import React, { createElement, Context, useState, useEffect, useRef, useContext } from "react";
 import {
-    ActionManager,
-    Color3,
-    DynamicTexture,
-    Matrix,
     Mesh,
     MeshBuilder,
     PointerEventTypes,
     Ray,
-    RayHelper,
-    Scene,
-    StandardMaterial,
-    Vector2,
     Vector3,
-    VideoTexture
 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
-import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import {
-    BinaryBitmap,
     BrowserMultiFormatReader,
-    HTMLCanvasElementLuminanceSource,
-    HybridBinarizer,
-    NotFoundException,
-    QRCodeReader,
-    Result,
     ResultPoint
 } from "@zxing/library/cjs";
 
@@ -37,11 +21,9 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     let codeReaderRef = useRef<BrowserMultiFormatReader>();
     let videoRef = useRef<HTMLVideoElement>();
 
-    const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
-    const scale = 0.5;
     const stopped = useRef<Boolean>(false);
     
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
@@ -69,55 +51,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         }
       };
 
-    const scanWithCropOnce = (reader: BrowserMultiFormatReader, videoRef: HTMLVideoElement): Promise<Result> => {
-        const cropWidth = videoRef!.videoWidth * scale;
-        const captureCanvas = reader.createCaptureCanvas(videoRef!);
-        captureCanvas.width = cropWidth;
-        captureCanvas.height = cropWidth;
-        const loop = (resolve: (value: Result) => void, reject: (reason?: Error) => void) => {
-            try {
-                console.log("stopped: " + stopped.current);
-                const canvasContext = captureCanvas.getContext("2d");
-                if (canvasContext !== null) {
-                    canvasContext.drawImage(
-                        videoRef!,
-                        (videoRef!.videoWidth * (1 - scale)) / 2,
-                        (videoRef!.videoHeight - cropWidth) / 2,
-                        cropWidth,
-                        cropWidth,
-                        0,
-                        0,
-                        captureCanvas.width,
-                        captureCanvas.width
-                    );
-                    canvasRef.current?.getContext("2d")?.drawImage(
-                        videoRef!,
-                        (videoRef!.videoWidth * (1 - scale)) / 2,
-                        (videoRef!.videoHeight - cropWidth) / 2,
-                        cropWidth,
-                        cropWidth,
-                        0,
-                        0,
-                        captureCanvas.width,
-                        captureCanvas.width)
-                        console.log(canvasRef.current?.getContext("2d")?.getImageData(10,10,1,1))
-                    const luminanceSource = new HTMLCanvasElementLuminanceSource(captureCanvas);
-                    const binaryBitmap = new BinaryBitmap(new HybridBinarizer(luminanceSource));
-                    const result = reader.decodeBitmap(binaryBitmap);
-                    resolve(result);
-                }
-            } catch (error: any) {
-                if (error instanceof NotFoundException && !stopped.current) {
-                    console.log("Not found");
-                    setTimeout(() => loop(resolve, reject), reader.timeBetweenDecodingAttempts);
-                } else {
-                    reject(error);
-                }
-            }
-        };
-        return new Promise(loop);
-    };
-
     useEffect(() => {
         stopped.current = false;
         const codeReader = new BrowserMultiFormatReader();
@@ -132,39 +65,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             codeReader.stopAsyncDecode();
             codeReader.reset();
         };
-
-        const start = async (): Promise<void> => {
-            let stream;
-
-            // try {
-            //     stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-            //     codeReader.timeBetweenDecodingAttempts = 500;
-                
-            //     if (videoElement) {
-            //         videoElement.srcObject = stream;
-            //         videoElement.autofocus = true;
-            //         videoElement.playsInline = true; // Fix error in Safari
-            //         await videoElement.play();
-            //     //     while (!stopped.current) {
-                        
-            //     //         // const result = await scanWithCropOnce(codeReader, videoElement);
-                       
-            //     //     }
-            //     }
-            // } catch (error) {
-            //     // Suppress not found error if widget is closed normally (eg. leaving page);
-            //     const isNotFound = error instanceof NotFoundException;
-            //     if (!isNotFound && !stopped.current) {
-            //         if (error instanceof Error) {
-            //             console.error(error.message);
-            //         }
-            //     }
-            // } finally {
-            //     stop();
-            //     stream?.getVideoTracks().forEach(track => track.stop());
-            // }
-        };
-        start();
 
         return () => {
             stop();
@@ -231,7 +131,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             engineContext.scene.onPointerObservable.add((pointerInfo) => {
                 switch (pointerInfo.type) {
                   case PointerEventTypes.POINTERDOWN:
-                    console.log("POINTERDOWN")
                     scan();
                     break;
                 }
@@ -280,7 +179,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     useEffect(() => {
         if (engineContext?.scene) {
             const localImageTracker = new Mesh(props.name, engineContext?.scene);
-            setImageTrackerParent(localImageTracker);
             setParentID(localImageTracker.uniqueId);
         }
     }, [engineContext]);
