@@ -1,11 +1,26 @@
 import typescript from "@rollup/plugin-typescript";
 const copy = require("rollup-plugin-copy");
+import commonjs from "@rollup/plugin-commonjs";
 
 export default args => {
     const result = args.configDefaultConfig;
-    result.forEach((config, index) => {
+    result.forEach(config => {
         const external = [/^@babylonjs\/core($|\/)/];
+        config.external = [...config.external, ...external];
+        config.plugins.push(
+            typescript({
+                include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
+            }),
+            commonjs()
+        );
+        config.output.paths = {
+            ...config.output.paths,
+            "@babylonjs/core": "../../../shared/babylonjscore.js"
+        };
+    });
 
+    result.forEach((config, index) => {
+        const external = [/^@zxing\/library($|\/)/];
         config.external = [...config.external, ...external];
 
         // Only for first entry
@@ -17,24 +32,17 @@ export default args => {
                     copyOnce: true,
                     targets: [
                         {
-                            src: "./src/bundle/babylonjscore.js",
+                            src: "./src/bundle/zxinglibrary.js",
                             dest: "dist/tmp/widgets/com/mendix/shared"
-                        },
+                        }
                     ]
                 })
             ];
         }
         config.output.paths = {
             ...config.output.paths,
-            "@babylonjs/core": "../../../shared/babylonjscore.js",
-            "@babylonjs/core/Engines/engine.js": "../../../shared/babylonjscore.js",
-            "@babylonjs/core/scene.js": "../../../shared/babylonjscore.js",
+            "@zxing/library/cjs": "../../../shared/zxinglibrary.js"
         };
-        config.plugins.push(
-            typescript({
-                include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
-            })
-        );
     });
     return result;
 };

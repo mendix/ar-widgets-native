@@ -1,3 +1,5 @@
+import { Scene } from "@babylonjs/core";
+
 export type EngineContext = {
     scene?: Scene;
     featuresManager?: WebXRFeaturesManager;

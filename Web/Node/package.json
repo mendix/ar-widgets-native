@@ -10,7 +10,7 @@
     },
     "license": "Apache-2.0",
     "config": {
-        "projectPath": "../../../ARWebWidgetsTestProject/",
+        "projectPath": "../../../../MendixProjects/ARWebWidgetsTestProject/",
         "mendixHost": "http://localhost:8080",
         "developmentPort": 3000
     },
