@@ -1,19 +1,16 @@
-import { createElement, ReactElement, useEffect, useRef, useState } from "react";
+import { createElement, ReactElement, useEffect, useRef, useState, useCallback } from "react";
 import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/src/EngineContext";
 import { ValueStatus } from "mendix";
 import {
     ArcRotateCamera,
-    Color3,
     Color4,
     CubeTexture,
     Engine,
     HemisphericLight,
     Mesh,
     Scene,
-    SceneLoader,
     Tools,
     Vector3,
-    WebXRExperienceHelper,
     WebXRSessionManager
 } from "@babylonjs/core";
 import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
@@ -22,6 +19,10 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const [parent, setParent] = useState<Mesh | undefined>();
     const [parentID, setParentID] = useState<number>(NaN);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const engineRef = useRef<Engine>();
+    const updateSize = useCallback(() => {
+        if (engineRef.current) engineRef.current.resize();
+    }, [engineRef.current]);
 
     useEffect(() => {
         // If we want realistic lighting, use the provided environment map
@@ -34,12 +35,10 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     useEffect(() => {
         if (scene === undefined) {
             const engine = new Engine(canvasRef.current, true, { xrCompatible: true }, true);
-            function updateSize() {
-                console.log("Resize");
-                engine.resize();
-            }
-
-            window.addEventListener("resize", updateSize);
+            engineRef.current = engine;
+            window.addEventListener("resize", () => {
+                updateSize();
+            });
             const newScene = new Scene(engine);
 
             newScene.clearColor = new Color4(0.5, 0.5, 0.5, 1);
