@@ -88,6 +88,9 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                 }
             };
             instantiateWebXR();
+            return () => {
+                window.removeEventListener("resize", updateSize);
+            };
         }
     }, [canvasRef.current]);
 
