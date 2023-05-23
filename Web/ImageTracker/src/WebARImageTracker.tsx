@@ -2,7 +2,7 @@ import React, { createElement, Context, useState, useEffect, useRef, useContext 
 import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { BrowserMultiFormatReader, ResultPoint } from "@zxing/library/cjs";
+import { BrowserMultiFormatReader, Result, ResultPoint } from "@zxing/library/cjs";
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
@@ -17,6 +17,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
     const [observableSet, setObservableSet] = useState<boolean>(false);
     const stopped = useRef<Boolean>(true);
+    const listOfResults = useRef<Result[]>();
 
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
         const lineVec1: Vector3 = ray1.direction;
@@ -43,6 +44,30 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         }
     };
 
+    const handleResult = (result: Result) => {
+        setResultsMap(oldResults => {
+            if (oldResults.find(old => old.id === result.getText())) {
+                const changedResult = oldResults.slice(0);
+                let indexToChange: number | undefined;
+                changedResult.forEach((element, index) => {
+                    if (element.id === result.getText()) {
+                        indexToChange = index;
+                    }
+                });
+                if (indexToChange !== undefined) {
+                    changedResult[indexToChange] = {
+                        id: result.getText(),
+                        result: result.getResultPoints()
+                    };
+                }
+                return changedResult;
+            } else {
+                const newArray = [...oldResults, { id: result.getText(), result: result.getResultPoints() }];
+                return newArray;
+            }
+        });
+    };
+
     useEffect(() => {
         const codeReader = new BrowserMultiFormatReader();
         codeReaderRef.current = codeReader;
@@ -61,6 +86,15 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             codeReader.stopAsyncDecode();
         };
     }, []);
+
+    useEffect(() => {
+        if (listOfResults.current && listOfResults.current.length !== 0) {
+            const poppedResult = listOfResults.current.pop();
+            if (poppedResult) {
+                handleResult(poppedResult);
+            }
+        }
+    }, [listOfResults.current]);
 
     useEffect(() => {
         if (engineContext.scene && !observableSet) {
@@ -85,37 +119,18 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                                     videoRef.current.autofocus = true;
                                     videoRef.current.playsInline = true; // Fix error in Safari
                                     videoRef.current.play().then(() => {
-                                        codeReaderRef.current!.decodeOnce(videoRef.current!).then(result => {
-                                            setResultsMap(oldResults => {
-                                                if (oldResults.find(old => old.id === result.getText())) {
-                                                    const changedResult = oldResults.slice(0);
-                                                    let indexToChange: number | undefined;
-                                                    changedResult.forEach((element, index) => {
-                                                        if (element.id === result.getText()) {
-                                                            indexToChange = index;
-                                                        }
-                                                    });
-                                                    if (indexToChange !== undefined) {
-                                                        changedResult[indexToChange] = {
-                                                            id: result.getText(),
-                                                            result: result.getResultPoints()
-                                                        };
-                                                    }
-                                                    return changedResult;
-                                                } else {
-                                                    const newArray = [
-                                                        ...oldResults,
-                                                        { id: result.getText(), result: result.getResultPoints() }
-                                                    ];
-                                                    return newArray;
-                                                }
-                                            });
-
-                                            codeReaderRef.current?.stopAsyncDecode();
-                                            codeReaderRef.current?.reset();
-                                            if (videoRef.current) videoRef.current.pause();
-                                            stream.getVideoTracks().forEach(track => track.stop());
-                                            stopped.current = true;
+                                        codeReaderRef.current?.decodeContinuously(videoRef.current!, result => {
+                                            if (listOfResults.current) {
+                                                listOfResults.current?.push(result);
+                                            } else {
+                                                listOfResults.current = [result];
+                                            }
+                                            if (stopped.current) {
+                                                codeReaderRef.current?.stopAsyncDecode();
+                                                codeReaderRef.current?.reset();
+                                                if (videoRef.current) videoRef.current.pause();
+                                                stream.getVideoTracks().forEach(track => track.stop());
+                                            }
                                         });
                                     });
                                 }
@@ -138,6 +153,9 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 }
             });
             setObservableSet(true);
+            return () => {
+                stopped.current = true;
+            };
         }
     }, [engineContext.scene, codeReaderRef.current, videoRef.current]);
 
@@ -191,7 +209,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     return (
         <>
-            <canvas ref={canvasRef} width="300" height="300" />
+            <canvas ref={canvasRef} width="300" height="300" hidden={true} />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );
