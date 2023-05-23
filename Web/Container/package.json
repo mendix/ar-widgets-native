@@ -26,7 +26,6 @@
         "prettier": "prettier --write ./src/*.tsx ./typings/*",
         "releaseWithPrettier": "npm run prettier && npm run release",
         "moveRelease": "cp ./dist/1.0.0/* ../Release/",
-        "rollupBabylon": "npx rollup --config rollupBabylon.config.js",
-        "rolluphtmlqrcode": "npx rollup --config rolluphtmlqrcode.config.js"
+        "rollupBabylon": "npx rollup --config rollupBabylon.config.js"
     }
 }

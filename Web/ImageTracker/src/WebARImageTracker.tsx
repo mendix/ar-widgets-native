@@ -20,11 +20,13 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let codeReaderRef = useRef<BrowserMultiFormatReader>();
     let videoRef = useRef<HTMLVideoElement>();
+    
 
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
-    const stopped = useRef<Boolean>(false);
+    const [observableSet, setObservableSet] = useState<boolean>(false);
+    const stopped = useRef<Boolean>(true);
     
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
         const lineVec1: Vector3 = ray1.direction;
@@ -52,7 +54,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
       };
 
     useEffect(() => {
-        stopped.current = false;
         const codeReader = new BrowserMultiFormatReader();
         codeReaderRef.current = codeReader;
 
@@ -73,61 +74,71 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, []);
 
     useEffect(() => {
-        if(engineContext.scene){
+        if(engineContext.scene && !observableSet){
             const scan = async () => {
                 if(codeReaderRef.current && videoRef.current && stopped.current){
                     stopped.current = false;
-                const mediaStreamConstraints: MediaStreamConstraints = {
-                    audio: false,
-                    video: {
-                        facingMode: "environment",
-                        width: { min: 1280, ideal: 1920, max: 2560 },
-                        height: { min: 720, ideal: 1080, max: 1440 }
-                    }
-                };
-                let stream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-                codeReaderRef.current.timeBetweenDecodingAttempts = 500;
-                
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                    videoRef.current.autofocus = true;
-                    videoRef.current.playsInline = true; // Fix error in Safari
-                    
-                    await videoRef.current.play();
-               
-                const result = await codeReaderRef.current.decodeOnce(videoRef.current)
-                setResultsMap(oldResults => {
-                    if (oldResults.find(old => old.id === result.getText())) {
-                        const changedResult = oldResults.slice(0);
-                        let indexToChange: number | undefined;
-                        changedResult.forEach((element, index) => {
-                            if (element.id === result.getText()) {
-                                indexToChange = index;
-                            }
-                        });
-                        if (indexToChange !== undefined) {
-                            changedResult[indexToChange] = {
-                                id: result.getText(),
-                                result: result.getResultPoints()
-                            };
+                    const mediaStreamConstraints: MediaStreamConstraints = {
+                        audio: false,
+                        video: {
+                            facingMode: "environment",
+                            width: { min: 1280, ideal: 1920, max: 2560 },
+                            height: { min: 720, ideal: 1080, max: 1440 }
                         }
-                        return changedResult;
-                    } else {
-                        const newArray = [
-                            ...oldResults,
-                            { id: result.getText(), result: result.getResultPoints() }
-                        ];
-                        return newArray;
-                    }
-                });
+                    };
+                    try{
+                         navigator.mediaDevices.getUserMedia(mediaStreamConstraints).then(stream => { 
+                            if(codeReaderRef.current && videoRef.current){
+                            codeReaderRef.current.timeBetweenDecodingAttempts = 500;
+                            videoRef.current.srcObject = stream;
+                            videoRef.current.autofocus = true;
+                            videoRef.current.playsInline = true; // Fix error in Safari
+                            videoRef.current.play().then(() => {
+                                codeReaderRef.current!.decodeOnce(videoRef.current!).then(result => {
+                                    setResultsMap(oldResults => {
+                                        if (oldResults.find(old => old.id === result.getText())) {
+                                            const changedResult = oldResults.slice(0);
+                                            let indexToChange: number | undefined;
+                                            changedResult.forEach((element, index) => {
+                                                if (element.id === result.getText()) {
+                                                    indexToChange = index;
+                                                }
+                                            });
+                                            if (indexToChange !== undefined) {
+                                                changedResult[indexToChange] = {
+                                                    id: result.getText(),
+                                                    result: result.getResultPoints()
+                                                };
+                                            }
+                                            return changedResult;
+                                        } else {
+                                            const newArray = [
+                                                ...oldResults,
+                                                { id: result.getText(), result: result.getResultPoints() }
+                                            ];
+                                            return newArray;
+                                        }
+                                    });
+                                    
+                                    codeReaderRef.current?.stopAsyncDecode();
+                                    codeReaderRef.current?.reset();
+                                    if(videoRef.current) videoRef.current.pause();
+                                    stream.getVideoTracks().forEach(track => track.stop());
+                                    stopped.current = true;
+                            })
+                            })
+                        }
+                        
+                    }).catch(reason => {
+                        console.log("catch: " + reason)
+                        stopped.current = true;
+                    })
+                } catch (error) {
+                    console.log(error)
+                    stopped.current = true;
                 }
-                codeReaderRef.current?.stopAsyncDecode();
-                codeReaderRef.current?.reset();
-                videoRef.current.pause();
-                stream?.getVideoTracks().forEach(track => track.stop());
-                stopped.current = true;   
-            }}
-
+                }
+            }
             engineContext.scene.onPointerObservable.add((pointerInfo) => {
                 switch (pointerInfo.type) {
                   case PointerEventTypes.POINTERDOWN:
@@ -135,8 +146,9 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     break;
                 }
             });
+            setObservableSet(true);
         }
-    }, [])
+    }, [engineContext.scene, codeReaderRef.current, videoRef.current])
 
     useEffect(() => {
         resultsMap.forEach(result => {
