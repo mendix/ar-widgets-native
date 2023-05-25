@@ -1,4 +1,4 @@
-import React, { createElement, Context, useState, useEffect, useRef, useContext } from "react";
+import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback } from "react";
 import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
@@ -11,6 +11,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let codeReaderRef = useRef<BrowserMultiFormatReader>();
     let videoRef = useRef<HTMLVideoElement>();
+    let streamRef = useRef<MediaStream>();
 
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
@@ -18,6 +19,30 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [observableSet, setObservableSet] = useState<boolean>(false);
     const stopped = useRef<Boolean>(true);
     const listOfResults = useRef<Result[]>();
+
+    const loopTrack = useCallback((stream: MediaStream) => {
+        const promise = new Promise<void>((resolve, reject) => {
+            console.log("Called promise");
+            codeReaderRef.current?.decodeFromVideo(videoRef.current!).then(result => {
+                console.log(result);
+                if (listOfResults.current) {
+                    listOfResults.current?.push(result);
+                } else {
+                    listOfResults.current = [result];
+                }
+                if (stopped.current) {
+                    console.log("Stopping loop");
+                    codeReaderRef.current?.stopAsyncDecode();
+                    codeReaderRef.current?.reset();
+                    if (videoRef.current) videoRef.current.pause();
+                    stream.getVideoTracks().forEach(track => track.stop());
+                    reject();
+                }
+                resolve();
+            });
+        });
+        promise.then(() => loopTrack(stream)).catch(() => console.log("ended looptrack"));
+    }, []);
 
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
         const lineVec1: Vector3 = ray1.direction;
@@ -118,20 +143,10 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                                     videoRef.current.srcObject = stream;
                                     videoRef.current.autofocus = true;
                                     videoRef.current.playsInline = true; // Fix error in Safari
+                                    streamRef.current = stream;
                                     videoRef.current.play().then(() => {
-                                        codeReaderRef.current?.decodeContinuously(videoRef.current!, result => {
-                                            if (listOfResults.current) {
-                                                listOfResults.current?.push(result);
-                                            } else {
-                                                listOfResults.current = [result];
-                                            }
-                                            if (stopped.current) {
-                                                codeReaderRef.current?.stopAsyncDecode();
-                                                codeReaderRef.current?.reset();
-                                                if (videoRef.current) videoRef.current.pause();
-                                                stream.getVideoTracks().forEach(track => track.stop());
-                                            }
-                                        });
+                                        console.log("Looptrack called");
+                                        loopTrack(stream);
                                     });
                                 }
                             })
