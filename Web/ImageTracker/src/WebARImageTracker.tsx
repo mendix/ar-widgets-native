@@ -2,7 +2,7 @@ import React, { createElement, Context, useState, useEffect, useRef, useContext,
 import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { BrowserMultiFormatReader, Result, ResultPoint } from "@zxing/library/cjs";
+import { BrowserMultiFormatReader, NotFoundException, Result, ResultPoint } from "@zxing/library/cjs";
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
@@ -16,32 +16,33 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
-    const [observableSet, setObservableSet] = useState<boolean>(false);
+    const [startLoopTrack, setStartLoopTrack] = useState<boolean>(false);
     const stopped = useRef<Boolean>(true);
-    const listOfResults = useRef<Result[]>();
+    const listOfResults = useRef<Result[]>([]);
 
-    const loopTrack = useCallback((stream: MediaStream) => {
-        const promise = new Promise<void>((resolve, reject) => {
-            console.log("Called promise");
-            codeReaderRef.current?.decodeFromVideo(videoRef.current!).then(result => {
-                console.log(result);
-                if (listOfResults.current) {
-                    listOfResults.current?.push(result);
-                } else {
-                    listOfResults.current = [result];
+    const loopTrack = useCallback(async () => {
+        if (streamRef.current)
+            codeReaderRef.current?.decodeOnceFromStream(streamRef.current).then(qrcode => {
+                console.log(qrcode);
+                let shouldContinue = true;
+                if (qrcode) {
+                    if (listOfResults.current) {
+                        listOfResults.current?.push(qrcode);
+                    } else {
+                        listOfResults.current = [qrcode];
+                    }
+                    if (stopped.current) {
+                        codeReaderRef.current?.stopAsyncDecode();
+                        codeReaderRef.current?.reset();
+                        if (videoRef.current) videoRef.current.pause();
+                        streamRef.current?.getVideoTracks().forEach(track => track.stop());
+                        shouldContinue = false;
+                    }
                 }
-                if (stopped.current) {
-                    console.log("Stopping loop");
-                    codeReaderRef.current?.stopAsyncDecode();
-                    codeReaderRef.current?.reset();
-                    if (videoRef.current) videoRef.current.pause();
-                    stream.getVideoTracks().forEach(track => track.stop());
-                    reject();
+                if (shouldContinue) {
+                    setTimeout(loopTrack, 1000 / 10);
                 }
-                resolve();
             });
-        });
-        promise.then(() => loopTrack(stream)).catch(() => console.log("ended looptrack"));
     }, []);
 
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
@@ -100,20 +101,16 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         let videoElement = document.createElement("video");
         videoRef.current = videoElement;
 
-        const stop = (): void => {
+        return () => {
             stopped.current = true;
             codeReader.stopAsyncDecode();
             codeReader.reset();
-        };
-
-        return () => {
-            stop();
-            codeReader.stopAsyncDecode();
         };
     }, []);
 
     useEffect(() => {
         if (listOfResults.current && listOfResults.current.length !== 0) {
+            console.log();
             const poppedResult = listOfResults.current.pop();
             if (poppedResult) {
                 handleResult(poppedResult);
@@ -122,8 +119,14 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, [listOfResults.current]);
 
     useEffect(() => {
-        if (engineContext.scene && !observableSet) {
-            const scan = async () => {
+        if (startLoopTrack && streamRef.current) {
+            loopTrack();
+        }
+    }, [startLoopTrack, streamRef.current]);
+
+    useEffect(() => {
+        if (engineContext.scene && !startLoopTrack) {
+            const scan = () => {
                 if (codeReaderRef.current && videoRef.current && stopped.current) {
                     stopped.current = false;
                     const mediaStreamConstraints: MediaStreamConstraints = {
@@ -144,9 +147,20 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                                     videoRef.current.autofocus = true;
                                     videoRef.current.playsInline = true; // Fix error in Safari
                                     streamRef.current = stream;
+                                    videoRef.current.addEventListener("play", function () {
+                                        var $this = this; //cache
+                                        var ctx = canvasRef.current!.getContext("2d");
+                                        if (ctx) {
+                                            (function loop() {
+                                                if (!$this.paused && !$this.ended) {
+                                                    ctx.drawImage($this, 0, 0);
+                                                    setTimeout(loop, 1000 / 30); // drawing at 30fps
+                                                }
+                                            })();
+                                        }
+                                    });
                                     videoRef.current.play().then(() => {
-                                        console.log("Looptrack called");
-                                        loopTrack(stream);
+                                        setStartLoopTrack(true);
                                     });
                                 }
                             })
@@ -167,7 +181,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                         break;
                 }
             });
-            setObservableSet(true);
             return () => {
                 stopped.current = true;
             };
@@ -224,7 +237,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     return (
         <>
-            <canvas ref={canvasRef} width="300" height="300" hidden={true} />
+            <canvas ref={canvasRef} width="1000" height="1000" />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );
