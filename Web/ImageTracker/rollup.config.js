@@ -1,6 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 const copy = require("rollup-plugin-copy");
 import commonjs from "@rollup/plugin-commonjs";
+// import replace from '@rollup/plugin-replace';
 
 export default args => {
     const result = args.configDefaultConfig;
@@ -43,6 +44,39 @@ export default args => {
             ...config.output.paths,
             "@zxing/library/cjs": "../../../shared/zxinglibrary.js"
         };
+    });
+
+
+    result.forEach((config, index) => {
+        // const external = [/.\/Worker\.ts/];
+        // config.external = [...config.external, ...external];
+
+        // Only for first entry
+        if (index === 0) {
+            config.plugins = [
+                ...config.plugins,
+                copy({
+                    verbose: true,
+                    copyOnce: true,
+                    targets: [
+                        {
+                            src: "./src/bundle/Worker.js",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
+                })
+                // replace({
+                //     preventAssignment: true,
+                //     values: {
+                //         'rollupReplaceWithCorrectPath': '../../../shared'
+                //     }
+                // })
+            ];
+        }
+        // config.output.paths = {
+        //     ...config.output.paths,
+        //     "./Worker.ts": "../../../shared/Worker.ts"
+        // };
     });
     return result;
 };

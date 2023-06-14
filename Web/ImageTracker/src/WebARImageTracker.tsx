@@ -2,48 +2,34 @@ import React, { createElement, Context, useState, useEffect, useRef, useContext,
 import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { BrowserMultiFormatReader, NotFoundException, Result, ResultPoint } from "@zxing/library/cjs";
+import { BrowserMultiFormatReader, Result, ResultPoint } from "@zxing/library/cjs";
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
     const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
-    let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let codeReaderRef = useRef<BrowserMultiFormatReader>();
-    let videoRef = useRef<HTMLVideoElement>();
     let streamRef = useRef<MediaStream>();
+    let canvasRef = useRef<HTMLCanvasElement>(null);
+    let videoRef = useRef<HTMLVideoElement>();
 
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
     const [startLoopTrack, setStartLoopTrack] = useState<boolean>(false);
-    const stopped = useRef<Boolean>(true);
+    const stopped = useRef<Boolean>(false);
     const listOfResults = useRef<Result[]>([]);
-
-    const loopTrack = useCallback(async () => {
-        if (streamRef.current)
-            codeReaderRef.current?.decodeOnceFromStream(streamRef.current).then(qrcode => {
-                console.log(qrcode);
-                let shouldContinue = true;
-                if (qrcode) {
-                    if (listOfResults.current) {
-                        listOfResults.current?.push(qrcode);
-                    } else {
-                        listOfResults.current = [qrcode];
-                    }
-                    if (stopped.current) {
-                        codeReaderRef.current?.stopAsyncDecode();
-                        codeReaderRef.current?.reset();
-                        if (videoRef.current) videoRef.current.pause();
-                        streamRef.current?.getVideoTracks().forEach(track => track.stop());
-                        shouldContinue = false;
-                    }
-                }
-                if (shouldContinue) {
-                    setTimeout(loopTrack, 1000 / 10);
-                }
-            });
+    const returnWorker = useCallback(() => {
+        return new Worker("widgets/com/mendix/shared/Worker.js");
     }, []);
+
+    let workerRequire = require("./bundle/Worker.js");
+
+    // useEffect(() => {
+    //     if (codeReaderRef.current && streamRef.current && startLoopTrack) {
+
+    //     }
+    // }, [codeReaderRef.current, streamRef.current, startLoopTrack]);
 
     const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
         const lineVec1: Vector3 = ray1.direction;
@@ -97,14 +83,37 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     useEffect(() => {
         const codeReader = new BrowserMultiFormatReader();
         codeReaderRef.current = codeReader;
-
-        let videoElement = document.createElement("video");
-        videoRef.current = videoElement;
+        const mediaStreamConstraints: MediaStreamConstraints = {
+            audio: false,
+            video: {
+                facingMode: "environment",
+                width: { min: 1280, ideal: 1920, max: 2560 },
+                height: { min: 720, ideal: 1080, max: 1440 }
+            }
+        };
+        navigator.mediaDevices
+            .getUserMedia(mediaStreamConstraints)
+            .then(stream => {
+                if (codeReaderRef.current) {
+                    // codeReaderRef.current.timeBetweenDecodingAttempts = 500;
+                    streamRef.current = stream;
+                    videoRef.current = codeReaderRef.current?.prepareVideoElement();
+                    videoRef.current.srcObject = streamRef.current;
+                    videoRef.current.play();
+                }
+            })
+            .catch(reason => {
+                console.log("catch: " + reason);
+                stopped.current = true;
+            });
 
         return () => {
             stopped.current = true;
             codeReader.stopAsyncDecode();
             codeReader.reset();
+            streamRef.current?.getVideoTracks().forEach(track => {
+                track.stop();
+            });
         };
     }, []);
 
@@ -119,64 +128,40 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, [listOfResults.current]);
 
     useEffect(() => {
-        if (startLoopTrack && streamRef.current) {
-            loopTrack();
-        }
-    }, [startLoopTrack, streamRef.current]);
-
-    useEffect(() => {
+        console.log("enginecontext.scene " + engineContext.scene);
+        console.log("!startLoopTrack " + !startLoopTrack);
         if (engineContext.scene && !startLoopTrack) {
             const scan = () => {
-                if (codeReaderRef.current && videoRef.current && stopped.current) {
+                console.log("Calling scan useeffect");
+                if (codeReaderRef.current && !stopped.current) {
+                    console.log("In codeReaderRef.current && stopped.current");
                     stopped.current = false;
-                    const mediaStreamConstraints: MediaStreamConstraints = {
-                        audio: false,
-                        video: {
-                            facingMode: "environment",
-                            width: { min: 1280, ideal: 1920, max: 2560 },
-                            height: { min: 720, ideal: 1080, max: 1440 }
-                        }
-                    };
-                    try {
-                        navigator.mediaDevices
-                            .getUserMedia(mediaStreamConstraints)
-                            .then(stream => {
-                                if (codeReaderRef.current && videoRef.current) {
-                                    codeReaderRef.current.timeBetweenDecodingAttempts = 500;
-                                    videoRef.current.srcObject = stream;
-                                    videoRef.current.autofocus = true;
-                                    videoRef.current.playsInline = true; // Fix error in Safari
-                                    streamRef.current = stream;
-                                    videoRef.current.addEventListener("play", function () {
-                                        var $this = this; //cache
-                                        var ctx = canvasRef.current!.getContext("2d");
-                                        if (ctx) {
-                                            (function loop() {
-                                                if (!$this.paused && !$this.ended) {
-                                                    ctx.drawImage($this, 0, 0);
-                                                    setTimeout(loop, 1000 / 30); // drawing at 30fps
-                                                }
-                                            })();
-                                        }
-                                    });
-                                    videoRef.current.play().then(() => {
-                                        setStartLoopTrack(true);
-                                    });
-                                }
-                            })
-                            .catch(reason => {
-                                console.log("catch: " + reason);
-                                stopped.current = true;
-                            });
-                    } catch (error) {
-                        console.log(error);
-                        stopped.current = true;
+                    if (videoRef.current) {
+                        const captureCanvas = codeReaderRef.current!.createCaptureCanvas(videoRef.current);
+                        const myWorker = returnWorker();
+                        myWorker.onmessage = event => {
+                            console.log("Data back: " + event.data);
+                            myWorker.terminate();
+                            console.log("Terminated worker");
+                        };
+
+                        captureCanvas
+                            ?.getContext("2d")
+                            ?.drawImage(videoRef.current, videoRef.current.width, videoRef.current.height);
+                        const imgData = captureCanvas
+                            ?.getContext("2d")
+                            ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
+                        canvasRef.current
+                            ?.getContext("2d")
+                            ?.drawImage(videoRef.current, videoRef.current.width, videoRef.current.height);
+                        myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
+                        console.log(myWorker);
                     }
                 }
             };
             engineContext.scene.onPointerObservable.add(pointerInfo => {
                 switch (pointerInfo.type) {
-                    case PointerEventTypes.POINTERDOWN:
+                    case PointerEventTypes.POINTERTAP:
                         scan();
                         break;
                 }
@@ -185,7 +170,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 stopped.current = true;
             };
         }
-    }, [engineContext.scene, codeReaderRef.current, videoRef.current]);
+    }, [engineContext.scene, codeReaderRef.current]);
 
     useEffect(() => {
         resultsMap.forEach(result => {
@@ -237,7 +222,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     return (
         <>
-            <canvas ref={canvasRef} width="1000" height="1000" />
+            <canvas ref={canvasRef} width="1920" height="1080" />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );
