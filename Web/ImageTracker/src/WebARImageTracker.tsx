@@ -2,7 +2,9 @@ import React, { createElement, Context, useState, useEffect, useRef, useContext,
 import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { BrowserMultiFormatReader, Result, ResultPoint } from "@zxing/library/cjs";
+import { BrowserMultiFormatReader, Result } from "@zxing/library/cjs";
+
+type ResultPoint = { x: number; y: number; estimatedModuleSize: number; count: number };
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
@@ -10,7 +12,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
     let codeReaderRef = useRef<BrowserMultiFormatReader>();
     let streamRef = useRef<MediaStream>();
-    let canvasRef = useRef<HTMLCanvasElement>(null);
+    // let canvasRef = useRef<HTMLCanvasElement>(null);
     let videoRef = useRef<HTMLVideoElement>();
 
     const [parentID, setParentID] = useState<number>(NaN);
@@ -18,10 +20,10 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
     const [startLoopTrack, setStartLoopTrack] = useState<boolean>(false);
     const stopped = useRef<Boolean>(false);
-    const listOfResults = useRef<Result[]>([]);
     const returnWorker = useCallback(() => {
         return new Worker("widgets/com/mendix/shared/Worker.js");
     }, []);
+    const scanning = useRef<Boolean>(false);
 
     let workerRequire = require("./bundle/Worker.js");
 
@@ -56,25 +58,60 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         }
     };
 
-    const handleResult = (result: Result) => {
+    const callDecodeWorker = useCallback(() => {
+        console.log("Calling scan useeffect");
+        if (codeReaderRef.current && !stopped.current) {
+            console.log("In codeReaderRef.current && stopped.current");
+            stopped.current = false;
+            if (videoRef.current) {
+                const captureCanvas = codeReaderRef.current!.createCaptureCanvas(videoRef.current);
+                const myWorker = returnWorker();
+                myWorker.onmessage = event => {
+                    console.log("Data back: " + event.data);
+                    if (event.data !== null) {
+                        handleResult(event.data[0], event.data[1]);
+                    }
+
+                    myWorker.terminate();
+                    if (scanning.current) {
+                        callDecodeWorker();
+                    } else {
+                        console.log("Stopping loop");
+                    }
+                    console.log("Terminated worker");
+                };
+
+                captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
+                const imgData = captureCanvas
+                    ?.getContext("2d")
+                    ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
+                // canvasRef.current?.getContext("2d")?.putImageData(imgData!, 0, 0);
+                console.log(`width ${imgData?.width}, height ${imgData?.height}`);
+                myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
+                console.log(myWorker);
+            }
+        }
+    }, []);
+
+    const handleResult = (text: string, resultPoints: ResultPoint[]) => {
         setResultsMap(oldResults => {
-            if (oldResults.find(old => old.id === result.getText())) {
+            if (oldResults.find(old => old.id === text)) {
                 const changedResult = oldResults.slice(0);
                 let indexToChange: number | undefined;
                 changedResult.forEach((element, index) => {
-                    if (element.id === result.getText()) {
+                    if (element.id === text) {
                         indexToChange = index;
                     }
                 });
                 if (indexToChange !== undefined) {
                     changedResult[indexToChange] = {
-                        id: result.getText(),
-                        result: result.getResultPoints()
+                        id: text,
+                        result: resultPoints
                     };
                 }
                 return changedResult;
             } else {
-                const newArray = [...oldResults, { id: result.getText(), result: result.getResultPoints() }];
+                const newArray = [...oldResults, { id: text, result: resultPoints }];
                 return newArray;
             }
         });
@@ -97,9 +134,16 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 if (codeReaderRef.current) {
                     // codeReaderRef.current.timeBetweenDecodingAttempts = 500;
                     streamRef.current = stream;
-                    videoRef.current = codeReaderRef.current?.prepareVideoElement();
-                    videoRef.current.srcObject = streamRef.current;
-                    videoRef.current.play();
+                    const video = document.createElement("video", {});
+                    let { width, height } = stream.getTracks()[0].getSettings();
+                    video.width = width!;
+                    video.height = height!;
+                    video.srcObject = streamRef.current;
+                    video.play().then(() => {
+                        videoRef.current = video;
+
+                        console.log(`videowidth ${videoRef.current.width}, height ${videoRef.current.height}`);
+                    });
                 }
             })
             .catch(reason => {
@@ -118,51 +162,17 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, []);
 
     useEffect(() => {
-        if (listOfResults.current && listOfResults.current.length !== 0) {
-            console.log();
-            const poppedResult = listOfResults.current.pop();
-            if (poppedResult) {
-                handleResult(poppedResult);
-            }
-        }
-    }, [listOfResults.current]);
-
-    useEffect(() => {
         console.log("enginecontext.scene " + engineContext.scene);
         console.log("!startLoopTrack " + !startLoopTrack);
         if (engineContext.scene && !startLoopTrack) {
-            const scan = () => {
-                console.log("Calling scan useeffect");
-                if (codeReaderRef.current && !stopped.current) {
-                    console.log("In codeReaderRef.current && stopped.current");
-                    stopped.current = false;
-                    if (videoRef.current) {
-                        const captureCanvas = codeReaderRef.current!.createCaptureCanvas(videoRef.current);
-                        const myWorker = returnWorker();
-                        myWorker.onmessage = event => {
-                            console.log("Data back: " + event.data);
-                            myWorker.terminate();
-                            console.log("Terminated worker");
-                        };
-
-                        captureCanvas
-                            ?.getContext("2d")
-                            ?.drawImage(videoRef.current, videoRef.current.width, videoRef.current.height);
-                        const imgData = captureCanvas
-                            ?.getContext("2d")
-                            ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
-                        canvasRef.current
-                            ?.getContext("2d")
-                            ?.drawImage(videoRef.current, videoRef.current.width, videoRef.current.height);
-                        myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
-                        console.log(myWorker);
-                    }
-                }
-            };
             engineContext.scene.onPointerObservable.add(pointerInfo => {
                 switch (pointerInfo.type) {
-                    case PointerEventTypes.POINTERTAP:
-                        scan();
+                    case PointerEventTypes.POINTERDOWN:
+                        scanning.current = !scanning.current;
+                        console.log(`Scanning is ${scanning.current}`);
+                        if (scanning.current) {
+                            callDecodeWorker();
+                        }
                         break;
                 }
             });
@@ -178,7 +188,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             if (engineContext.scene) {
                 var rays: Ray[] = [];
                 result.result.forEach((point, index) => {
-                    const ray = engineContext.scene!.pick(point.getX(), point.getY());
+                    const ray = engineContext.scene!.pick(point.x, point.y);
                     if (ray?.ray) {
                         rays[index] = ray.ray;
                     }
@@ -222,7 +232,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     return (
         <>
-            <canvas ref={canvasRef} width="1920" height="1080" />
+            {/* <canvas ref={canvasRef} width="1920" height="1080" /> */}
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );

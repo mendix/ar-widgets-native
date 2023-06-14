@@ -11,6 +11,7 @@ export class ImageDataLuminanceSource extends LuminanceSource {
 
     public constructor(data: ImageData) {
         super(data.width, data.height);
+      
         this.buffer = ImageDataLuminanceSource.toGrayscaleBuffer(data.data, data.width, data.height)
     }
 
@@ -69,7 +70,8 @@ export class ImageDataLuminanceSource extends LuminanceSource {
         return false;
     }
 
-    public crop(): LuminanceSource {
+    public crop(left: number /*int*/, top: number /*int*/, width: number /*int*/, height: number /*int*/): LuminanceSource {
+        super.crop(left, top, width, height);
         return this;
     }
 
