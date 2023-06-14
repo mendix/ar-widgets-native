@@ -72,11 +72,12 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             }
 
             const instantiateWebXR = async () => {
-                const supported = await WebXRSessionManager.IsSessionSupportedAsync("immersive-vr");
-                console.log("is immersive-vr supported? " + supported);
+                const supportedAR = await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
+                console.log("is immersive-ar supported? " + supportedAR);
+
                 var defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
                     uiOptions: {
-                        sessionMode: "immersive-vr"
+                        sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
                     }
                 });
                 if (!defaultXRExperience.baseExperience) {
