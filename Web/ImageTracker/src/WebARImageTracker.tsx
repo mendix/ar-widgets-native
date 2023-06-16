@@ -1,10 +1,11 @@
 import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback } from "react";
-import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
+import { IWebXRAnchor, Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader, Result } from "@zxing/library/cjs";
 
 type ResultPoint = { x: number; y: number; estimatedModuleSize: number; count: number };
+type Cube = { id: string; mesh: Mesh; previousRays: Ray[]; anchor?: IWebXRAnchor };
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
@@ -12,12 +13,11 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
     let codeReaderRef = useRef<BrowserMultiFormatReader>();
     let streamRef = useRef<MediaStream>();
-    // let canvasRef = useRef<HTMLCanvasElement>(null);
     let videoRef = useRef<HTMLVideoElement>();
 
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
-    const [cubes, setCubes] = useState<{ id: string; mesh: Mesh; previousRays: Ray[] }[]>([]);
+    const [cubes, setCubes] = useState<Cube[]>([]);
     const [startLoopTrack, setStartLoopTrack] = useState<boolean>(false);
     const stopped = useRef<Boolean>(false);
     const returnWorker = useCallback(() => {
@@ -27,8 +27,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const createCaptureCanvas = useCallback(() => {
         return codeReaderRef.current!.createCaptureCanvas(videoRef.current);
     }, []);
-
-    let workerRequire = require("./bundle/Worker.js");
 
     const startStream = useCallback(() => {
         const mediaStreamConstraints: MediaStreamConstraints = {
@@ -43,7 +41,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             .getUserMedia(mediaStreamConstraints)
             .then(stream => {
                 if (codeReaderRef.current) {
-                    // codeReaderRef.current.timeBetweenDecodingAttempts = 500;
                     streamRef.current = stream;
                     const video = document.createElement("video", {});
                     let { width, height } = stream.getTracks()[0].getSettings();
@@ -53,7 +50,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     video.play().then(() => {
                         videoRef.current = video;
                         callDecodeWorker();
-                        console.log(`videowidth ${videoRef.current.width}, height ${videoRef.current.height}`);
                     });
                 }
             })
@@ -89,7 +85,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     };
 
     const callDecodeWorker = useCallback(() => {
-        console.log("callDecodeWorker");
         if (codeReaderRef.current && !stopped.current) {
             stopped.current = false;
             if (videoRef.current) {
@@ -160,11 +155,9 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 switch (pointerInfo.type) {
                     case PointerEventTypes.POINTERDOWN:
                         scanning.current = !scanning.current;
-                        console.log(`Scanning is ${scanning.current}`);
                         if (scanning.current) {
                             startStream();
                         } else {
-                            console.log("Stopping stream");
                             streamRef.current?.getVideoTracks().forEach(track => {
                                 track.stop();
                             });
@@ -211,6 +204,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                             id: result.id,
                             previousRays: rays
                         };
+
                         newCubes.push(newCube);
                         setCubes(newCubes);
                     }
@@ -228,7 +222,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     return (
         <>
-            {/* <canvas ref={canvasRef} width="1920" height="1080" /> */}
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
         </>
     );

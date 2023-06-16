@@ -78,16 +78,17 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                 var defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
                     uiOptions: {
                         sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
-                    }
+                    },
+                    optionalFeatures: true
                 });
                 if (!defaultXRExperience.baseExperience) {
                     console.log("No XR support");
                 } else {
-                    // defaultXRExperience.baseExperience.enterXRAsync("immersive-ar", "unbounded")
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
             instantiateWebXR();
+            updateSize();
             return () => {
                 window.removeEventListener("resize", updateSize);
             };

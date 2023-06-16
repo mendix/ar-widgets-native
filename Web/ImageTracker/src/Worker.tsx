@@ -2,7 +2,6 @@ import { QRCodeReader, HybridBinarizer, BinaryBitmap, BarcodeFormat, DecodeHintT
 import { ImageDataLuminanceSource } from "./ImageDataLuminanceSource";
 
 self.onmessage = function (e) {
-    console.log("Got message " + e.data);
     const rawImage: ImageData = e.data[2];
     const codeReader = new QRCodeReader();
 
