@@ -2,7 +2,7 @@ import React, { createElement, Context, useState, useEffect, useRef, useContext,
 import { IWebXRAnchor, Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import { BrowserMultiFormatReader, Result } from "@zxing/library/cjs";
+import { BrowserMultiFormatReader } from "@zxing/library/cjs";
 
 type ResultPoint = { x: number; y: number; estimatedModuleSize: number; count: number };
 type Cube = { id: string; mesh: Mesh; previousRays: Ray[]; anchor?: IWebXRAnchor };
@@ -11,23 +11,48 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const global = globalThis;
     const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
-    let codeReaderRef = useRef<BrowserMultiFormatReader>();
-    let streamRef = useRef<MediaStream>();
-    let videoRef = useRef<HTMLVideoElement>();
-
     const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<Cube[]>([]);
-    const [startLoopTrack, setStartLoopTrack] = useState<boolean>(false);
+
     const stopped = useRef<Boolean>(false);
+    const scanning = useRef<Boolean>(false);
+    const codeReaderRef = useRef<BrowserMultiFormatReader>();
+    const streamRef = useRef<MediaStream>();
+    const videoRef = useRef<HTMLVideoElement>();
+
     const returnWorker = useCallback(() => {
         return new Worker("widgets/com/mendix/shared/Worker.js");
     }, []);
-    const scanning = useRef<Boolean>(false);
     const createCaptureCanvas = useCallback(() => {
         return codeReaderRef.current!.createCaptureCanvas(videoRef.current);
     }, []);
-
+    const callDecodeWorker = useCallback(() => {
+        if (codeReaderRef.current && !stopped.current) {
+            if (videoRef.current) {
+                const myWorker = returnWorker();
+                myWorker.onmessage = event => {
+                    if (event.data !== null) {
+                        console.log(`Data recieved ${event.data[0]}`);
+                        handleResult(event.data[0], event.data[1]);
+                    }
+                    myWorker.terminate();
+                    if (scanning.current && !stopped.current) {
+                        callDecodeWorker();
+                    } else {
+                        console.log("Stopping loop");
+                        stopped.current = true;
+                    }
+                };
+                const captureCanvas = createCaptureCanvas();
+                captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
+                const imgData = captureCanvas
+                    ?.getContext("2d")
+                    ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
+                myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
+            }
+        }
+    }, []);
     const startStream = useCallback(() => {
         const mediaStreamConstraints: MediaStreamConstraints = {
             audio: false,
@@ -42,19 +67,20 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             .then(stream => {
                 if (codeReaderRef.current) {
                     streamRef.current = stream;
-                    const video = document.createElement("video", {});
+                    const video = document.createElement("video");
                     let { width, height } = stream.getTracks()[0].getSettings();
-                    video.width = width!;
-                    video.height = height!;
+                    if (width) video.width = width;
+                    if (height) video.height = height;
                     video.srcObject = streamRef.current;
                     video.play().then(() => {
                         videoRef.current = video;
+                        stopped.current = false;
                         callDecodeWorker();
                     });
                 }
             })
             .catch(reason => {
-                console.log("catch: " + reason);
+                console.log("Error while creating stream: " + reason);
                 stopped.current = true;
             });
     }, []);
@@ -84,48 +110,13 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         }
     };
 
-    const callDecodeWorker = useCallback(() => {
-        if (codeReaderRef.current && !stopped.current) {
-            stopped.current = false;
-            if (videoRef.current) {
-                const myWorker = returnWorker();
-                myWorker.onmessage = event => {
-                    if (event.data !== null) {
-                        console.log(`Data recieved ${event.data[0]}`);
-                        handleResult(event.data[0], event.data[1]);
-                    }
-                    myWorker.terminate();
-                    if (scanning.current && !stopped.current) {
-                        callDecodeWorker();
-                    } else {
-                        console.log("Stopping loop");
-                    }
-                };
-                const captureCanvas = createCaptureCanvas();
-                captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
-                const imgData = captureCanvas
-                    ?.getContext("2d")
-                    ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
-                myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
-            }
-        }
-    }, []);
-
     const handleResult = (text: string, resultPoints: ResultPoint[]) => {
         setResultsMap(oldResults => {
             if (oldResults.find(old => old.id === text)) {
-                const changedResult = oldResults.slice(0);
-                let indexToChange: number | undefined;
-                changedResult.forEach((element, index) => {
-                    if (element.id === text) {
-                        indexToChange = index;
-                    }
-                });
-                if (indexToChange !== undefined) {
-                    changedResult[indexToChange] = {
-                        id: text,
-                        result: resultPoints
-                    };
+                const changedResult = [...oldResults];
+                const indexToChange = oldResults.findIndex(element => element.id === text);
+                if (indexToChange !== -1) {
+                    changedResult[indexToChange].result = resultPoints;
                 }
                 return changedResult;
             } else {
@@ -150,7 +141,9 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, []);
 
     useEffect(() => {
-        if (engineContext.scene && !startLoopTrack) {
+        if (engineContext.scene) {
+            const localImageTracker = new Mesh(props.name, engineContext?.scene);
+            setParentID(localImageTracker.uniqueId);
             engineContext.scene.onPointerObservable.add(pointerInfo => {
                 switch (pointerInfo.type) {
                     case PointerEventTypes.POINTERDOWN:
@@ -165,9 +158,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                         break;
                 }
             });
-            return () => {
-                stopped.current = true;
-            };
         }
     }, [engineContext.scene, codeReaderRef.current]);
 
@@ -204,7 +194,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                             id: result.id,
                             previousRays: rays
                         };
-
                         newCubes.push(newCube);
                         setCubes(newCubes);
                     }
@@ -213,16 +202,5 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         });
     }, [resultsMap]);
 
-    useEffect(() => {
-        if (engineContext?.scene) {
-            const localImageTracker = new Mesh(props.name, engineContext?.scene);
-            setParentID(localImageTracker.uniqueId);
-        }
-    }, [engineContext]);
-
-    return (
-        <>
-            <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
-        </>
-    );
+    return <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>;
 }

@@ -74,7 +74,6 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             const instantiateWebXR = async () => {
                 const supportedAR = await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
                 console.log("is immersive-ar supported? " + supportedAR);
-
                 var defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
                     uiOptions: {
                         sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
