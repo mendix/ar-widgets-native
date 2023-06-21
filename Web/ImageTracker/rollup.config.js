@@ -48,9 +48,6 @@ export default args => {
 
 
     result.forEach((config, index) => {
-        // const external = [/.\/Worker\.ts/];
-        // config.external = [...config.external, ...external];
-
         // Only for first entry
         if (index === 0) {
             config.plugins = [
@@ -65,18 +62,8 @@ export default args => {
                         }
                     ]
                 })
-                // replace({
-                //     preventAssignment: true,
-                //     values: {
-                //         'rollupReplaceWithCorrectPath': '../../../shared'
-                //     }
-                // })
             ];
         }
-        // config.output.paths = {
-        //     ...config.output.paths,
-        //     "./Worker.ts": "../../../shared/Worker.ts"
-        // };
     });
     return result;
 };

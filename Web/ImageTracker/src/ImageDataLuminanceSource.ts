@@ -3,7 +3,7 @@ import LuminanceSource from '@zxing/library/esm/core/LuminanceSource';
 import IllegalArgumentException from '@zxing/library/esm/core/IllegalArgumentException';
 
 /**
- * adapted from @zxing/library/library/esm/browser/HTMLCanvasElementLuminanceSource.ts
+ * adapted from @zxing/library/library/esm/browser/HTMLCanvasElementLuminanceSource.ts, copied from https://github.com/pocesar/react-use-qrcode/blob/master/src/ImageDataLuminanceSource.ts
  */
 export class ImageDataLuminanceSource extends LuminanceSource {
 
