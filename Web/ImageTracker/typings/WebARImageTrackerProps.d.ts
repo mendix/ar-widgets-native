@@ -4,7 +4,22 @@
  * @author Mendix Widgets Framework Team
  */
 import { ComponentType, CSSProperties, ReactNode } from "react";
-import { ActionValue, ListValue } from "mendix";
+import { ActionValue } from "mendix";
+import { Big } from "big.js";
+
+export interface ImageTrackingObjectType {
+    ScannedResult: string;
+    X: Big;
+    Y: Big;
+    Z: Big;
+}
+
+export interface ImageTrackingObjectPreviewType {
+    ScannedResult: string;
+    X: number | null;
+    Y: number | null;
+    Z: number | null;
+}
 
 export interface WebARImageTrackerContainerProps {
     name: string;
@@ -12,7 +27,7 @@ export interface WebARImageTrackerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     mxContentWidget?: ReactNode;
-    datasource: ListValue;
+    ImageTrackingObject: ImageTrackingObjectType[];
     mxOnClick?: ActionValue;
     mxOnHoverEnter?: ActionValue;
     mxOnHoverExit?: ActionValue;
@@ -28,7 +43,7 @@ export interface WebARImageTrackerPreviewProps {
     styleObject?: CSSProperties;
     readOnly: boolean;
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
-    datasource: {} | { caption: string } | { type: string } | null;
+    ImageTrackingObject: ImageTrackingObjectPreviewType[];
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;
     mxOnHoverExit: {} | null;

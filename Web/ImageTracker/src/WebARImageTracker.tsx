@@ -1,8 +1,9 @@
 import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback } from "react";
 import { IWebXRAnchor, Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
-import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
+import { ImageTrackingObjectType, WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader } from "@zxing/library/cjs";
+import Big from "big.js";
 
 type ResultPoint = { x: number; y: number; estimatedModuleSize: number; count: number };
 type Cube = { id: string; mesh: Mesh; previousRays: Ray[]; anchor?: IWebXRAnchor };
@@ -200,6 +201,30 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             }
         });
     }, [resultsMap]);
+
+    useEffect(() => {
+        if (cubes.length > 0) {
+            cubes.forEach(cube => {
+                const index = props.ImageTrackingObject.findIndex(imgObj => imgObj.ScannedResult === cube.id);
+                if (index !== -1) {
+                    // object already exists, update position data
+                    props.ImageTrackingObject[index].X = Big(cube.mesh.position.x);
+                    props.ImageTrackingObject[index].Y = Big(cube.mesh.position.y);
+                    props.ImageTrackingObject[index].Z = Big(cube.mesh.position.z);
+                } else {
+                    // create new object
+                    const newImgObj: ImageTrackingObjectType = {
+                        ScannedResult: cube.id,
+                        X: Big(cube.mesh.position.x),
+                        Y: Big(cube.mesh.position.y),
+                        Z: Big(cube.mesh.position.z)
+                    };
+                    props.ImageTrackingObject.push(newImgObj);
+                }
+                console.log(props.ImageTrackingObject);
+            });
+        }
+    }, [cubes]);
 
     return <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>;
 }

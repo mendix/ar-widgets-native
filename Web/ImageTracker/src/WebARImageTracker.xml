@@ -10,7 +10,31 @@
                 <caption>Add AR widgets</caption>
                 <description>Add an AR widget to go in the ImageTracker AR container</description>
             </property>
-            <property key="datasource" type="datasource" />
+            <property key="" type="action"
+            <!-- <property key="ImageTrackingObject" type="object" isList="true" required="false">
+                <caption>Imagetracking list</caption>
+                <description />
+                <properties>
+                    <propertyGroup caption="Imagetracking list group">
+                        <property key="ScannedResult" type="string">
+                            <caption>Scanned result</caption>
+                            <description />
+                        </property>
+                       <property key="X" type="decimal" defaultValue="0">
+                            <caption>Position X</caption>
+                            <description />
+                        </property>
+                         <property key="Y" type="decimal" defaultValue="0">
+                            <caption>Position Y</caption>
+                            <description />
+                        </property>
+                        <property key="Z" type="decimal" defaultValue="0">
+                            <caption>Position Z</caption>
+                            <description />
+                        </property>
+                    </propertyGroup>
+                </properties>
+            </property> -->
         </propertyGroup>
         <propertyGroup caption="Events">
             <property key="mxOnClick" type="action" required="false">
