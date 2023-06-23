@@ -23,7 +23,7 @@
         "prettier": "prettier --write ./typings/*",
         "release": "pluggable-widgets-tools release:native",
         "releaseWithPrettier": "npm run prettier && npm run release",
-        "moveRelease": "cp ./dist/1.0.0/* ../Release/"
+        "moveRelease": "cp ./dist/$npm_package_version/* ../Release/"
     },
     "license": "Apache-2.0"
 }
