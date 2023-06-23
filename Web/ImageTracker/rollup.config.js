@@ -37,6 +37,14 @@ export default args => {
                             dest: "dist/tmp/widgets/com/mendix/shared"
                         }
                     ]
+                }),
+                copy({
+                    targets: [
+                        {
+                            src: "ReadMeOSS.txt",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
                 })
             ];
         }
