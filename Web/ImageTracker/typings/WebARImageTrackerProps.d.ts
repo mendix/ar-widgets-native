@@ -4,7 +4,7 @@
  * @author Mendix Widgets Framework Team
  */
 import { ComponentType, CSSProperties, ReactNode } from "react";
-import { ActionValue } from "mendix";
+import { ActionValue, ListValue } from "mendix";
 
 export interface WebARImageTrackerContainerProps {
     name: string;
@@ -12,6 +12,7 @@ export interface WebARImageTrackerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     mxContentWidget?: ReactNode;
+    datasource: ListValue;
     mxOnClick?: ActionValue;
     mxOnHoverEnter?: ActionValue;
     mxOnHoverExit?: ActionValue;
@@ -27,6 +28,7 @@ export interface WebARImageTrackerPreviewProps {
     styleObject?: CSSProperties;
     readOnly: boolean;
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
+    datasource: {} | { caption: string } | { type: string } | null;
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;
     mxOnHoverExit: {} | null;
