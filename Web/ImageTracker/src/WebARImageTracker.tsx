@@ -30,27 +30,26 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, []);
     const callDecodeWorker = useCallback(() => {
         if (codeReaderRef.current && !stopped.current && videoRef.current) {
-                const myWorker = returnWorker();
-                myWorker.onmessage = event => {
-                    if (event.data !== null) {
-                        console.log(`Data recieved ${event.data[0]}`);
-                        handleResult(event.data[0], event.data[1]);
-                    }
-                    myWorker.terminate();
-                    if (scanning.current && !stopped.current) {
-                        callDecodeWorker();
-                    } else {
-                        console.log("Stopping loop");
-                        stopped.current = true;
-                    }
-                };
-                const captureCanvas = createCaptureCanvas();
-                captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
-                const imgData = captureCanvas
-                    ?.getContext("2d")
-                    ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
-                myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
-            }
+            const myWorker = returnWorker();
+            myWorker.onmessage = event => {
+                if (event.data !== null) {
+                    console.log(`Data recieved ${event.data[0]}`);
+                    handleResult(event.data[0], event.data[1]);
+                }
+                myWorker.terminate();
+                if (scanning.current && !stopped.current) {
+                    callDecodeWorker();
+                } else {
+                    console.log("Stopping loop");
+                    stopped.current = true;
+                }
+            };
+            const captureCanvas = createCaptureCanvas();
+            captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
+            const imgData = captureCanvas
+                ?.getContext("2d")
+                ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
+            myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
         }
     }, []);
     const startStream = useCallback(() => {
