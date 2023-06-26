@@ -28,8 +28,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         return codeReaderRef.current!.createCaptureCanvas(videoRef.current);
     }, []);
     const callDecodeWorker = useCallback(() => {
-        if (codeReaderRef.current && !stopped.current) {
-            if (videoRef.current) {
+        if (codeReaderRef.current && !stopped.current && videoRef.current) {
                 const myWorker = returnWorker();
                 myWorker.onmessage = event => {
                     if (event.data !== null) {
