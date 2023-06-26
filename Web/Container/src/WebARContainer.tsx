@@ -72,21 +72,22 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             }
 
             const instantiateWebXR = async () => {
-                const supported = await WebXRSessionManager.IsSessionSupportedAsync("immersive-vr");
-                console.log("is immersive-vr supported? " + supported);
+                const supportedAR = await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
+                console.log("is immersive-ar supported? " + supportedAR);
                 var defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
                     uiOptions: {
-                        sessionMode: "immersive-vr"
-                    }
+                        sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
+                    },
+                    optionalFeatures: true
                 });
                 if (!defaultXRExperience.baseExperience) {
                     console.log("No XR support");
                 } else {
-                    // defaultXRExperience.baseExperience.enterXRAsync("immersive-ar", "unbounded")
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
             instantiateWebXR();
+            updateSize();
             return () => {
                 window.removeEventListener("resize", updateSize);
             };

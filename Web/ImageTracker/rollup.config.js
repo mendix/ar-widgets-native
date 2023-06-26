@@ -1,6 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 const copy = require("rollup-plugin-copy");
 import commonjs from "@rollup/plugin-commonjs";
+// import replace from '@rollup/plugin-replace';
 
 export default args => {
     const result = args.configDefaultConfig;
@@ -36,6 +37,14 @@ export default args => {
                             dest: "dist/tmp/widgets/com/mendix/shared"
                         }
                     ]
+                }),
+                copy({
+                    targets: [
+                        {
+                            src: "ReadMeOSS.txt",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
                 })
             ];
         }
@@ -43,6 +52,26 @@ export default args => {
             ...config.output.paths,
             "@zxing/library/cjs": "../../../shared/zxinglibrary.js"
         };
+    });
+
+
+    result.forEach((config, index) => {
+        // Only for first entry
+        if (index === 0) {
+            config.plugins = [
+                ...config.plugins,
+                copy({
+                    verbose: true,
+                    copyOnce: true,
+                    targets: [
+                        {
+                            src: "./src/bundle/Worker.js",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
+                })
+            ];
+        }
     });
     return result;
 };
