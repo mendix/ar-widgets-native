@@ -15,7 +15,6 @@ self.onmessage = function (e) {
         hints.set(DecodeHintType.TRY_HARDER, true);
 
         const result = codeReader.decode(binaryBitmap, hints);
-        console.log("qr code result: " + result.getText());
         postMessage([result.getText(), result.getResultPoints()]);
     } catch (NotFoundException) {
         postMessage(null);

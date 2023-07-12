@@ -6,48 +6,37 @@
     <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
-            <property key="mxContentWidget" type="widgets" required="false">
-                <caption>Add AR widgets</caption>
-                <description>Add an AR widget to go in the ImageTracker AR container</description>
-            </property>
-            <property key="" type="action"
-            <!-- <property key="ImageTrackingObject" type="object" isList="true" required="false">
-                <caption>Imagetracking list</caption>
+            <property key="ScannedResult" type="attribute">
+                <caption>Scanned result</caption>
                 <description />
-                <properties>
-                    <propertyGroup caption="Imagetracking list group">
-                        <property key="ScannedResult" type="string">
-                            <caption>Scanned result</caption>
-                            <description />
-                        </property>
-                       <property key="X" type="decimal" defaultValue="0">
-                            <caption>Position X</caption>
-                            <description />
-                        </property>
-                         <property key="Y" type="decimal" defaultValue="0">
-                            <caption>Position Y</caption>
-                            <description />
-                        </property>
-                        <property key="Z" type="decimal" defaultValue="0">
-                            <caption>Position Z</caption>
-                            <description />
-                        </property>
-                    </propertyGroup>
-                </properties>
-            </property> -->
-        </propertyGroup>
-        <propertyGroup caption="Events">
-            <property key="mxOnClick" type="action" required="false">
-                <caption>On click</caption>
-                <description>Called when the object is clicked.</description>
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
             </property>
-            <property key="mxOnHoverEnter" type="action" required="false">
-                <caption>On hover enter</caption>
-                <description>Called when the object is in the middle of the screen.</description>
+             <property key="mxOnDataChanged" type="action">
+                <caption>Data changed</caption>
+                <description>Called when there is new data available.</description>
             </property>
-            <property key="mxOnHoverExit" type="action" required="false">
-                <caption>On hover exit</caption>
-                <description>Called when the object is in the middle of the screen.</description>
+            <property key="X" type="attribute">
+                <caption>Position X</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="Decimal" />
+                </attributeTypes>
+            </property>
+                <property key="Y" type="attribute">
+                <caption>Position Y</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="Decimal" />
+                </attributeTypes>
+            </property>
+            <property key="Z" type="attribute">
+                <caption>Position Z</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="Decimal" />
+                </attributeTypes>
             </property>
         </propertyGroup>
     </properties>

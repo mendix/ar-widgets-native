@@ -1,6 +1,6 @@
 import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback } from "react";
 import { IWebXRAnchor, Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
-import { ImageTrackingObjectType, WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
+import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader } from "@zxing/library/cjs";
 import Big from "big.js";
@@ -10,12 +10,9 @@ type Cube = { id: string; mesh: Mesh; previousRays: Ray[]; anchor?: IWebXRAnchor
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
-    const ParentContext: Context<number> = (global as GlobalContext).ParentContext;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
-    const [parentID, setParentID] = useState<number>(NaN);
     const [resultsMap, setResultsMap] = useState<{ id: string; result: ResultPoint[] }[]>([]);
     const [cubes, setCubes] = useState<Cube[]>([]);
-
     const stopped = useRef<Boolean>(false);
     const scanning = useRef<Boolean>(false);
     const codeReaderRef = useRef<BrowserMultiFormatReader>();
@@ -33,7 +30,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             const myWorker = returnWorker();
             myWorker.onmessage = event => {
                 if (event.data !== null) {
-                    console.log(`Data recieved ${event.data[0]}`);
                     handleResult(event.data[0], event.data[1]);
                 }
                 myWorker.terminate();
@@ -125,6 +121,10 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         });
     };
 
+    function getAverageOfPoints(pointA: Vector3, pointB: Vector3) {
+        return new Vector3((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2, (pointA.z + pointB.z) / 2);
+    }
+
     useEffect(() => {
         const codeReader = new BrowserMultiFormatReader();
         codeReaderRef.current = codeReader;
@@ -141,8 +141,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     useEffect(() => {
         if (engineContext.scene) {
-            const localImageTracker = new Mesh(props.name, engineContext?.scene);
-            setParentID(localImageTracker.uniqueId);
             engineContext.scene.onPointerObservable.add(pointerInfo => {
                 switch (pointerInfo.type) {
                     case PointerEventTypes.POINTERDOWN:
@@ -165,65 +163,53 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             const foundIndex = cubes.findIndex(cube => cube.id === result.id);
             if (engineContext.scene) {
                 var rays: Ray[] = [];
+                let combinedPosition: Vector3 | undefined = undefined;
                 result.result.forEach((point, index) => {
                     const ray = engineContext.scene!.pick(point.x, point.y);
                     if (ray?.ray) {
                         rays[index] = ray.ray;
-                    }
-                });
-                if (rays.length !== 0) {
-                    if (foundIndex !== -1 && cubes[foundIndex].mesh) {
-                        rays.forEach((currentRay, index) => {
-                            const closestPoint = ClosestPointOnTwoLines(
-                                cubes[foundIndex].previousRays[index],
-                                currentRay
-                            );
-                            if (closestPoint !== Vector3.Zero()) {
+                        if (foundIndex > -1) {
+                            const closestPoint = ClosestPointOnTwoLines(cubes[foundIndex].previousRays[index], ray.ray);
+                            if (combinedPosition === undefined) {
+                                combinedPosition = closestPoint;
+                            } else {
+                                combinedPosition = getAverageOfPoints(combinedPosition, closestPoint);
+                            }
+                            if (index === result.result.length - 1) {
                                 setCubes(oldcubes => {
-                                    oldcubes[foundIndex].mesh.position = closestPoint;
-                                    oldcubes[foundIndex].previousRays[index] = currentRay;
+                                    oldcubes[foundIndex].mesh.position = combinedPosition!;
+                                    oldcubes[foundIndex].previousRays[index] = ray.ray!;
                                     return oldcubes;
                                 });
+
+                                props.ScannedResult.setValue(result.id);
+                                const preciseX = combinedPosition.x.toPrecision(4);
+                                const preciseY = combinedPosition.y.toPrecision(4);
+                                const preciseZ = combinedPosition.z.toPrecision(4);
+
+                                props.X.setValue(Big(preciseX.includes("e") ? 0 : preciseX));
+                                props.Y.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
+                                props.Z.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
+
+                                props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting
+                                    ? props.mxOnDataChanged.execute()
+                                    : null;
+                                console.log(props.ScannedResult.validation);
                             }
-                        });
-                    } else {
-                        const newCubes = cubes.slice(0);
-                        const newCube = {
-                            mesh: MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene),
-                            id: result.id,
-                            previousRays: rays
-                        };
-                        newCubes.push(newCube);
-                        setCubes(newCubes);
+                        }
                     }
+                });
+                if (foundIndex === -1 && rays.length !== 0) {
+                    const newCubes = cubes.slice(0);
+                    const newCube = {
+                        mesh: MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene),
+                        id: result.id,
+                        previousRays: rays
+                    };
+                    newCubes.push(newCube);
+                    setCubes(newCubes);
                 }
             }
         });
     }, [resultsMap]);
-
-    useEffect(() => {
-        if (cubes.length > 0) {
-            cubes.forEach(cube => {
-                const index = props.ImageTrackingObject.findIndex(imgObj => imgObj.ScannedResult === cube.id);
-                if (index !== -1) {
-                    // object already exists, update position data
-                    props.ImageTrackingObject[index].X = Big(cube.mesh.position.x);
-                    props.ImageTrackingObject[index].Y = Big(cube.mesh.position.y);
-                    props.ImageTrackingObject[index].Z = Big(cube.mesh.position.z);
-                } else {
-                    // create new object
-                    const newImgObj: ImageTrackingObjectType = {
-                        ScannedResult: cube.id,
-                        X: Big(cube.mesh.position.x),
-                        Y: Big(cube.mesh.position.y),
-                        Z: Big(cube.mesh.position.z)
-                    };
-                    props.ImageTrackingObject.push(newImgObj);
-                }
-                console.log(props.ImageTrackingObject);
-            });
-        }
-    }, [cubes]);
-
-    return <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>;
 }
