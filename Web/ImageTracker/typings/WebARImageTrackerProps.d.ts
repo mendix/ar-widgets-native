@@ -13,10 +13,10 @@ export interface WebARImageTrackerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     ScannedResult: EditableValue<string>;
-    mxOnDataChanged?: ActionValue;
     X: EditableValue<Big>;
     Y: EditableValue<Big>;
     Z: EditableValue<Big>;
+    mxOnDataChanged?: ActionValue;
 }
 
 export interface WebARImageTrackerPreviewProps {
@@ -29,8 +29,8 @@ export interface WebARImageTrackerPreviewProps {
     styleObject?: CSSProperties;
     readOnly: boolean;
     ScannedResult: string;
-    mxOnDataChanged: {} | null;
     X: string;
     Y: string;
     Z: string;
+    mxOnDataChanged: {} | null;
 }

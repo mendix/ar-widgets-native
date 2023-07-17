@@ -6,38 +6,44 @@
     <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
-            <property key="ScannedResult" type="attribute">
-                <caption>Scanned result</caption>
-                <description />
-                <attributeTypes>
-                    <attributeType name="String" />
-                </attributeTypes>
-            </property>
-             <property key="mxOnDataChanged" type="action">
-                <caption>Data changed</caption>
-                <description>Called when there is new data available.</description>
-            </property>
-            <property key="X" type="attribute">
-                <caption>Position X</caption>
-                <description />
-                <attributeTypes>
-                    <attributeType name="Decimal" />
-                </attributeTypes>
-            </property>
-                <property key="Y" type="attribute">
-                <caption>Position Y</caption>
-                <description />
-                <attributeTypes>
-                    <attributeType name="Decimal" />
-                </attributeTypes>
-            </property>
-            <property key="Z" type="attribute">
-                <caption>Position Z</caption>
-                <description />
-                <attributeTypes>
-                    <attributeType name="Decimal" />
-                </attributeTypes>
-            </property>
+            <propertyGroup caption="Text">
+                <property key="ScannedResult" type="attribute">
+                    <caption>Scanned result</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                        </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Position">
+                <property key="X" type="attribute">
+                    <caption>Position X</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                    <property key="Y" type="attribute">
+                    <caption>Position Y</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="Z" type="attribute">
+                    <caption>Position Z</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Event">
+                <property key="mxOnDataChanged" type="action">
+                    <caption>Data changed</caption>
+                    <description>Called when there is new data available.</description>
+                </property>
+            </propertyGroup>
         </propertyGroup>
     </properties>
 </widget>
