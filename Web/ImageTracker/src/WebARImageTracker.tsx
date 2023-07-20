@@ -169,10 +169,10 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                         const preciseX = combinedPoint.x.toPrecision(4);
                         const preciseY = combinedPoint.y.toPrecision(4);
                         const preciseZ = combinedPoint.z.toPrecision(4);
-                        props.ScannedResult.setValue(newResult.id);
-                        props.X.setValue(Big(preciseX.includes("e") ? 0 : preciseX));
-                        props.Y.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
-                        props.Z.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
+                        props.mxScannedResult.setValue(newResult.id);
+                        props.mxPositionX.setValue(Big(preciseX.includes("e") ? 0 : preciseX));
+                        props.mxPositionY.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
+                        props.mxPositionZ.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
                         props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting
                             ? props.mxOnDataChanged.execute()
                             : null;

@@ -7,7 +7,7 @@
     <properties>
         <propertyGroup caption="General">
             <propertyGroup caption="Text">
-                <property key="ScannedResult" type="attribute">
+                <property key="mxScannedResult" type="attribute">
                     <caption>Scanned result</caption>
                     <description />
                     <attributeTypes>
@@ -16,22 +16,22 @@
                 </property>
             </propertyGroup>
             <propertyGroup caption="Position">
-                <property key="X" type="attribute">
-                    <caption>Position X</caption>
+                <property key="mxPositionX" type="attribute">
+                    <caption>X</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="Decimal" />
                     </attributeTypes>
                 </property>
-                    <property key="Y" type="attribute">
-                    <caption>Position Y</caption>
+                    <property key="mxPositionY" type="attribute">
+                    <caption>Y</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="Decimal" />
                     </attributeTypes>
                 </property>
-                <property key="Z" type="attribute">
-                    <caption>Position Z</caption>
+                <property key="mxPositionZ" type="attribute">
+                    <caption>Z</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="Decimal" />
