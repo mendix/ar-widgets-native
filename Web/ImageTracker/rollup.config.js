@@ -54,7 +54,6 @@ export default args => {
         };
     });
 
-
     result.forEach((config, index) => {
         // Only for first entry
         if (index === 0) {

@@ -1,5 +1,5 @@
-import React, { createElement, Context, useState, useEffect, useRef, useContext, useCallback } from "react";
-import { IWebXRAnchor, Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
+import React, { createElement, useState, useEffect, useRef, useContext, useCallback } from "react";
+import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader } from "@zxing/library/cjs";
@@ -30,7 +30,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             const myWorker = returnWorker();
             myWorker.onmessage = event => {
                 if (event.data !== null) {
-                    setNewResult({id: event.data[0], result: event.data[1]})
+                    setNewResult({ id: event.data[0], result: event.data[1] });
                 }
                 myWorker.terminate();
                 if (scanning.current && !stopped.current) {
@@ -74,13 +74,13 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 }
             })
             .catch(reason => {
-                console.log("Error while creating stream: " + reason);
+                console.error("Error while creating stream: " + reason);
                 stopped.current = true;
             });
     }, []);
 
-    const ClosestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
-        if(ray1 === undefined || ray2 === undefined){
+    const closestPointOnTwoLines = (ray1: Ray, ray2: Ray): Vector3 => {
+        if (ray1 === undefined || ray2 === undefined) {
             return Vector3.Zero();
         } else {
             const lineVec1: Vector3 = ray1.direction;
@@ -107,7 +107,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             }
         }
     };
-
 
     function getAverageOfPoints(pointA: Vector3, pointB: Vector3) {
         return new Vector3((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2, (pointA.z + pointB.z) / 2);
@@ -149,26 +148,24 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     useEffect(() => {
         if (engineContext.scene && newResult) {
             const foundIndex = previousResults.findIndex(previousResult => previousResult.id === newResult.id);
-            if (foundIndex > 0){
+            if (foundIndex > -1) {
                 const previousResult = previousResults[foundIndex];
                 const newResultPoints = newResult.result;
                 let newRays: Ray[] = [];
                 let combinedPoint: Vector3 | undefined = undefined;
-
                 newResultPoints.forEach((point, index) => {
-                    const newRay = engineContext.scene!.pick(point.x, point.y);
+                    const newRay = engineContext.scene!.pick(point.x, point.y).ray;
                     const prevRay = previousResult.previousRays[index];
-                    if(newRay.ray){
-                        newRays.push(newRay.ray)
-                        const closestPoint = ClosestPointOnTwoLines(prevRay, newRay.ray);
-                        if (combinedPoint !== undefined){
-                            combinedPoint = getAverageOfPoints(combinedPoint, closestPoint)
-                        } else{
+                    if (newRay) {
+                        newRays.push(newRay);
+                        const closestPoint = closestPointOnTwoLines(prevRay, newRay);
+                        if (combinedPoint !== undefined) {
+                            combinedPoint = getAverageOfPoints(combinedPoint, closestPoint);
+                        } else {
                             combinedPoint = closestPoint;
                         }
-                        previousResult.previousRays[index] = newRay.ray;
                     }
-                    if(index === newResultPoints.length -1 && combinedPoint){
+                    if (index === newResultPoints.length - 1 && combinedPoint) {
                         const preciseX = combinedPoint.x.toPrecision(4);
                         const preciseY = combinedPoint.y.toPrecision(4);
                         const preciseZ = combinedPoint.z.toPrecision(4);
@@ -177,8 +174,8 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                         props.Y.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
                         props.Z.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
                         props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting
-                        ? props.mxOnDataChanged.execute()
-                        : null;
+                            ? props.mxOnDataChanged.execute()
+                            : null;
                         setPreviousResults(oldresults => {
                             oldresults[foundIndex].mesh.position = combinedPoint!;
                             oldresults[foundIndex].previousRays = newRays;
@@ -186,22 +183,21 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                         });
                     }
                 });
-            } else{
+            } else {
                 const rays: Ray[] = [];
-                newResult.result.forEach((point) => {
+                newResult.result.forEach(point => {
                     const newRay = engineContext.scene!.pick(point.x, point.y).ray;
-                    if(newRay){
+                    if (newRay) {
                         rays.push(newRay);
                     }
                 });
-                const createResult: PreviousResult = {                    
+                const createResult: PreviousResult = {
                     mesh: MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene),
                     id: newResult.id,
                     previousRays: rays
-                }
+                };
                 setPreviousResults(prev => [...prev, createResult]);
             }
         }
-        
-    }, [newResult]);
+    }, [newResult, engineContext.scene]);
 }
