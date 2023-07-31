@@ -7,7 +7,7 @@ export default {
     input: "./src/Worker.tsx",
     output: {
         format: "umd",
-        file: "./src/bundle/Worker.js",
+        file: "./src/bundle/Worker.js"
     },
 
     plugins: [

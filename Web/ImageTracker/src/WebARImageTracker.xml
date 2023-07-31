@@ -6,24 +6,44 @@
     <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
     <properties>
         <propertyGroup caption="General">
-            <property key="mxContentWidget" type="widgets" required="false">
-                <caption>Add AR widgets</caption>
-                <description>Add an AR widget to go in the ImageTracker AR container</description>
-            </property>
-        </propertyGroup>
-        <propertyGroup caption="Events">
-            <property key="mxOnClick" type="action" required="false">
-                <caption>On click</caption>
-                <description>Called when the object is clicked.</description>
-            </property>
-            <property key="mxOnHoverEnter" type="action" required="false">
-                <caption>On hover enter</caption>
-                <description>Called when the object is in the middle of the screen.</description>
-            </property>
-            <property key="mxOnHoverExit" type="action" required="false">
-                <caption>On hover exit</caption>
-                <description>Called when the object is in the middle of the screen.</description>
-            </property>
+            <propertyGroup caption="Text">
+                <property key="mxScannedResult" type="attribute">
+                    <caption>Scanned result</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                        </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Position">
+                <property key="mxPositionX" type="attribute">
+                    <caption>X</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                    <property key="mxPositionY" type="attribute">
+                    <caption>Y</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxPositionZ" type="attribute">
+                    <caption>Z</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Event">
+                <property key="mxOnDataChanged" type="action">
+                    <caption>Data changed</caption>
+                    <description>Called when there is new data available.</description>
+                </property>
+            </propertyGroup>
         </propertyGroup>
     </properties>
 </widget>

@@ -3,18 +3,20 @@
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix Widgets Framework Team
  */
-import { ComponentType, CSSProperties, ReactNode } from "react";
-import { ActionValue } from "mendix";
+import { CSSProperties } from "react";
+import { ActionValue, EditableValue } from "mendix";
+import { Big } from "big.js";
 
 export interface WebARImageTrackerContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
     tabIndex?: number;
-    mxContentWidget?: ReactNode;
-    mxOnClick?: ActionValue;
-    mxOnHoverEnter?: ActionValue;
-    mxOnHoverExit?: ActionValue;
+    mxScannedResult: EditableValue<string>;
+    mxPositionX: EditableValue<Big>;
+    mxPositionY: EditableValue<Big>;
+    mxPositionZ: EditableValue<Big>;
+    mxOnDataChanged?: ActionValue;
 }
 
 export interface WebARImageTrackerPreviewProps {
@@ -26,8 +28,9 @@ export interface WebARImageTrackerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
-    mxOnClick: {} | null;
-    mxOnHoverEnter: {} | null;
-    mxOnHoverExit: {} | null;
+    mxScannedResult: string;
+    mxPositionX: string;
+    mxPositionY: string;
+    mxPositionZ: string;
+    mxOnDataChanged: {} | null;
 }
