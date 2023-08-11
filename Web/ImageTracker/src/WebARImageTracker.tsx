@@ -1,5 +1,18 @@
 import React, { createElement, useState, useEffect, useRef, useContext, useCallback } from "react";
-import { Mesh, MeshBuilder, PointerEventTypes, Ray, Vector3 } from "@babylonjs/core";
+import {
+    Color3,
+    Mesh,
+    MeshBuilder,
+    PointerEventTypes,
+    PositionGizmo,
+    Ray,
+    RayHelper,
+    Scene,
+    UniversalCamera,
+    UtilityLayerRenderer,
+    Vector3,
+    WebXRCamera
+} from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader } from "@zxing/library/cjs";
@@ -18,6 +31,10 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const codeReaderRef = useRef<BrowserMultiFormatReader>();
     const streamRef = useRef<MediaStream>();
     const videoRef = useRef<HTMLVideoElement>();
+    const engineContextCamera = useRef<WebXRCamera>();
+    const clonedCamera = useRef<UniversalCamera>();
+    const sceneRef = useRef<Scene>();
+    const utillayer = useRef<UtilityLayerRenderer>();
 
     const returnWorker = useCallback(() => {
         return new Worker("widgets/com/mendix/shared/Worker.js");
@@ -25,8 +42,10 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const createCaptureCanvas = useCallback(() => {
         return codeReaderRef.current!.createCaptureCanvas(videoRef.current);
     }, []);
-    const callDecodeWorker = useCallback(() => {
-        if (codeReaderRef.current && !stopped.current && videoRef.current) {
+    const callDecodeWorker = () => {
+        console.log("engineContextCamera.current in callDecodeWorker " + engineContextCamera.current);
+        console.log("engineContextCamera.current.position " + engineContextCamera.current?.position);
+        if (codeReaderRef.current && !stopped.current && videoRef.current && engineContextCamera.current) {
             const myWorker = returnWorker();
             myWorker.onmessage = event => {
                 if (event.data !== null) {
@@ -44,9 +63,37 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             const imgData = captureCanvas
                 ?.getContext("2d")
                 ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
+            if (clonedCamera.current !== undefined) {
+                clonedCamera.current.dispose();
+            }
+            //  = engineContextCamera.current.clone("ClonedCamera");
+            clonedCamera.current = new UniversalCamera(
+                "clonedCamera",
+                engineContextCamera.current.position,
+                sceneRef.current
+            );
+            clonedCamera.current.rotationQuaternion = engineContextCamera.current.rotationQuaternion;
+            const newRay = sceneRef.current!.createPickingRay(50, 50, null, clonedCamera.current, false);
+
+            const debugbox = MeshBuilder.CreateBox("box", { size: 0.1 });
+            debugbox.position = clonedCamera.current.position;
+            debugbox.rotationQuaternion = clonedCamera.current.absoluteRotation.clone();
+
+            const gizmo = new PositionGizmo(utillayer.current);
+            gizmo!.attachedMesh = debugbox;
+            RayHelper.CreateAndShow(newRay, sceneRef.current!, new Color3(1, 1, 1));
             myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
         }
-    }, []);
+    };
+
+    useEffect(() => {
+        console.log(`engineContext.camera ${engineContext.camera}`);
+        if (engineContext.camera) {
+            engineContextCamera.current = engineContext.camera;
+            utillayer.current = new UtilityLayerRenderer(sceneRef.current!);
+        }
+    }, [engineContext.camera]);
+
     const startStream = useCallback(() => {
         const mediaStreamConstraints: MediaStreamConstraints = {
             audio: false,
@@ -69,6 +116,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     video.play().then(() => {
                         videoRef.current = video;
                         stopped.current = false;
+                        console.log("Video started");
                         callDecodeWorker();
                     });
                 }
@@ -128,6 +176,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
 
     useEffect(() => {
         if (engineContext.scene) {
+            sceneRef.current = engineContext.scene;
             engineContext.scene.onPointerObservable.add(pointerInfo => {
                 switch (pointerInfo.type) {
                     case PointerEventTypes.POINTERDOWN:
@@ -146,58 +195,77 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     }, [engineContext.scene, codeReaderRef.current]);
 
     useEffect(() => {
-        if (engineContext.scene && newResult) {
+        if (sceneRef.current && newResult) {
+            console.log("newResult");
+            console.log(newResult);
             const foundIndex = previousResults.findIndex(previousResult => previousResult.id === newResult.id);
+
             if (foundIndex > -1) {
                 const previousResult = previousResults[foundIndex];
                 const newResultPoints = newResult.result;
                 let newRays: Ray[] = [];
                 let combinedPoint: Vector3 | undefined = undefined;
                 newResultPoints.forEach((point, index) => {
-                    const newRay = engineContext.scene!.pick(point.x, point.y).ray;
-                    const prevRay = previousResult.previousRays[index];
-                    if (newRay) {
-                        newRays.push(newRay);
-                        const closestPoint = closestPointOnTwoLines(prevRay, newRay);
-                        if (combinedPoint !== undefined) {
-                            combinedPoint = getAverageOfPoints(combinedPoint, closestPoint);
-                        } else {
-                            combinedPoint = closestPoint;
+                    // const newRay = engineContext.scene!.pick(point.x, point.y).ray;
+                    if (clonedCamera.current) {
+                        const newRay = sceneRef.current!.createPickingRay(point.x, point.y, null, clonedCamera.current);
+
+                        console.log("New ray:");
+                        console.log(newRay);
+                        RayHelper.CreateAndShow(
+                            newRay,
+                            engineContext.scene!,
+                            new Color3(index === 0 ? 1 : 0, index === 1 ? 1 : 0, index === 2 ? 1 : 0)
+                        );
+                        const prevRay = previousResult.previousRays[index];
+                        if (newRay) {
+                            newRays.push(newRay);
+                            const closestPoint = closestPointOnTwoLines(prevRay, newRay);
+                            if (combinedPoint !== undefined) {
+                                combinedPoint = getAverageOfPoints(combinedPoint, closestPoint);
+                            } else {
+                                combinedPoint = closestPoint;
+                            }
                         }
-                    }
-                    if (index === newResultPoints.length - 1 && combinedPoint) {
-                        const preciseX = combinedPoint.x.toPrecision(4);
-                        const preciseY = combinedPoint.y.toPrecision(4);
-                        const preciseZ = combinedPoint.z.toPrecision(4);
-                        props.mxScannedResult.setValue(newResult.id);
-                        props.mxPositionX.setValue(Big(preciseX.includes("e") ? 0 : preciseX));
-                        props.mxPositionY.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
-                        props.mxPositionZ.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
-                        props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting
-                            ? props.mxOnDataChanged.execute()
-                            : null;
-                        setPreviousResults(oldresults => {
-                            oldresults[foundIndex].mesh.position = combinedPoint!;
-                            oldresults[foundIndex].previousRays = newRays;
-                            return oldresults;
-                        });
+                        if (index === newResultPoints.length - 1 && combinedPoint) {
+                            const preciseX = combinedPoint.x.toPrecision(4);
+                            const preciseY = combinedPoint.y.toPrecision(4);
+                            const preciseZ = combinedPoint.z.toPrecision(4);
+                            props.mxScannedResult.setValue(newResult.id);
+                            props.mxPositionX.setValue(Big(preciseX.includes("e") ? 0 : preciseX));
+                            props.mxPositionY.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
+                            props.mxPositionZ.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
+                            props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting
+                                ? props.mxOnDataChanged.execute()
+                                : null;
+                            setPreviousResults(oldresults => {
+                                oldresults[foundIndex].mesh.position = combinedPoint!;
+                                oldresults[foundIndex].previousRays = newRays;
+                                return oldresults;
+                            });
+                        }
                     }
                 });
             } else {
                 const rays: Ray[] = [];
                 newResult.result.forEach(point => {
-                    const newRay = engineContext.scene!.pick(point.x, point.y).ray;
+                    const newRay = engineContext.scene!.createPickingRayInCameraSpace(
+                        point.x,
+                        point.y,
+                        clonedCamera.current
+                    ); // engineContext.scene!.pick(point.x, point.y).ray;
                     if (newRay) {
                         rays.push(newRay);
                     }
                 });
                 const createResult: PreviousResult = {
-                    mesh: MeshBuilder.CreateBox("newbox", { size: 0.1 }, engineContext.scene),
+                    mesh: MeshBuilder.CreateBox("newbox", { size: 0.01 }, engineContext.scene),
                     id: newResult.id,
                     previousRays: rays
                 };
                 setPreviousResults(prev => [...prev, createResult]);
             }
+            clonedCamera.current?.dispose();
         }
     }, [newResult, engineContext.scene]);
 }

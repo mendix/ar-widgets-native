@@ -3,11 +3,15 @@ import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/sr
 import { ValueStatus } from "mendix";
 import {
     ArcRotateCamera,
+    Camera,
+    Color3,
     Color4,
     CubeTexture,
     Engine,
     HemisphericLight,
     Mesh,
+    Ray,
+    RayHelper,
     Scene,
     Tools,
     Vector3,
@@ -20,6 +24,7 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const [parentID, setParentID] = useState<number>(NaN);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine>();
+    const [camera, setCamera] = useState<Camera>();
     const updateSize = useCallback(() => {
         if (engineRef.current) engineRef.current.resize();
     }, [engineRef.current]);
@@ -80,24 +85,40 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     },
                     optionalFeatures: true
                 });
+                console.log("set camera");
+                console.log(defaultXRExperience.baseExperience.camera);
+                console.log("Show ray");
+                RayHelper.CreateAndShow(
+                    defaultXRExperience.baseExperience.camera.getForwardRay(),
+                    newScene,
+                    new Color3(0.5, 0.5, 0)
+                );
+                setCamera(defaultXRExperience.baseExperience.camera);
                 if (!defaultXRExperience.baseExperience) {
                     console.log("No XR support");
                 } else {
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
-            instantiateWebXR();
+
             updateSize();
+            instantiateWebXR();
             return () => {
                 window.removeEventListener("resize", updateSize);
             };
         }
     }, [canvasRef.current]);
 
+    useEffect(() => {
+        console.log("camera");
+        console.log(camera);
+    }, [camera]);
+
     return (
         <EngineContext.Provider
             value={{
-                scene
+                scene,
+                camera
             }}
         >
             <div id="reader" />
