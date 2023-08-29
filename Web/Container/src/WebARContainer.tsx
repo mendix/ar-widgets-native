@@ -85,18 +85,11 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     },
                     optionalFeatures: true
                 });
-                console.log("set camera");
-                console.log(defaultXRExperience.baseExperience.camera);
-                console.log("Show ray");
-                RayHelper.CreateAndShow(
-                    defaultXRExperience.baseExperience.camera.getForwardRay(),
-                    newScene,
-                    new Color3(0.5, 0.5, 0)
-                );
-                setCamera(defaultXRExperience.baseExperience.camera);
+
                 if (!defaultXRExperience.baseExperience) {
                     console.log("No XR support");
                 } else {
+                    setCamera(defaultXRExperience.baseExperience.camera);
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
