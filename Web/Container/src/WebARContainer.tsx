@@ -99,11 +99,6 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         }
     }, [canvasRef.current]);
 
-    useEffect(() => {
-        console.log("camera");
-        console.log(camera);
-    }, [camera]);
-
     return (
         <EngineContext.Provider
             value={{
