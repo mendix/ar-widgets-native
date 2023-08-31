@@ -51,7 +51,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             const cameraToClone = engineContextCamera.current ?? sceneRef.current.activeCamera;
             if (clonedCamera.current && lastPosition.current) {
                 const distance = Vector3.Distance(cameraToClone!.position, lastPosition.current);
-                console.log(distance);
             }
             if (
                 !lastPosition.current ||
@@ -61,7 +60,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                 const myWorker = returnWorker();
                 myWorker.onmessage = event => {
                     if (event.data !== null) {
-                        console.log(event.data[1]);
                         lastPosition.current = clonedCamera.current!.position.clone();
                         const ResultPoints: ResultPoint[] = event.data[1];
                         ResultPoints.forEach(point => {
@@ -130,7 +128,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     video.play().then(() => {
                         videoRef.current = video;
                         stopped.current = false;
-                        console.log("Video started");
                         callDecodeWorker();
                     });
                 }
