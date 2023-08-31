@@ -1,18 +1,13 @@
 import React, { createElement, useState, useEffect, useRef, useContext, useCallback } from "react";
 import {
-    Color3,
-    Matrix,
     Mesh,
     MeshBuilder,
     PointerEventTypes,
-    PositionGizmo,
     Ray,
-    RayHelper,
     Scene,
     UniversalCamera,
     UtilityLayerRenderer,
     Vector3,
-    Viewport,
     WebXRCamera
 } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
@@ -37,6 +32,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const clonedCamera = useRef<UniversalCamera>();
     const sceneRef = useRef<Scene>();
     const utillayer = useRef<UtilityLayerRenderer>();
+    const lastPosition = useRef<Vector3>();
 
     const returnWorker = useCallback(() => {
         return new Worker("widgets/com/mendix/shared/Worker.js");
@@ -53,35 +49,55 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
             (engineContextCamera.current !== undefined || sceneRef.current?.activeCamera !== (undefined || null))
         ) {
             const cameraToClone = engineContextCamera.current ?? sceneRef.current.activeCamera;
-            const myWorker = returnWorker();
-            myWorker.onmessage = event => {
-                if (event.data !== null) {
-                    setNewResult({ id: event.data[0], result: event.data[1], camera: clonedCamera.current! });
-                } else {
-                    clonedCamera.current?.dispose();
-                }
-                myWorker.terminate();
-                if (scanning.current && !stopped.current) {
-                    callDecodeWorker();
-                } else {
-                    stopped.current = true;
-                }
-            };
-            const captureCanvas = createCaptureCanvas();
-            captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
-            const imgData = captureCanvas
-                ?.getContext("2d")
-                ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
-            if (clonedCamera.current !== undefined) {
-                clonedCamera.current.dispose();
+            if (clonedCamera.current && lastPosition.current) {
+                const distance = Vector3.Distance(cameraToClone!.position, lastPosition.current);
+                console.log(distance);
             }
-            myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
-            clonedCamera.current = new UniversalCamera(
-                "clonedCamera",
-                cameraToClone!.position.clone(),
-                sceneRef.current
-            );
-            clonedCamera.current.rotationQuaternion = cameraToClone!.absoluteRotation.clone();
+            if (
+                !lastPosition.current ||
+                clonedCamera.current === undefined ||
+                Vector3.Distance(cameraToClone!.position, lastPosition.current) > 0.1
+            ) {
+                const myWorker = returnWorker();
+                myWorker.onmessage = event => {
+                    if (event.data !== null) {
+                        console.log(event.data[1]);
+                        lastPosition.current = clonedCamera.current!.position.clone();
+                        const ResultPoints: ResultPoint[] = event.data[1];
+                        ResultPoints.forEach(point => {
+                            point.y -= 125;
+                        });
+                        setNewResult({ id: event.data[0], result: ResultPoints, camera: clonedCamera.current! });
+                    } else {
+                        clonedCamera.current?.dispose();
+                    }
+                    myWorker.terminate();
+                    if (scanning.current && !stopped.current) {
+                        callDecodeWorker();
+                    } else {
+                        stopped.current = true;
+                    }
+                };
+                const captureCanvas = createCaptureCanvas();
+                captureCanvas?.getContext("2d")?.drawImage(videoRef.current, 0, 0);
+                const imgData = captureCanvas
+                    ?.getContext("2d")
+                    ?.getImageData(0, 0, videoRef.current.width, videoRef.current.height);
+                if (clonedCamera.current !== undefined) {
+                    clonedCamera.current.dispose();
+                }
+                myWorker.postMessage([captureCanvas.width, captureCanvas.height, imgData]);
+                clonedCamera.current = new UniversalCamera(
+                    "clonedCamera",
+                    cameraToClone!.position.clone(),
+                    sceneRef.current
+                );
+                clonedCamera.current.rotationQuaternion = cameraToClone!.absoluteRotation.clone();
+            } else {
+                setTimeout(() => {
+                    if (!stopped.current && scanning.current) callDecodeWorker();
+                }, 250);
+            }
         }
     };
 
@@ -154,10 +170,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
         }
     };
 
-    function getAverageOfPoints(pointA: Vector3, pointB: Vector3) {
-        return new Vector3((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2, (pointA.z + pointB.z) / 2);
-    }
-
     useEffect(() => {
         const codeReader = new BrowserMultiFormatReader();
         codeReaderRef.current = codeReader;
@@ -205,17 +217,14 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     if (newResult.camera) {
                         const newRay = sceneRef.current!.pick(point.x, point.y, undefined, false, newResult.camera).ray;
                         if (newRay) {
-                            RayHelper.CreateAndShow(
-                                newRay,
-                                engineContext.scene!,
-                                new Color3(index === 0 ? 1 : 0, index === 1 ? 1 : 0, index === 2 ? 1 : 0)
-                            );
+                            newRay.origin = newResult.camera.position.clone();
+
                             const prevRay = previousResult.previousRays[index];
                             if (newRay) {
                                 newRays.push(newRay);
                                 const closestPoint = closestPointOnTwoLines(prevRay, newRay);
                                 if (combinedPoint !== undefined) {
-                                    combinedPoint = getAverageOfPoints(combinedPoint, closestPoint);
+                                    combinedPoint = combinedPoint.add(closestPoint).scale(0.5);
                                 } else {
                                     combinedPoint = closestPoint;
                                 }
@@ -249,13 +258,12 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     }
                 });
                 const createResult: PreviousResult = {
-                    mesh: MeshBuilder.CreateBox("newbox", { size: 0.01 }, engineContext.scene),
+                    mesh: MeshBuilder.CreateBox("newbox", { size: 0 }, engineContext.scene),
                     id: newResult.id,
                     previousRays: rays
                 };
                 setPreviousResults(prev => [...prev, createResult]);
             }
-            console.log("dispose cloned camera");
             newResult.camera?.dispose();
         }
     }, [newResult, engineContext.scene]);
