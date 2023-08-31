@@ -1,7 +1,5 @@
 import React, { createElement, useState, useEffect, useRef, useContext, useCallback } from "react";
 import {
-    Mesh,
-    MeshBuilder,
     PointerEventTypes,
     Ray,
     Scene,
@@ -16,7 +14,7 @@ import { BrowserMultiFormatReader } from "@zxing/library/cjs";
 import Big from "big.js";
 
 type ResultPoint = { x: number; y: number; estimatedModuleSize: number; count: number };
-type PreviousResult = { id: string; mesh: Mesh; previousRays: Ray[] };
+type PreviousResult = { id: string; position: Vector3 | undefined; previousRays: Ray[] };
 
 export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
@@ -238,7 +236,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                                     ? props.mxOnDataChanged.execute()
                                     : null;
                                 setPreviousResults(oldresults => {
-                                    oldresults[foundIndex].mesh.position = combinedPoint!;
+                                    oldresults[foundIndex].position = combinedPoint!;
                                     oldresults[foundIndex].previousRays = newRays;
                                     return oldresults;
                                 });
@@ -255,7 +253,7 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
                     }
                 });
                 const createResult: PreviousResult = {
-                    mesh: MeshBuilder.CreateBox("newbox", { size: 0 }, engineContext.scene),
+                    position: undefined,
                     id: newResult.id,
                     previousRays: rays
                 };
