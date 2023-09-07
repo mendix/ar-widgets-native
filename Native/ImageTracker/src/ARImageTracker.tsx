@@ -1,11 +1,12 @@
 import React, { createElement, useContext, useEffect, useState } from "react";
+import Big from "big.js";
 import { Style } from "mendix";
+import { Image } from "react-native";
+import { Scene, Mesh } from "@babylonjs/core";
 import { ARImageTrackerProps } from "../typings/ARImageTrackerProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Scene, Mesh } from "@babylonjs/core";
 import { EngineContext, GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import Big from "big.js";
-import { Image } from "react-native";
+import fs from "react-native-fs";
 
 export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactElement | void {
     const globalContext = global as GlobalContext;
@@ -23,11 +24,20 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
 
     useEffect(() => {
         if (props.mxImage.value !== undefined) {
+            console.error("props.mxImage.value " + props.mxImage.value);
             if (typeof props.mxImage.value === "string") {
-                setImageURL(props.mxImage.value);
+                console.error("Type is string: " + props.mxImage.value);
             } else if (typeof props.mxImage.value === "number") {
-                setImageURL(Image.resolveAssetSource(props.mxImage.value).uri);
+                const resolvedImage = Image.resolveAssetSource(props.mxImage.value).uri;
+                const destinationPath = fs.CachesDirectoryPath + resolvedImage + ".png";
+                fs.copyFileRes(resolvedImage + ".png", destinationPath)
+                    .then(() => setImageURL(`file://${destinationPath}`))
+                    .catch(error => {
+                        console.log("Error copying file to " + destinationPath);
+                        console.error("Error: " + error);
+                    });
             } else if (typeof props.mxImage.value === "object") {
+                console.error("Type is object: " + props.mxImage.value);
                 setImageURL(`file://${props.mxImage.value.uri}`);
             } else {
                 if (imageURL !== undefined) {
