@@ -1,7 +1,8 @@
-import { Scene } from "@babylonjs/core";
+import { Scene, WebXRCamera } from "@babylonjs/core";
 
 export type EngineContext = {
     scene?: Scene;
+    camera: WebXRCamera;
     featuresManager?: WebXRFeaturesManager;
     xrActive: boolean;
     pinchScale: number;

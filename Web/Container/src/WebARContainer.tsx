@@ -3,6 +3,7 @@ import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/sr
 import { ValueStatus } from "mendix";
 import {
     ArcRotateCamera,
+    Camera,
     Color4,
     CubeTexture,
     Engine,
@@ -20,6 +21,7 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const [parentID, setParentID] = useState<number>(NaN);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine>();
+    const [camera, setCamera] = useState<Camera>();
     const updateSize = useCallback(() => {
         if (engineRef.current) engineRef.current.resize();
     }, [engineRef.current]);
@@ -80,14 +82,17 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     },
                     optionalFeatures: true
                 });
+
                 if (!defaultXRExperience.baseExperience) {
                     console.log("No XR support");
                 } else {
+                    setCamera(defaultXRExperience.baseExperience.camera);
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
-            instantiateWebXR();
+
             updateSize();
+            instantiateWebXR();
             return () => {
                 window.removeEventListener("resize", updateSize);
             };
@@ -97,7 +102,8 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     return (
         <EngineContext.Provider
             value={{
-                scene
+                scene,
+                camera
             }}
         >
             <div id="reader" />
