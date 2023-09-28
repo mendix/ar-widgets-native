@@ -4,7 +4,7 @@ import { ARCubeProps } from "../typings/ARCubeProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { MeshBuilder, Mesh, Scene, Texture } from "@babylonjs/core";
 import { Image } from "react-native";
-import fs from "react-native-fs";
+// import fs from "react-native-fs";
 
 export function ARCube(props: ARCubeProps<Style>): React.ReactElement | void {
     const { mxMaterialTexture } = props;
@@ -15,29 +15,12 @@ export function ARCube(props: ARCubeProps<Style>): React.ReactElement | void {
         setScene(scene);
     };
     const [texture, setTexture] = useState<Texture>();
-
     useEffect(() => {
         if (mxMaterialTexture && scene) {
             if (typeof mxMaterialTexture.value === "string") {
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "number") {
-                const resolvedImage = Image.resolveAssetSource(mxMaterialTexture.value);
-                console.log(resolvedImage);
-                fs.stat(`file://res/drawable/${resolvedImage.uri}`)
-                    .then(result => {
-                        console.log(result);
-                    })
-                    .catch(error => console.log(error));
-                fs.readFileRes(`${resolvedImage.uri}.png`, "base64")
-                    .then(base64Image => {
-                        console.log(`base 64: ${base64Image}`);
-                        setTexture(
-                            Texture.CreateFromBase64String(`data:image/png;base64,${base64Image}`, "texture", scene)
-                        );
-                    })
-                    .catch(error => {
-                        console.error("Error: " + error);
-                    });
+                setTexture(new Texture(Image.resolveAssetSource(mxMaterialTexture.value).uri, scene));
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(`file://${mxMaterialTexture.value.uri}`));
             }

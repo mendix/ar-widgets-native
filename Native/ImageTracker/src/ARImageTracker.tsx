@@ -1,12 +1,11 @@
 import React, { createElement, useContext, useEffect, useState } from "react";
 import Big from "big.js";
 import { Style } from "mendix";
-import { Image } from "react-native";
+import { Image, NativeModules, Platform } from "react-native";
 import { Scene, Mesh } from "@babylonjs/core";
 import { ARImageTrackerProps } from "../typings/ARImageTrackerProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { EngineContext, GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import fs from "react-native-fs";
 
 export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactElement | void {
     const globalContext = global as GlobalContext;
@@ -14,7 +13,6 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
     const [imageURL, setImageURL] = useState<string>();
-
     const handleSceneLoaded = (scene: Scene) => {
         const localImageTracker = new Mesh(props.name, scene);
         localImageTracker.setEnabled(false);
@@ -24,18 +22,22 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
 
     useEffect(() => {
         if (props.mxImage.value !== undefined) {
-            console.error("props.mxImage.value " + props.mxImage.value);
             if (typeof props.mxImage.value === "string") {
-                console.error("Type is string: " + props.mxImage.value);
+                setImageURL(props.mxImage.value);
             } else if (typeof props.mxImage.value === "number") {
-                const resolvedImage = Image.resolveAssetSource(props.mxImage.value).uri;
-                const destinationPath = fs.CachesDirectoryPath + resolvedImage + ".png";
-                fs.copyFileRes(resolvedImage + ".png", destinationPath)
-                    .then(() => setImageURL(`file://${destinationPath}`))
-                    .catch(error => {
-                        console.log("Error copying file to " + destinationPath);
-                        console.error("Error: " + error);
-                    });
+                const fs = NativeModules.RNFSManager ? require("react-native-fs") : null;
+                if (Platform.OS === "android" && fs !== null) {
+                    const resolvedImage = Image.resolveAssetSource(props.mxImage.value).uri;
+                    const destinationPath = `${fs.CachesDirectoryPath}/${resolvedImage}.png`;
+                    fs.copyFileRes(resolvedImage + ".png", destinationPath)
+                        .then(() => setImageURL(`file://${destinationPath}`))
+                        .catch((error: string) => {
+                            console.error("Error copying file to " + destinationPath);
+                            console.error("Error: " + error);
+                        });
+                } else {
+                    setImageURL(Image.resolveAssetSource(props.mxImage.value).uri);
+                }
             } else if (typeof props.mxImage.value === "object") {
                 console.error("Type is object: " + props.mxImage.value);
                 setImageURL(`file://${props.mxImage.value.uri}`);
