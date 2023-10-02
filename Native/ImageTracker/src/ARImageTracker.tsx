@@ -33,7 +33,6 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
                         console.error(error);
                     });
             } else if (typeof props.mxImage.value === "object") {
-                console.error("Type is object: " + props.mxImage.value);
                 setImageURL(`file://${props.mxImage.value.uri}`);
             } else {
                 if (imageURL !== undefined) {
