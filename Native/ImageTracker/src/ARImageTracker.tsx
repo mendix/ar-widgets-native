@@ -1,11 +1,11 @@
 import React, { createElement, useContext, useEffect, useState } from "react";
 import Big from "big.js";
 import { Style } from "mendix";
-import { Image, NativeModules, Platform } from "react-native";
 import { Scene, Mesh } from "@babylonjs/core";
 import { ARImageTrackerProps } from "../typings/ARImageTrackerProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { EngineContext, GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
+import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 
 export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactElement | void {
     const globalContext = global as GlobalContext;
@@ -25,19 +25,13 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
             if (typeof props.mxImage.value === "string") {
                 setImageURL(props.mxImage.value);
             } else if (typeof props.mxImage.value === "number") {
-                const fs = NativeModules.RNFSManager ? require("react-native-fs") : null;
-                if (Platform.OS === "android" && fs !== null) {
-                    const resolvedImage = Image.resolveAssetSource(props.mxImage.value).uri;
-                    const destinationPath = `${fs.CachesDirectoryPath}/${resolvedImage}.png`;
-                    fs.copyFileRes(resolvedImage + ".png", destinationPath)
-                        .then(() => setImageURL(`file://${destinationPath}`))
-                        .catch((error: string) => {
-                            console.error("Error copying file to " + destinationPath);
-                            console.error("Error: " + error);
-                        });
-                } else {
-                    setImageURL(Image.resolveAssetSource(props.mxImage.value).uri);
-                }
+                retrieveImageFromNumber(props.mxImage.value)
+                    .then(uri => {
+                        setImageURL(uri);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             } else if (typeof props.mxImage.value === "object") {
                 console.error("Type is object: " + props.mxImage.value);
                 setImageURL(`file://${props.mxImage.value.uri}`);

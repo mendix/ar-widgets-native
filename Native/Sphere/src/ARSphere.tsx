@@ -3,7 +3,7 @@ import { Style } from "mendix";
 import { ARSphereProps } from "../typings/ARSphereProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { MeshBuilder, Mesh, Scene, Texture } from "@babylonjs/core";
-import { Image } from "react-native";
+import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 
 export function ARSphere(props: ARSphereProps<Style>): ReturnType<typeof MeshComponent> {
     const { mxMaterialTexture } = props;
@@ -22,7 +22,13 @@ export function ARSphere(props: ARSphereProps<Style>): ReturnType<typeof MeshCom
             if (typeof mxMaterialTexture.value === "string") {
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "number") {
-                setTexture(new Texture(Image.resolveAssetSource(mxMaterialTexture.value).uri, scene));
+                retrieveImageFromNumber(mxMaterialTexture.value)
+                    .then(uri => {
+                        setTexture(new Texture(uri, scene));
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(`file://${mxMaterialTexture.value.uri}`));
             }
