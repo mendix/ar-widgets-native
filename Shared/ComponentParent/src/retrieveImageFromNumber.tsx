@@ -27,7 +27,6 @@ export function retrieveImageFromNumber(numberImage: number): Promise<string> {
                     reject(error);
                 });
         } else {
-            console.error("using old way of retrieving file");
             resolve(Image.resolveAssetSource(numberImage).uri);
         }
     });
