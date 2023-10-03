@@ -56,7 +56,7 @@
         "babylonjs-gltf2interface": "^6.8.1",
         "base-64": "^1.0.0",
         "fs-extra": "^7.0.1",
-        "patch-package": "^6.5.1",
+        "patch-package": "^8.0.0",
         "react-native-fs": "^2.20.0",
         "utf8": "^3.0.0"
     }
