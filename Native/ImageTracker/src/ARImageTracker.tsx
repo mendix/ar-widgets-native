@@ -1,11 +1,11 @@
 import React, { createElement, useContext, useEffect, useState } from "react";
+import Big from "big.js";
 import { Style } from "mendix";
+import { Scene, Mesh } from "@babylonjs/core";
 import { ARImageTrackerProps } from "../typings/ARImageTrackerProps";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Scene, Mesh } from "@babylonjs/core";
 import { EngineContext, GlobalContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
-import Big from "big.js";
-import { Image } from "react-native";
+import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 
 export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactElement | void {
     const globalContext = global as GlobalContext;
@@ -13,7 +13,6 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
     const [imagetrackerParent, setImageTrackerParent] = useState<Mesh>();
     const [parentID, setParentID] = useState<number>(NaN);
     const [imageURL, setImageURL] = useState<string>();
-
     const handleSceneLoaded = (scene: Scene) => {
         const localImageTracker = new Mesh(props.name, scene);
         localImageTracker.setEnabled(false);
@@ -26,7 +25,13 @@ export function ARImageTracker(props: ARImageTrackerProps<Style>): React.ReactEl
             if (typeof props.mxImage.value === "string") {
                 setImageURL(props.mxImage.value);
             } else if (typeof props.mxImage.value === "number") {
-                setImageURL(Image.resolveAssetSource(props.mxImage.value).uri);
+                retrieveImageFromNumber(props.mxImage.value)
+                    .then(uri => {
+                        setImageURL(uri);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             } else if (typeof props.mxImage.value === "object") {
                 setImageURL(`file://${props.mxImage.value.uri}`);
             } else {

@@ -7,7 +7,7 @@ import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { MeshComponent } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { AR3DObjectProps } from "../typings/AR3DObjectProps";
 import { Scene } from "@babylonjs/core/scene";
-import { Image } from "react-native";
+import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 import { Texture } from "@babylonjs/core";
 
 export const AR3DObject = (props: AR3DObjectProps<Style>) => {
@@ -22,7 +22,13 @@ export const AR3DObject = (props: AR3DObjectProps<Style>) => {
             if (typeof mxMaterialTexture.value === "string") {
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "number") {
-                setTexture(new Texture(Image.resolveAssetSource(mxMaterialTexture.value).uri, scene));
+                retrieveImageFromNumber(mxMaterialTexture.value)
+                    .then(uri => {
+                        setTexture(new Texture(uri, scene));
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(`file://${mxMaterialTexture.value.uri}`));
             }

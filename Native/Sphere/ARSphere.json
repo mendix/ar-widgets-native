@@ -1,0 +1,6 @@
+{
+    "nativeDependencies": {
+        "react-native-fs": "2.20.0",
+        "base-64": "1.0.0"
+    }
+}

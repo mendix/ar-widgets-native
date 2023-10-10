@@ -9,7 +9,7 @@
     "packagePath": "mendix",
     "scripts": {
         "postinstall": "patch-package",
-        "buildAllNative": "npm run --prefix \"./Native/3DObject\" build && npm run --prefix \"./Native/Cube\" build && npm run --prefix \"./Native/ImageTracker\" build && npm run --prefix \"./Native/Node\" build && npm run --prefix \"./Native/Sphere\" build && npm run --prefix \"./Native/Square\" build && npm run --prefix \"./Native/Container\" build && npm run --prefix \"./Native/ImageTracker\" build",
+        "buildAllNative": "npm run --prefix \"./Native/3DObject\" build && npm run --prefix \"./Native/Cube\" build && npm run --prefix \"./Native/Node\" build && npm run --prefix \"./Native/Sphere\" build && npm run --prefix \"./Native/Square\" build && npm run --prefix \"./Native/Container\" build && npm run --prefix \"./Native/ImageTracker\" build",
         "buildReleaseNative": "npm run --prefix \"./Native/Cube\" releaseWithPrettier && npm run --prefix \"./Native/Sphere\" releaseWithPrettier && npm run --prefix \"./Native/Square\" releaseWithPrettier && npm run --prefix \"./Native/Node\" releaseWithPrettier && npm run --prefix \"./Native/Container\" releaseWithPrettier && npm run --prefix \"./Native/3DObject\" releaseWithPrettier && npm run --prefix \"./Native/ImageTracker\" releaseWithPrettier",
         "moveReleasesNative": "mkdir Native/Release && npm run --prefix \"./Native/Cube\" moveRelease && npm run --prefix \"./Native/Sphere\" moveRelease && npm run --prefix \"./Native/Square\" moveRelease && npm run --prefix \"./Native/Node\" moveRelease && npm run --prefix \"./Native/Container\" moveRelease && npm run --prefix \"./Native/3DObject\" moveRelease && npm run --prefix \"./Native/ImageTracker\" moveRelease",
         "buildAllWeb": "npm run --prefix \"./Web/Cube\" build && npm run --prefix \"./Web/ImageTracker\" build && npm run --prefix \"./Web/Sphere\" build && npm run --prefix \"./Web/Square\" build && npm run --prefix \"./Web/Node\" build && npm run --prefix \"./Web/Container\" build && npm run --prefix \"./Web/3DObject\" build",
@@ -18,7 +18,7 @@
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "@mendix/pluggable-widgets-tools": "9.24.0",
+        "@mendix/pluggable-widgets-tools": "10.0.1",
         "@prettier/plugin-xml": "3.0.0",
         "@react-navigation/native": "^6.0.4",
         "@rollup/plugin-node-resolve": "^15.0.1",
@@ -34,7 +34,7 @@
         "bufferutil": "^4.0.3",
         "eslint": "^7.32.0",
         "lodash": "^4.17.20",
-        "prettier": "^3.0.0",
+        "prettier": "3.0.3",
         "react": "18.2.0",
         "react-native": "0.70.7",
         "react-native-gesture-handler": "1.10.3",
@@ -45,7 +45,8 @@
         "rollup-plugin-bundle-size": "^1.0.3",
         "rollup-plugin-copy": "^3.4.0",
         "typescript-eslint": "^0.0.1-alpha.0",
-        "utf-8-validate": "^5.0.5"
+        "utf-8-validate": "^5.0.5",
+        "eslint-plugin-prettier": "5.0.0"
     },
     "dependencies": {
         "@babylonjs/core": "5.46.0",
@@ -54,6 +55,10 @@
         "@babylonjs/react-native-iosandroid-0-70": "1.5.1",
         "@zxing/library": "^0.19.2",
         "babylonjs-gltf2interface": "^6.8.1",
-        "patch-package": "^7.0.1"
+        "base-64": "^1.0.0",
+        "fs-extra": "^7.0.1",
+        "patch-package": "^8.0.0",
+        "react-native-fs": "^2.20.0",
+        "utf8": "^3.0.0"
     }
 }

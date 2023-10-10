@@ -13,7 +13,10 @@ export default args => {
         "semver",
         "lru-cache",
         "yallist",
-        "lodash"
+        "lodash",
+        "base-64",
+        "utf8",
+        "react-native-fs"
     ];
 
     result.forEach(config => {
