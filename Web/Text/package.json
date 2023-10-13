@@ -25,6 +25,7 @@
         "release": "pluggable-widgets-tools release:web",
         "prettier": "prettier --write ./src/*.ts* ./typings/*",
         "releaseWithPrettier": "npm run prettier && npm run release",
+        "rollupfontjson": "npx rollup --config rollupFont.config.js",
         "moveRelease": "cp ./dist/1.0.0/* ../Release/"
     }
 }

@@ -26,6 +26,7 @@
         "prettier": "prettier --write ./src/*.tsx ./typings/*",
         "releaseWithPrettier": "npm run prettier && npm run release",
         "rollupzxinglibrary": "npx rollup --config rollupzxinglibrary.config.js",
-        "rollupworker": "npx rollup --config rollupWorker.config.js"
+        "rollupworker": "npx rollup --config rollupWorker.config.js",
+        "moveRelease": "cp ./dist/1.0.0/* ../Release/"
     }
 }

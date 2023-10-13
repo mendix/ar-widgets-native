@@ -1,0 +1,29 @@
+{
+    "name": "@mendix/artext",
+    "widgetName": "ARText",
+    "version": "3.1.3",
+    "description": "AR Text",
+    "copyright": "© Mendix Technology BV 2023. All rights reserved.",
+    "author": "Mendix",
+    "engines": {
+        "node": ">=12"
+    },
+    "config": {
+        "projectPath": "../../../ARWidgetsTestProject-main/"
+    },
+    "packagePath": "com.mendix.widget.native",
+    "scripts": {
+        "start": "pluggable-widgets-tools start:native",
+        "buildWithComponentParent": "npm run --prefix \"../ComponentParent\" && pluggable-widgets-tools build:native",
+        "build": "pluggable-widgets-tools build:native",
+        "format": "pluggable-widgets-tools format",
+        "lint": "pluggable-widgets-tools lint",
+        "lint:fix": "pluggable-widgets-tools lint:fix",
+        "prerelease": "npm run lint",
+        "prettier": "prettier --write ./typings/*",
+        "release": "pluggable-widgets-tools release:native",
+        "releaseWithPrettier": "npm run prettier && npm run release",
+        "moveRelease": "cp ./dist/$npm_package_version/* ../Release/"
+    },
+    "license": "Apache-2.0"
+}

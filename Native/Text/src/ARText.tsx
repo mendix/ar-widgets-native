@@ -1,16 +1,19 @@
 import React, { createElement, useEffect, useRef, useState } from "react";
-import { WebARTextContainerProps } from "../typings/WebARTextProps";
+import { ARTextProps } from "../typings/ARTextProps";
+import { Style } from "mendix";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { IFontData, Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
+import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 import font from "../../../Shared/ComponentParent/src/Droid Sans_Regular.json";
 import earcut from "earcut";
 
-export function WebARText(props: WebARTextContainerProps): React.ReactElement {
+export function WebARText(props: ARTextProps<Style>): React.ReactElement {
     (window as any).earcut = earcut;
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
+    const [texture, setTexture] = useState<Texture>();
     const gizmoTransform = useGizmoComponent({
         mesh: mesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
@@ -33,7 +36,6 @@ export function WebARText(props: WebARTextContainerProps): React.ReactElement {
         }
         setScene(scene);
     };
-    const [texture, setTexture] = useState<Texture>();
 
     useEffect(() => {
         if (gizmoTransform.newPosition) {
@@ -56,10 +58,17 @@ export function WebARText(props: WebARTextContainerProps): React.ReactElement {
     useEffect(() => {
         if (mxMaterialTexture && scene) {
             if (typeof mxMaterialTexture.value === "string") {
-                //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
+            } else if (typeof mxMaterialTexture.value === "number") {
+                retrieveImageFromNumber(mxMaterialTexture.value)
+                    .then(uri => {
+                        setTexture(new Texture(uri, scene));
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             } else if (typeof mxMaterialTexture.value === "object") {
-                setTexture(new Texture(mxMaterialTexture.value.uri, scene));
+                setTexture(new Texture(`file://${mxMaterialTexture.value.uri}`));
             }
         }
     }, [mxMaterialTexture, scene]);
