@@ -4,6 +4,7 @@ Standard component to show 3D Text in AR.
 
 | Text (AR)                                                   |
 | ----------------------------------------------------------- |
+| Text: expression(String)                                    |
 | Position type: enumeration (Static, Attribute, Expression)  |
 | PositionX: Decimal, expression(Decimal), attribute(Decimal) |
 | PositionY: Decimal, expression(Decimal), attribute(Decimal) |
