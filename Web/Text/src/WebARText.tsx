@@ -1,8 +1,8 @@
-import React, { createElement, useEffect, useRef, useState } from "react";
+import React, { createElement, useEffect, useState } from "react";
 import { WebARTextContainerProps } from "../typings/WebARTextProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
-import { IFontData, Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
+import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import font from "../../../Shared/ComponentParent/src/Droid Sans_Regular.json";
 import earcut from "earcut";
 
@@ -19,11 +19,9 @@ export function WebARText(props: WebARTextContainerProps): React.ReactElement {
         gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
         color: props.mxGizmoColor.value ?? "#ffffff"
     });
-    const loadedFontData = useRef<IFontData>();
 
     const handleSceneLoaded = (scene: Scene) => {
-        loadedFontData.current = font;
-        const newMesh = MeshBuilder.CreateText("myText", props.mxText.value ?? "Hello World !! @ #$ % é", font, {
+        const newMesh = MeshBuilder.CreateText("myText", props.mxText.value ?? "", font, {
             resolution: 64,
             depth: 10
         });
@@ -54,9 +52,9 @@ export function WebARText(props: WebARTextContainerProps): React.ReactElement {
     }, [gizmoTransform.newScale]);
 
     useEffect(() => {
-        if (mxMaterialTexture && scene) {
+        if (mxMaterialTexture !== undefined && scene) {
             if (typeof mxMaterialTexture.value === "string") {
-                //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
+                // @ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(mxMaterialTexture.value.uri, scene));
@@ -65,20 +63,15 @@ export function WebARText(props: WebARTextContainerProps): React.ReactElement {
     }, [mxMaterialTexture, scene]);
 
     useEffect(() => {
-        if (props.mxText.value && loadedFontData.current !== undefined) {
+        if (props.mxText.value && font !== undefined) {
             mesh?.dispose();
-            const newMesh = MeshBuilder.CreateText(
-                "myText",
-                props.mxText.value ?? "Hello World !! @ #$ % é",
-                loadedFontData.current,
-                {
-                    resolution: 64,
-                    depth: 10
-                }
-            );
+            const newMesh = MeshBuilder.CreateText("myText", props.mxText.value ?? "", font, {
+                resolution: 64,
+                depth: 10
+            });
             if (newMesh) setMesh(newMesh);
         }
-    }, [props.mxText, loadedFontData.current]);
+    }, [props.mxText, font]);
 
     return (
         <MeshComponent

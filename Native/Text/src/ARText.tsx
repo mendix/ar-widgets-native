@@ -3,12 +3,12 @@ import { ARTextProps } from "../typings/ARTextProps";
 import { Style } from "mendix";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
-import { IFontData, Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
+import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 import font from "../../../Shared/ComponentParent/src/Droid Sans_Regular.json";
 import earcut from "earcut";
 
-export function WebARText(props: ARTextProps<Style>): React.ReactElement {
+export function ARText(props: ARTextProps<Style>): React.ReactElement {
     (window as any).earcut = earcut;
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
@@ -22,14 +22,18 @@ export function WebARText(props: ARTextProps<Style>): React.ReactElement {
         gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
         color: props.mxGizmoColor.value ?? "#ffffff"
     });
-    const loadedFontData = useRef<IFontData>();
 
     const handleSceneLoaded = (scene: Scene) => {
-        loadedFontData.current = font;
-        const newMesh = MeshBuilder.CreateText("myText", props.mxText.value ?? "Hello World !! @ #$ % é", font, {
-            resolution: 64,
-            depth: 10
-        });
+        const newMesh = MeshBuilder.CreateText(
+            "myText",
+            props.mxText.value ?? "",
+            font,
+            {
+                resolution: 64,
+                depth: 10
+            },
+            scene
+        );
         if (newMesh) {
             newMesh.scaling = Vector3.Zero();
             setMesh(newMesh);
@@ -74,20 +78,21 @@ export function WebARText(props: ARTextProps<Style>): React.ReactElement {
     }, [mxMaterialTexture, scene]);
 
     useEffect(() => {
-        if (props.mxText.value && loadedFontData.current !== undefined) {
+        if (props.mxText.value && font !== undefined && scene) {
             mesh?.dispose();
             const newMesh = MeshBuilder.CreateText(
                 "myText",
-                props.mxText.value ?? "Hello World !! @ #$ % é",
-                loadedFontData.current,
+                props.mxText.value ?? "",
+                font,
                 {
                     resolution: 64,
                     depth: 10
-                }
+                },
+                scene
             );
             if (newMesh) setMesh(newMesh);
         }
-    }, [props.mxText, loadedFontData.current]);
+    }, [props.mxText, font]);
 
     return (
         <MeshComponent
