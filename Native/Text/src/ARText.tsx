@@ -5,7 +5,7 @@ import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/sr
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
-import font from "../../../Shared/ComponentParent/src/Droid Sans_Regular.json";
+import font from "../../../Shared/ComponentParent/utils/Open Sans_Regular.json";
 import earcut from "earcut";
 
 export function ARText(props: ARTextProps<Style>): React.ReactElement {

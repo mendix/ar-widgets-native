@@ -3,7 +3,7 @@ import { WebARTextContainerProps } from "../typings/WebARTextProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
-import font from "../../../Shared/ComponentParent/src/Droid Sans_Regular.json";
+import font from "../../../Shared/ComponentParent/utils/Open Sans_Regular.json";
 import earcut from "earcut";
 
 export function WebARText(props: WebARTextContainerProps): React.ReactElement {
