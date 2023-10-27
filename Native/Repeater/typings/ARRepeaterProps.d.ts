@@ -1,9 +1,9 @@
 /**
  * This file was generated from ARRepeater.xml
  * WARNING: All changes made to this file will be overwritten
- * @author Mendix UI Content Team
+ * @author Mendix Widgets Framework Team
  */
-import { ComponentType, CSSProperties } from "react";
+import { ComponentType, CSSProperties, ReactNode } from "react";
 import { ListValue, ListWidgetValue } from "mendix";
 
 export interface ARRepeaterProps<Style> {
@@ -22,6 +22,6 @@ export interface ARRepeaterPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
-    datasource: {} | { type: string } | null;
-    content: { widgetCount: number; renderer: ComponentType<{ caption?: string }> };
+    datasource: {} | { caption: string } | { type: string } | null;
+    content: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
 }
