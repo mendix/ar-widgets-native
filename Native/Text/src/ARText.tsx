@@ -6,10 +6,9 @@ import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoC
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import { retrieveImageFromNumber } from "../../../Shared/ComponentParent/src/retrieveImageFromNumber";
 import font from "../../../Shared/ComponentParent/utils/Open Sans_Regular.json";
-import earcut from "earcut";
+import "../../../Shared/ComponentParent/utils/injectEarcut";
 
 export function ARText(props: ARTextProps<Style>): React.ReactElement {
-    (window as any).earcut = earcut;
     const { mxMaterialTexture, mxMaterialColor, mxDraggingEnabled, mxPinchEnabled, mxText, ...restProps } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();

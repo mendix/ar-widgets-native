@@ -4,10 +4,9 @@ import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/sr
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import font from "../../../Shared/ComponentParent/utils/Open Sans_Regular.json";
-import earcut from "earcut";
+import "../../../Shared/ComponentParent/utils/injectEarcut";
 
 export function WebARText(props: WebARTextContainerProps): React.ReactElement {
-    (window as any).earcut = earcut;
     const { mxMaterialTexture, mxText, name, tabIndex, style, ...restOfProps } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
