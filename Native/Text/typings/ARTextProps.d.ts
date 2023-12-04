@@ -66,9 +66,7 @@ export interface ARTextProps<Style> {
     mxOnDrag?: ActionValue;
     mxUsePinchInteraction: boolean;
     mxPinchEnabled: DynamicValue<boolean>;
-    mxPinchRotationEnabled: DynamicValue<boolean>;
-    mxGizmoColor: DynamicValue<string>;
-    mxGizmoSize: DynamicValue<Big>;
+    mxPinchToScaleEnabled: boolean;
     mxOnPinchActionValue?: ActionValue;
     mxOnClick?: ActionValue;
     mxOnHoverEnter?: ActionValue;
@@ -128,9 +126,7 @@ export interface ARTextPreviewProps {
     mxOnDrag: {} | null;
     mxUsePinchInteraction: boolean;
     mxPinchEnabled: string;
-    mxPinchRotationEnabled: string;
-    mxGizmoColor: string;
-    mxGizmoSize: string;
+    mxPinchToScaleEnabled: boolean;
     mxOnPinchActionValue: {} | null;
     mxOnClick: {} | null;
     mxOnHoverEnter: {} | null;

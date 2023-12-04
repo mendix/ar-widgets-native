@@ -1,5 +1,5 @@
 import typescript from "@rollup/plugin-typescript";
-
+import rollupJson from "@rollup/plugin-json";
 import commonjs from "@rollup/plugin-commonjs";
 
 export default args => {
@@ -11,7 +11,8 @@ export default args => {
             typescript({
                 include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
             }),
-            commonjs()
+            commonjs(),
+            rollupJson()
         );
         config.output.paths = {
             ...config.output.paths,
