@@ -31,12 +31,14 @@ export function useGizmoComponent(gizmoProps: Gizmo): GizmoReturn {
                 gizmo.dispose();
                 setGizmo(undefined);
             } else {
+                if (mesh && gizmo.attachedMesh?.uniqueId !== mesh?.uniqueId) {
+                    gizmo.attachedMesh = mesh;
+                }
                 gizmo.updateBoundingBox();
             }
         } else if (draggingEnabled && mesh) {
             setGizmo(createGizmo(mesh));
             initReturnTransform(mesh);
-
             if (dragBehaviour === undefined) {
                 setDragBehaviour(createDragBehaviour(mesh));
             } else {
@@ -121,7 +123,7 @@ export function useGizmoComponent(gizmoProps: Gizmo): GizmoReturn {
         const newDragBehaviour = new PointerDragBehavior();
         newDragBehaviour.attach(mesh);
         newDragBehaviour.onDragEndObservable.add(() => {
-            setReturnPosition(mesh!.position.clone());
+            setReturnPosition(mesh.position.clone());
         });
         return newDragBehaviour;
     };

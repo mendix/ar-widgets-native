@@ -25,6 +25,16 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const updateSize = useCallback(() => {
         if (engineRef.current) engineRef.current.resize();
     }, [engineRef.current]);
+    const countFrames = useRef<number>(0);
+    const onTenthFrame = () => {
+        if (countFrames.current > 10) {
+            //Wait 10 frames to do the resize, since it's changing still after the first frames
+            if (engineRef.current) engineRef.current.resize();
+            engineRef.current?.onEndFrameObservable.removeCallback(onTenthFrame);
+        } else {
+            countFrames.current++;
+        }
+    };
 
     useEffect(() => {
         // If we want realistic lighting, use the provided environment map
@@ -65,9 +75,11 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
 
             setParent(newParent);
             setParentID(newParent.uniqueId);
+
             engine.runRenderLoop(function () {
                 newScene.render();
             });
+            engine.onEndFrameObservable.add(onTenthFrame);
 
             if (parent) {
                 parent.rotation = Vector3.Zero();
@@ -90,9 +102,8 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
-
-            updateSize();
             instantiateWebXR();
+
             return () => {
                 window.removeEventListener("resize", updateSize);
             };

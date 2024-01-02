@@ -123,8 +123,8 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     useEffect(() => {
         if (rootMesh && !meshRef.current) meshRef.current = rootMesh;
-        if (rootMesh && !isNaN(parentContext)) {
-            const localParentMesh = engineContext.scene?.getMeshByUniqueId(parentContext);
+        if (rootMesh && !isNaN(parentContext) && engineContext.scene) {
+            const localParentMesh = engineContext.scene.getMeshByUniqueId(parentContext);
             if (localParentMesh) {
                 rootMesh.setParent(localParentMesh);
             }

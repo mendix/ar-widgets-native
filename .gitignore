@@ -6,8 +6,6 @@ tests/testProject/
 .DS_Store
 **/.DS_Store
 */package-lock.json
-Shared/ComponentParent/src/*.js*
-Shared/ComponentParent/utils/*.js*
 # Web/Container/src/bundle/babylonjscore.js
 **/**/**/bundle/*
 Native/Release

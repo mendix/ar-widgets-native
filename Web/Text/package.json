@@ -1,12 +1,12 @@
 {
-    "name": "@mendix/webarimagetracker",
-    "widgetName": "WebARImageTracker",
+    "name": "@mendix/webartext",
+    "widgetName": "WebARText",
     "version": "1.0.0",
-    "description": "ImageTracker AR",
+    "description": "A text",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",
     "author": "Mendix",
     "engines": {
-        "imagetracker": ">=12"
+        "node": ">=12"
     },
     "license": "Apache-2.0",
     "config": {
@@ -23,10 +23,9 @@
         "lint:fix": "pluggable-widgets-tools lint:fix",
         "prerelease": "npm run lint",
         "release": "pluggable-widgets-tools release:web",
-        "prettier": "prettier --write ./src/*.tsx ./typings/*",
+        "prettier": "prettier --write ./src/*.ts* ./typings/*",
         "releaseWithPrettier": "npm run prettier && npm run release",
-        "rollupzxinglibrary": "npx rollup --config rollupzxinglibrary.config.js",
-        "rollupworker": "npx rollup --config rollupWorker.config.js",
+        "rollupfontjson": "npx rollup --config rollupFont.config.js",
         "moveRelease": "cp ./dist/1.0.0/* ../Release/"
     }
 }
