@@ -1,0 +1,28 @@
+{
+  "name": "arrepeater",
+  "widgetName": "ARRepeater",
+  "version": "1.0.0",
+  "description": "Repeater AR",
+  "copyright": "© Mendix Technology BV 2022. All rights reserved.",
+  "author": "Mendix",
+  "engines": {
+    "node": ">=12"
+  },
+  "license": "Apache-2.0",
+  "config": {
+    "projectPath": "../../../ARWidgetsTestProject-main/"
+  },
+  "packagePath": "com.mendix.widget.native",
+  "scripts": {
+    "start": "pluggable-widgets-tools start:server",
+    "dev": "pluggable-widgets-tools start:native",
+    "build": "pluggable-widgets-tools build:native",
+    "lint": "pluggable-widgets-tools lint",
+    "lint:fix": "pluggable-widgets-tools lint:fix",
+    "prerelease": "npm run lint",
+    "release": "pluggable-widgets-tools release:native",
+    "prettier": "prettier --write ./src/*.tsx ./typings/*",
+    "releaseWithPrettier": "npm run prettier && npm run release",
+    "moveRelease": "cp ./dist/$npm_package_version/* ../Release/"
+  }
+}
