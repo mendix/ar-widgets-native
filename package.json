@@ -51,12 +51,12 @@
         "utf-8-validate": "^5.0.5"
     },
     "dependencies": {
-        "@babylonjs/core": "6.4.1",
-        "@babylonjs/loaders": "6.4.1",
-        "@babylonjs/react-native": "1.5.1",
-        "@babylonjs/react-native-iosandroid-0-70": "1.5.1",
+        "@babylonjs/core": "6.8.1",
+        "@babylonjs/loaders": "6.8.1",
+        "@babylonjs/react-native": "1.6.3",
+        "@babylonjs/react-native-iosandroid-0-71": "1.6.3",
         "@zxing/library": "^0.19.2",
-        "babylonjs-gltf2interface": "^6.8.1",
+        "babylonjs-gltf2interface": "6.8.1",
         "base-64": "^1.0.0",
         "earcut": "^2.2.4",
         "fs-extra": "^7.0.1",
