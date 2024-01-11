@@ -200,6 +200,7 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
                     disableTeleportation: true,
                     optionalFeatures: true
                 });
+
                 // If any exist, add the images that need to be tracked. This has to happen here, because they need to be added before starting the XR session
                 if (imageTrackingOptions !== undefined) {
                     const convertedImageOptions = {
@@ -235,6 +236,7 @@ export const ARContainer = (props: ARContainerProps<Style> & { mxVisible: boolea
                 });
                 scene.activeCamera = xr.baseExperience.camera;
                 setTrackingState(xr.baseExperience.camera.trackingState);
+
                 xr.baseExperience.camera.onTrackingStateChanged.add((newTrackingState: WebXRTrackingState) => {
                     setTrackingState(newTrackingState);
                 });
