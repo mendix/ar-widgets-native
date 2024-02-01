@@ -5,14 +5,13 @@ import {
     ArcRotateCamera,
     Camera,
     Color4,
+    CompatibilityOptions,
     CubeTexture,
     Engine,
-    HemisphericLight,
     Mesh,
     Scene,
     Tools,
     Vector3,
-    WebXRExperienceHelper,
     WebXRSessionManager,
     WebXRState
 } from "@babylonjs/core";
@@ -46,6 +45,7 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         // If we want realistic lighting, use the provided environment map
         if (scene && props.mxUsePBR && props.mxHdrPath?.status === ValueStatus.Available && scene.activeCamera) {
             const hdrTexture = CubeTexture.CreateFromPrefilteredData(props.mxHdrPath.value, scene);
+
             scene.environmentTexture = hdrTexture;
             setSkyBox(
                 scene.createDefaultSkybox(
@@ -59,17 +59,17 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
         }
     }, [scene, props.mxHdrPath, scene?.activeCamera]);
 
-    useEffect(() => {
-        if (skyBox !== undefined) {
-            console.log("skybox active: " + !xrActiveRef.current);
-            skyBox.setEnabled(!xrActiveRef.current);
-        }
-    }, [xrActiveRef.current, skyBox]);
+    // useEffect(() => {
+    //     if (skyBox !== undefined) {
+    //         skyBox.setEnabled(!xrActiveRef.current);
+    //     }
+    // }, [xrActiveRef.current, skyBox]);
 
     useEffect(() => {
         if (scene === undefined) {
             const engine = new Engine(canvasRef.current, true, { xrCompatible: true }, true);
             engineRef.current = engine;
+            CompatibilityOptions.UseOpenGLOrientationForUV = true;
             const newScene = new Scene(engine);
             newScene.clearColor = new Color4(0.5, 0.5, 0.5, 1);
 
@@ -112,7 +112,6 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     optionalFeatures: true
                 });
                 defaultXRExperience.baseExperience.onStateChangedObservable.add(state => {
-                    console.log(state);
                     if (state === WebXRState.ENTERING_XR) {
                         xrActiveRef.current = true;
                     } else if (state === WebXRState.EXITING_XR) {
@@ -124,7 +123,6 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     console.log("No XR support");
                 } else {
                     setCamera(defaultXRExperience.baseExperience.camera);
-
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };

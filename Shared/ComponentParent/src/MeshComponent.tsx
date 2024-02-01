@@ -5,6 +5,7 @@ import { EngineContext, GlobalContext, State } from "../typings/GlobalContextPro
 import {
     ActionManager,
     Color3,
+    CompatibilityOptions,
     ExecuteCodeAction,
     Mesh,
     PBRMaterial,
@@ -322,29 +323,13 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     const handlePBRMaterial = (mesh: Mesh, index: number, color?: Color3, texture?: Texture, aotexture?: Texture) => {
         if (engineContext.scene) {
-            // let mat = mesh.material;
-            // if (!(mesh.material instanceof PBRMaterial)) {
-            // let mat =
-            // if (mesh.material === null) {
-            //     console.log(mesh.name + " had no material");
             mesh.material = new PBRMaterial(mesh.name + index + "Material", engineContext.scene);
-            // }
-            // if (engineContext.scene.environmentTexture) {
-            //     console.log("reflectiontexture set");
-            //     (mesh.material as PBRMetallicRoughnessMaterial).environmentTexture =
-            //         engineContext.scene.environmentTexture;
-            // }
-            // }
-            // if (mesh.material instanceof PBRMetallicRoughnessMaterial) {
-            console.log("Setting new material of " + mesh.name);
             if (aotexture) {
                 (mesh.material as PBRMaterial).ambientTexture = aotexture;
-                console.log("Setting ambientTexture of " + mesh.name);
             }
             if (color) {
                 (mesh.material as PBRMaterial).albedoColor = color;
             } else if (texture) {
-                console.log("Setting normal texture of " + mesh.name);
                 (mesh.material as PBRMaterial).albedoTexture = texture;
             }
 

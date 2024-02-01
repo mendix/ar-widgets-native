@@ -1,7 +1,7 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebAR3DObjectContainerProps } from "../typings/WebAR3DObjectProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Color3, CompatibilityOptions, Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
+import { Mesh, Scene, SceneLoader, Texture } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
@@ -25,7 +25,6 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {
-            CompatibilityOptions.UseOpenGLOrientationForUV = true;
             if (typeof mxMaterialTexture.value === "string") {
                 //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
@@ -36,10 +35,7 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
     }, [mxMaterialTexture, scene]);
 
     useEffect(() => {
-        console.log("outside of ambient occlusion thing" + mxMaterialAmbientOcclusion);
         if (mxMaterialAmbientOcclusion && scene) {
-            CompatibilityOptions.UseOpenGLOrientationForUV = true;
-            console.log("there is an ambient occlusion thing");
             if (typeof mxMaterialAmbientOcclusion.value === "string") {
                 //@ts-ignore - for some reason it thinks mxMaterialAmbientOcclusion is of type never, code does work though
                 let tex = new Texture(mxMaterialAmbientOcclusion.value, scene);
@@ -74,7 +70,6 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
                 setRootMesh(models[0] as Mesh);
                 let castMeshes: Mesh[] = [];
                 models.forEach(abstractMesh => {
-                    console.log(abstractMesh.material?.getClassName());
                     abstractMesh.name = props.name;
                     castMeshes = [...castMeshes, abstractMesh as Mesh];
                 });
