@@ -20,6 +20,20 @@
                     <description>The distance in meters from the 3D objects to the preview camera.</description>
                 </property>
             </propertyGroup>
+             <propertyGroup caption="StartingPosition">
+                    <property key="mxPositionX" type="decimal" defaultValue="0.0">
+                        <caption>X</caption>
+                        <description />
+                    </property>
+                    <property key="mxPositionY" type="decimal" defaultValue="0.0">
+                        <caption>Y</caption>
+                        <description />
+                    </property>
+                    <property key="mxPositionZ" type="decimal" defaultValue="0.0">
+                        <caption>Z</caption>
+                        <description />
+                    </property>
+                </propertyGroup>
             <propertyGroup caption="Realistic lighting">
                 <property key="mxUsePBR" type="boolean" defaultValue="false">
                     <caption>Add realistic lighting</caption>

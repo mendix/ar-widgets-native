@@ -15,6 +15,9 @@ export interface WebARContainerContainerProps {
     mxContentWidget?: ReactNode;
     mxUsePreview: boolean;
     mxPreviewCameraDistance: Big;
+    mxPositionX: Big;
+    mxPositionY: Big;
+    mxPositionZ: Big;
     mxUsePBR: boolean;
     mxHdrPath?: DynamicValue<string>;
 }
@@ -31,6 +34,9 @@ export interface WebARContainerPreviewProps {
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxUsePreview: boolean;
     mxPreviewCameraDistance: number | null;
+    mxPositionX: number | null;
+    mxPositionY: number | null;
+    mxPositionZ: number | null;
     mxUsePBR: boolean;
     mxHdrPath: string;
 }

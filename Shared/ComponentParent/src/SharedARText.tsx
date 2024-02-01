@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ARTextProps } from "../typings/ARTextProps";
 import { setAttributes, MeshComponent } from "./MeshComponent";
 import { useGizmoComponent } from "./useGizmoComponent";
@@ -23,6 +23,7 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
     const global = globalThis;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
+    const currentText = useRef<string>();
     const gizmoTransform = useGizmo
         ? useGizmoComponent({
               mesh: mesh,
@@ -77,8 +78,9 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
     }, [useGizmo, gizmoTransform?.newPosition, gizmoTransform?.newRotation, gizmoTransform?.newScale]);
 
     useEffect(() => {
-        if (mxText.value && font !== undefined && scene) {
+        if (currentText.current !== mxText.value && font !== undefined && scene) {
             if (mesh) mesh.dispose();
+            currentText.current = mxText.value;
             const newMesh = MeshBuilder.CreateText(
                 "myText",
                 mxText.value ?? "",
@@ -91,7 +93,7 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
             );
             if (newMesh) setMesh(newMesh);
         }
-    }, [mxText, font]);
+    }, [mxText.value, font]);
 
     return (
         <MeshComponent

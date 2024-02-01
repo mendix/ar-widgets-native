@@ -12,7 +12,9 @@ import {
     Scene,
     Tools,
     Vector3,
-    WebXRSessionManager
+    WebXRExperienceHelper,
+    WebXRSessionManager,
+    WebXRState
 } from "@babylonjs/core";
 import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
 export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
@@ -22,49 +24,67 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine>();
     const [camera, setCamera] = useState<Camera>();
-    const updateSize = useCallback(() => {
-        if (engineRef.current) engineRef.current.resize();
-    }, [engineRef.current]);
-    const countFrames = useRef<number>(0);
-    const onTenthFrame = () => {
-        if (countFrames.current > 10) {
-            //Wait 10 frames to do the resize, since it's changing still after the first frames
-            if (engineRef.current) engineRef.current.resize();
-            engineRef.current?.onEndFrameObservable.removeCallback(onTenthFrame);
-        } else {
-            countFrames.current++;
-        }
-    };
+    const xrActiveRef = useRef<boolean>(false);
+    // const [xrActive, setXrActive] = useState<boolean>(false);
+    // const [skybox, setSkybox] = useState<Mesh | undefined>;
+    const [skyBox, setSkyBox] = useState<Mesh>();
+
+    useEffect(() => {
+        if (!canvasRef.current) return;
+        const resizeObserver = new ResizeObserver(() => {
+            if (!xrActiveRef.current) {
+                engineRef.current?.resize();
+            }
+
+            // Do what you want to do when the size of the element changes
+        });
+        resizeObserver.observe(canvasRef.current);
+        return () => resizeObserver.disconnect(); // clean up
+    }, []);
 
     useEffect(() => {
         // If we want realistic lighting, use the provided environment map
-        if (scene && props.mxUsePBR && props.mxHdrPath?.status === ValueStatus.Available) {
+        if (scene && props.mxUsePBR && props.mxHdrPath?.status === ValueStatus.Available && scene.activeCamera) {
             const hdrTexture = CubeTexture.CreateFromPrefilteredData(props.mxHdrPath.value, scene);
             scene.environmentTexture = hdrTexture;
+            setSkyBox(
+                scene.createDefaultSkybox(
+                    hdrTexture,
+                    true,
+                    (scene.activeCamera?.maxZ - scene.activeCamera.minZ) / 2,
+                    0.3,
+                    false
+                ) as Mesh
+            );
         }
-    }, [scene, props.mxHdrPath]);
+    }, [scene, props.mxHdrPath, scene?.activeCamera]);
+
+    useEffect(() => {
+        if (skyBox !== undefined) {
+            console.log("skybox active: " + !xrActiveRef.current);
+            skyBox.setEnabled(!xrActiveRef.current);
+        }
+    }, [xrActiveRef.current, skyBox]);
 
     useEffect(() => {
         if (scene === undefined) {
             const engine = new Engine(canvasRef.current, true, { xrCompatible: true }, true);
             engineRef.current = engine;
-            window.addEventListener("resize", () => {
-                updateSize();
-            });
             const newScene = new Scene(engine);
-
             newScene.clearColor = new Color4(0.5, 0.5, 0.5, 1);
+
             const camera = new ArcRotateCamera(
                 "MainCamera",
                 Tools.ToRadians(-90),
                 Tools.ToRadians(70),
                 Number(props.mxPreviewCameraDistance),
-                new Vector3(0, 0, 0),
+                new Vector3(props.mxPositionX.toNumber(), props.mxPositionY.toNumber(), props.mxPositionZ.toNumber()),
                 newScene
             );
+
             camera.minZ = 0.1;
             // This targets the camera to scene origin
-            new HemisphericLight("light", Vector3.Up(), newScene);
+            // new HemisphericLight("light", Vector3.Up(), newScene);
             setScene(newScene);
 
             // This attaches the camera to the canvas
@@ -72,14 +92,11 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
 
             // Add a parent so scene can be rotated in preview mode.
             const newParent = new Mesh("ContainerARParent", newScene);
-
             setParent(newParent);
             setParentID(newParent.uniqueId);
-
             engine.runRenderLoop(function () {
                 newScene.render();
             });
-            engine.onEndFrameObservable.add(onTenthFrame);
 
             if (parent) {
                 parent.rotation = Vector3.Zero();
@@ -94,19 +111,24 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                     },
                     optionalFeatures: true
                 });
+                defaultXRExperience.baseExperience.onStateChangedObservable.add(state => {
+                    console.log(state);
+                    if (state === WebXRState.ENTERING_XR) {
+                        xrActiveRef.current = true;
+                    } else if (state === WebXRState.EXITING_XR) {
+                        xrActiveRef.current = false;
+                    }
+                });
 
                 if (!defaultXRExperience.baseExperience) {
                     console.log("No XR support");
                 } else {
                     setCamera(defaultXRExperience.baseExperience.camera);
+
                     console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
                 }
             };
             instantiateWebXR();
-
-            return () => {
-                window.removeEventListener("resize", updateSize);
-            };
         }
     }, [canvasRef.current]);
 

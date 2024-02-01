@@ -1,17 +1,19 @@
 import React, { createElement, useEffect, useState } from "react";
 import { WebAR3DObjectContainerProps } from "../typings/WebAR3DObjectProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
-import { Color3, Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
+import { Color3, CompatibilityOptions, Mesh, Scene, SceneLoader, Texture, Vector3 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
-import { Gizmo, useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
+import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 
 export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactElement | void {
-    const { mxMaterialTexture } = props;
+    const { mxMaterialTexture, mxMaterialAmbientOcclusion } = props;
     const [rootMesh, setRootMesh] = useState<Mesh | undefined>();
     const [allMeshes, setAllMeshes] = useState<Mesh[] | undefined>();
     const [scene, setScene] = useState<Scene>();
     const [texture, setTexture] = useState<Texture>();
+    const [AOTexture, setAOTexture] = useState<Texture>();
+    const [rootMeshURLLoaded, setRootMeshURLLoaded] = useState<string>();
     const gizmoTransform = useGizmoComponent({
         mesh: rootMesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
@@ -23,6 +25,7 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
 
     useEffect(() => {
         if (mxMaterialTexture && scene) {
+            CompatibilityOptions.UseOpenGLOrientationForUV = true;
             if (typeof mxMaterialTexture.value === "string") {
                 //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
@@ -32,23 +35,47 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
         }
     }, [mxMaterialTexture, scene]);
 
+    useEffect(() => {
+        console.log("outside of ambient occlusion thing" + mxMaterialAmbientOcclusion);
+        if (mxMaterialAmbientOcclusion && scene) {
+            CompatibilityOptions.UseOpenGLOrientationForUV = true;
+            console.log("there is an ambient occlusion thing");
+            if (typeof mxMaterialAmbientOcclusion.value === "string") {
+                //@ts-ignore - for some reason it thinks mxMaterialAmbientOcclusion is of type never, code does work though
+                let tex = new Texture(mxMaterialAmbientOcclusion.value, scene);
+                // tex.invertZ = true;
+                setAOTexture(tex);
+            } else if (typeof mxMaterialAmbientOcclusion.value === "object") {
+                let tex = new Texture(mxMaterialAmbientOcclusion.value.uri, scene);
+                // tex.invertZ = true;
+                setAOTexture(tex);
+            }
+        }
+    }, [mxMaterialAmbientOcclusion, scene]);
+
     const handleSceneLoaded = (loadedScene: Scene) => {
         setScene(loadedScene);
         handleMesh(loadedScene);
     };
 
     useEffect(() => {
-        if (rootMesh) rootMesh.dispose();
-        if (scene) handleMesh(scene);
+        if (rootMeshURLLoaded !== props.mxSourceExpr.value) {
+            if (rootMesh) rootMesh.dispose();
+            if (scene) handleMesh(scene);
+            setRootMeshURLLoaded(props.mxSourceExpr.value);
+        }
     }, [props.mxSourceExpr.value]);
 
     const handleMesh = (scene: Scene) => {
         if (props.mxSourceExpr.value) {
             SceneLoader.ImportMesh("", props.mxSourceExpr.value, "", scene, models => {
                 models[0].rotationQuaternion = null;
+
                 setRootMesh(models[0] as Mesh);
                 let castMeshes: Mesh[] = [];
                 models.forEach(abstractMesh => {
+                    console.log(abstractMesh.material?.getClassName());
+                    abstractMesh.name = props.name;
                     castMeshes = [...castMeshes, abstractMesh as Mesh];
                 });
                 setAllMeshes(castMeshes);
@@ -113,6 +140,7 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
                 mxMaterialColor={props.mxMaterialColor.value ?? "#0CABF9"}
                 mxMaterialOption={props.mxMaterialOption}
                 texture={texture}
+                aOTexture={AOTexture}
                 mxMetalness={props.mxMetalness}
                 mxOpacity={props.mxOpacity}
                 mxRoughness={props.mxRoughness}

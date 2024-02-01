@@ -1,13 +1,5 @@
 import React, { createElement, useState, useEffect, useRef, useContext, useCallback } from "react";
-import {
-    PointerEventTypes,
-    Ray,
-    Scene,
-    UniversalCamera,
-    UtilityLayerRenderer,
-    Vector3,
-    WebXRCamera
-} from "@babylonjs/core";
+import { PointerEventTypes, Ray, Scene, UniversalCamera, Vector3, WebXRCamera } from "@babylonjs/core";
 import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader } from "@zxing/library/cjs";
@@ -29,7 +21,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     const engineContextCamera = useRef<WebXRCamera>();
     const clonedCamera = useRef<UniversalCamera>();
     const sceneRef = useRef<Scene>();
-    const utillayer = useRef<UtilityLayerRenderer>();
     const lastPosition = useRef<Vector3>();
 
     const returnWorker = useCallback(() => {
@@ -100,7 +91,6 @@ export function WebARImageTracker(props: WebARImageTrackerContainerProps): React
     useEffect(() => {
         if (engineContext.camera) {
             engineContextCamera.current = engineContext.camera;
-            utillayer.current = new UtilityLayerRenderer(sceneRef.current!);
         }
     }, [engineContext.camera]);
 
