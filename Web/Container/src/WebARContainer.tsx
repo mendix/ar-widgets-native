@@ -8,6 +8,8 @@ import {
     CompatibilityOptions,
     CubeTexture,
     Engine,
+    HemisphericLight,
+    Light,
     Mesh,
     Scene,
     Tools,
@@ -24,9 +26,8 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
     const engineRef = useRef<Engine>();
     const [camera, setCamera] = useState<Camera>();
     const xrActiveRef = useRef<boolean>(false);
-    // const [xrActive, setXrActive] = useState<boolean>(false);
-    // const [skybox, setSkybox] = useState<Mesh | undefined>;
-    const [skyBox, setSkyBox] = useState<Mesh>();
+    const skyboxRef = useRef<Mesh>();
+    const light = useRef<Light>();
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -34,11 +35,9 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             if (!xrActiveRef.current) {
                 engineRef.current?.resize();
             }
-
-            // Do what you want to do when the size of the element changes
         });
         resizeObserver.observe(canvasRef.current);
-        return () => resizeObserver.disconnect(); // clean up
+        return () => resizeObserver.disconnect();
     }, []);
 
     useEffect(() => {
@@ -47,23 +46,16 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             const hdrTexture = CubeTexture.CreateFromPrefilteredData(props.mxHdrPath.value, scene);
 
             scene.environmentTexture = hdrTexture;
-            setSkyBox(
-                scene.createDefaultSkybox(
-                    hdrTexture,
-                    true,
-                    (scene.activeCamera?.maxZ - scene.activeCamera.minZ) / 2,
-                    0.3,
-                    false
-                ) as Mesh
-            );
+            skyboxRef.current = scene.createDefaultSkybox(
+                hdrTexture,
+                true,
+                (scene.activeCamera?.maxZ - scene.activeCamera.minZ) / 2,
+                0.3,
+                false
+            ) as Mesh;
+            light.current?.setEnabled(false);
         }
     }, [scene, props.mxHdrPath, scene?.activeCamera]);
-
-    // useEffect(() => {
-    //     if (skyBox !== undefined) {
-    //         skyBox.setEnabled(!xrActiveRef.current);
-    //     }
-    // }, [xrActiveRef.current, skyBox]);
 
     useEffect(() => {
         if (scene === undefined) {
@@ -71,7 +63,10 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
             engineRef.current = engine;
             CompatibilityOptions.UseOpenGLOrientationForUV = true;
             const newScene = new Scene(engine);
-            newScene.clearColor = new Color4(0.5, 0.5, 0.5, 1);
+
+            newScene.clearColor = props.mxBackgroundColor?.value
+                ? Color4.FromHexString(props.mxBackgroundColor?.value)
+                : new Color4(1, 1, 1, 1);
 
             const camera = new ArcRotateCamera(
                 "MainCamera",
@@ -84,7 +79,8 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
 
             camera.minZ = 0.1;
             // This targets the camera to scene origin
-            // new HemisphericLight("light", Vector3.Up(), newScene);
+            light.current = new HemisphericLight("light", Vector3.Up(), newScene);
+
             setScene(newScene);
 
             // This attaches the camera to the canvas
@@ -113,8 +109,10 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
                 });
                 defaultXRExperience.baseExperience.onStateChangedObservable.add(state => {
                     if (state === WebXRState.ENTERING_XR) {
+                        skyboxRef.current?.setEnabled(false);
                         xrActiveRef.current = true;
                     } else if (state === WebXRState.EXITING_XR) {
+                        skyboxRef.current?.setEnabled(true);
                         xrActiveRef.current = false;
                     }
                 });

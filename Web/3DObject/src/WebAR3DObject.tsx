@@ -39,11 +39,9 @@ export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactEl
             if (typeof mxMaterialAmbientOcclusion.value === "string") {
                 //@ts-ignore - for some reason it thinks mxMaterialAmbientOcclusion is of type never, code does work though
                 let tex = new Texture(mxMaterialAmbientOcclusion.value, scene);
-                // tex.invertZ = true;
                 setAOTexture(tex);
             } else if (typeof mxMaterialAmbientOcclusion.value === "object") {
                 let tex = new Texture(mxMaterialAmbientOcclusion.value.uri, scene);
-                // tex.invertZ = true;
                 setAOTexture(tex);
             }
         }

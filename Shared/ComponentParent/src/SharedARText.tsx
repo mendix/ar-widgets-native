@@ -34,23 +34,26 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
               color: mxGizmoColor?.value ?? "#ffffff"
           })
         : null;
+    const textParent = useRef<Mesh>();
     const handleSceneLoaded = (newScene: Scene) => {
+        textParent.current = new Mesh("TextParent");
+        createTextMesh(newScene);
+        setScene(newScene);
+        props.handleSceneLoaded ? props.handleSceneLoaded(newScene) : null;
+    };
+    const createTextMesh = (scene: Scene) => {
         const newMesh = MeshBuilder.CreateText(
             "myText",
             mxText.value ?? "",
             font,
             {
+                size: 1,
                 resolution: 64,
-                depth: 10
+                depth: 1
             },
-            newScene
+            scene
         );
-        if (newMesh) {
-            newMesh.scaling = Vector3.Zero();
-            setMesh(newMesh);
-        }
-        setScene(newScene);
-        props.handleSceneLoaded ? props.handleSceneLoaded(newScene) : null;
+        if (newMesh) setMesh(newMesh);
     };
 
     useEffect(() => {
@@ -81,17 +84,7 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
         if (currentText.current !== mxText.value && font !== undefined && scene) {
             if (mesh) mesh.dispose();
             currentText.current = mxText.value;
-            const newMesh = MeshBuilder.CreateText(
-                "myText",
-                mxText.value ?? "",
-                font,
-                {
-                    resolution: 64,
-                    depth: 10
-                },
-                scene
-            );
-            if (newMesh) setMesh(newMesh);
+            createTextMesh(scene);
         }
     }, [mxText.value, font]);
 

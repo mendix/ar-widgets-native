@@ -206,14 +206,14 @@
                     <caption>Texture:</caption>
                     <description />
                 </property>
-                <property key="mxMaterialAmbientOcclusion" type="image" required="false">
-                    <caption>Ambient Occlusion Texture:</caption>
-                    <description />
-                </property>
                 <property key="mxMaterialColor" type="expression" defaultValue="'#0CABF9'">
                     <caption>Color:</caption>
                     <description>Using following format: #rrggbb</description>
                     <returnType type="String" />
+                </property>
+                <property key="mxMaterialAmbientOcclusion" type="image" required="false">
+                    <caption>Ambient Occlusion Texture:</caption>
+                    <description />
                 </property>
                 <property key="mxOpacity" type="expression" defaultValue="1">
                     <caption>Opacity:</caption>

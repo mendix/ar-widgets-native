@@ -57,8 +57,8 @@ export interface WebAR3DObjectContainerProps {
     mxScaleZExpr: DynamicValue<Big>;
     mxMaterialOption: MxMaterialOptionEnum;
     mxMaterialTexture?: DynamicValue<WebImage>;
-    mxMaterialAmbientOcclusion?: DynamicValue<WebImage>;
     mxMaterialColor: DynamicValue<string>;
+    mxMaterialAmbientOcclusion?: DynamicValue<WebImage>;
     mxOpacity: DynamicValue<Big>;
     mxLightingType: MxLightingTypeEnum;
     mxRoughness: DynamicValue<Big>;
@@ -120,8 +120,8 @@ export interface WebAR3DObjectPreviewProps {
     mxScaleZExpr: string;
     mxMaterialOption: MxMaterialOptionEnum;
     mxMaterialTexture: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
-    mxMaterialAmbientOcclusion: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
     mxMaterialColor: string;
+    mxMaterialAmbientOcclusion: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
     mxOpacity: string;
     mxLightingType: MxLightingTypeEnum;
     mxRoughness: string;

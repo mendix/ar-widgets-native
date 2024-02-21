@@ -13,11 +13,11 @@ export interface WebARContainerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     mxContentWidget?: ReactNode;
-    mxUsePreview: boolean;
     mxPreviewCameraDistance: Big;
     mxPositionX: Big;
     mxPositionY: Big;
     mxPositionZ: Big;
+    mxBackgroundColor: DynamicValue<string>;
     mxUsePBR: boolean;
     mxHdrPath?: DynamicValue<string>;
 }
@@ -32,11 +32,11 @@ export interface WebARContainerPreviewProps {
     styleObject?: CSSProperties;
     readOnly: boolean;
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
-    mxUsePreview: boolean;
     mxPreviewCameraDistance: number | null;
     mxPositionX: number | null;
     mxPositionY: number | null;
     mxPositionZ: number | null;
+    mxBackgroundColor: string;
     mxUsePBR: boolean;
     mxHdrPath: string;
 }

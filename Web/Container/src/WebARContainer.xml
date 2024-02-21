@@ -11,16 +11,12 @@
                     <caption>Add AR widgets</caption>
                     <description>Add an AR widget to go in the AR container.</description>
                 </property>
-                <property key="mxUsePreview" type="boolean" defaultValue="true">
-                    <caption>Show preview</caption>
-                    <description>If yes, a preview of the AR scene will be displayed first.</description>
-                </property>
                 <property key="mxPreviewCameraDistance" type="decimal" defaultValue="1.5">
                     <caption>Camera distance</caption>
                     <description>The distance in meters from the 3D objects to the preview camera.</description>
                 </property>
             </propertyGroup>
-             <propertyGroup caption="StartingPosition">
+             <propertyGroup caption="Starting position">
                     <property key="mxPositionX" type="decimal" defaultValue="0.0">
                         <caption>X</caption>
                         <description />
@@ -35,6 +31,11 @@
                     </property>
                 </propertyGroup>
             <propertyGroup caption="Realistic lighting">
+                <property key="mxBackgroundColor" type="expression" defaultValue="'#FFFFFF'">
+                    <caption>Background color:</caption>
+                    <description>Using following format: #rrggbb</description>
+                    <returnType type="String" />
+                </property>
                 <property key="mxUsePBR" type="boolean" defaultValue="false">
                     <caption>Add realistic lighting</caption>
                     <description>If yes, a path to an environment map is required.</description>
