@@ -31,9 +31,14 @@ export function WebARContainer(props: WebARContainerContainerProps): ReactElemen
 
     useEffect(() => {
         if (!canvasRef.current) return;
-        const resizeObserver = new ResizeObserver(() => {
+        const resizeObserver = new ResizeObserver(objectArray => {
             if (!xrActiveRef.current) {
-                engineRef.current?.resize();
+                window.requestAnimationFrame((): void | undefined => {
+                    if (!Array.isArray(objectArray) || !objectArray.length) {
+                        return;
+                    }
+                    engineRef.current?.resize();
+                });
             }
         });
         resizeObserver.observe(canvasRef.current);
