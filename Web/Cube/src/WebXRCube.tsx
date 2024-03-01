@@ -1,10 +1,10 @@
 import React, { createElement, useEffect, useState } from "react";
-import { WebARCubeContainerProps } from "../typings/WebARCubeProps";
+import { WebXRCubeContainerProps } from "../typings/WebXRCubeProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 
-export function WebARCube(props: WebARCubeContainerProps): React.ReactElement {
+export function WebXRCube(props: WebXRCubeContainerProps): React.ReactElement {
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
