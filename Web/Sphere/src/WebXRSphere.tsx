@@ -1,10 +1,10 @@
 import React, { createElement, useEffect, useState } from "react";
-import { WebARSphereContainerProps } from "../typings/WebARSphereProps";
+import { WebXRSphereContainerProps } from "../typings/WebXRSphereProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh, MeshBuilder, Scene, Texture, Vector3 } from "@babylonjs/core";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 
-export function WebARSphere(props: WebARSphereContainerProps): React.ReactElement | void {
+export function WebXRSphere(props: WebXRSphereContainerProps): React.ReactElement | void {
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
