@@ -1,5 +1,5 @@
 /**
- * This file was generated from WebAR3DObject.xml
+ * This file was generated from WebXR3DObject.xml
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix Widgets Framework Team
  */
@@ -19,7 +19,7 @@ export type MxLightingTypeEnum = "Simple" | "PBR";
 
 export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";
 
-export interface WebAR3DObjectContainerProps {
+export interface WebXR3DObjectContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
@@ -78,7 +78,7 @@ export interface WebAR3DObjectContainerProps {
     mxOnHoverExit?: ActionValue;
 }
 
-export interface WebAR3DObjectPreviewProps {
+export interface WebXR3DObjectPreviewProps {
     /**
      * @deprecated Deprecated since version 9.18.0. Please use class property instead.
      */

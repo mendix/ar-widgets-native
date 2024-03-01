@@ -1,12 +1,12 @@
 import React, { createElement, useEffect, useState } from "react";
-import { WebAR3DObjectContainerProps } from "../typings/WebAR3DObjectProps";
+import { WebXR3DObjectContainerProps } from "../typings/WebXR3DObjectProps";
 import { MeshComponent, setAttributes } from "../../../Shared/ComponentParent/src/MeshComponent";
 import { Mesh, Scene, SceneLoader, Texture } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/loaders/OBJ";
 import { useGizmoComponent } from "../../../Shared/ComponentParent/src/useGizmoComponent";
 
-export function WebAR3DObject(props: WebAR3DObjectContainerProps): React.ReactElement | void {
+export function WebXR3DObject(props: WebXR3DObjectContainerProps): React.ReactElement | void {
     const { mxMaterialTexture, mxMaterialAmbientOcclusion } = props;
     const [rootMesh, setRootMesh] = useState<Mesh | undefined>();
     const [allMeshes, setAllMeshes] = useState<Mesh[] | undefined>();
