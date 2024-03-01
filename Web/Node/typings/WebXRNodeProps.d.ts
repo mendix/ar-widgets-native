@@ -1,5 +1,5 @@
 /**
- * This file was generated from WebARNode.xml
+ * This file was generated from WebXRNode.xml
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix Widgets Framework Team
  */
@@ -17,7 +17,7 @@ export type MxScaleTypeEnum = "Static" | "Attribute" | "Expression";
 
 export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";
 
-export interface WebARNodeContainerProps {
+export interface WebXRNodeContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
@@ -69,7 +69,7 @@ export interface WebARNodeContainerProps {
     mxOnHoverExit?: ActionValue;
 }
 
-export interface WebARNodePreviewProps {
+export interface WebXRNodePreviewProps {
     /**
      * @deprecated Deprecated since version 9.18.0. Please use class property instead.
      */
