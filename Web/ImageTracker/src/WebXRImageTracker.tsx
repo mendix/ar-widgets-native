@@ -1,6 +1,6 @@
 import React, { createElement, useState, useEffect, useRef, useContext, useCallback } from "react";
 import { PointerEventTypes, Ray, Scene, UniversalCamera, Vector3, WebXRCamera } from "@babylonjs/core";
-import { WebARImageTrackerContainerProps } from "../typings/WebARImageTrackerProps";
+import { WebXRImageTrackerContainerProps } from "../typings/WebXRImageTrackerProps";
 import { GlobalContext, EngineContext } from "../../../Shared/ComponentParent/typings/GlobalContextProps";
 import { BrowserMultiFormatReader } from "@zxing/library/cjs";
 import Big from "big.js";
@@ -8,7 +8,7 @@ import Big from "big.js";
 type ResultPoint = { x: number; y: number; estimatedModuleSize: number; count: number };
 type PreviousResult = { id: string; position: Vector3 | undefined; previousRays: Ray[] };
 
-export function WebARImageTracker(props: WebARImageTrackerContainerProps): React.ReactElement | void {
+export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React.ReactElement | void {
     const global = globalThis;
     const engineContext: EngineContext = useContext((global as GlobalContext).EngineContext);
     const [newResult, setNewResult] = useState<{ id: string; result: ResultPoint[]; camera: UniversalCamera }>();

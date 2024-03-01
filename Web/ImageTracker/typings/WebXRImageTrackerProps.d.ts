@@ -1,5 +1,5 @@
 /**
- * This file was generated from WebARImageTracker.xml
+ * This file was generated from WebXRImageTracker.xml
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix Widgets Framework Team
  */
@@ -7,7 +7,7 @@ import { CSSProperties } from "react";
 import { ActionValue, EditableValue } from "mendix";
 import { Big } from "big.js";
 
-export interface WebARImageTrackerContainerProps {
+export interface WebXRImageTrackerContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
@@ -19,7 +19,7 @@ export interface WebARImageTrackerContainerProps {
     mxOnDataChanged?: ActionValue;
 }
 
-export interface WebARImageTrackerPreviewProps {
+export interface WebXRImageTrackerPreviewProps {
     /**
      * @deprecated Deprecated since version 9.18.0. Please use class property instead.
      */
