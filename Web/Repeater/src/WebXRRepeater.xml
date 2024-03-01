@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <widget
-  id="com.mendix.widget.web.webarrepeater.WebARRepeater"
+  id="com.mendix.widget.web.webxrrepeater.WebXRRepeater"
   pluginWidget="true"
   needsEntityContext="true"
   offlineCapable="true"

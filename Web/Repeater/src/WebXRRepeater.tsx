@@ -1,9 +1,9 @@
 import { createElement, ReactElement } from "react";
-import { WebARRepeaterContainerProps } from "../typings/WebARRepeaterProps";
+import { WebXRRepeaterContainerProps } from "../typings/WebXRRepeaterProps";
 import { ARSharedRepeater } from "../../../Shared/ComponentParent/src/SharedRepeater";
 
-export function WebARRepeater(
-  props: WebARRepeaterContainerProps
+export function WebXRRepeater(
+  props: WebXRRepeaterContainerProps,
 ): ReactElement {
   return (
     <ARSharedRepeater datasource={props.datasource} content={props.content} />

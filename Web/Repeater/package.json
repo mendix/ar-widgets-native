@@ -1,6 +1,6 @@
 {
-  "name": "webarrepeater",
-  "widgetName": "WebARRepeater",
+  "name": "webxrrepeater",
+  "widgetName": "WebXRRepeater",
   "version": "1.0.0",
   "description": "Repeater AR",
   "copyright": "© Mendix Technology BV 2022. All rights reserved.",
