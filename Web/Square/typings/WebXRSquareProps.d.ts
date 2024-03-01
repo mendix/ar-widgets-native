@@ -1,5 +1,5 @@
 /**
- * This file was generated from WebARSquare.xml
+ * This file was generated from WebXRSquare.xml
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix Widgets Framework Team
  */
@@ -19,7 +19,7 @@ export type MxLightingTypeEnum = "Simple" | "PBR";
 
 export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";
 
-export interface WebARSquareContainerProps {
+export interface WebXRSquareContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
@@ -76,7 +76,7 @@ export interface WebARSquareContainerProps {
     mxOnHoverExit?: ActionValue;
 }
 
-export interface WebARSquarePreviewProps {
+export interface WebXRSquarePreviewProps {
     /**
      * @deprecated Deprecated since version 9.18.0. Please use class property instead.
      */
