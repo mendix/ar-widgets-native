@@ -1,5 +1,5 @@
 /**
- * This file was generated from WebARText.xml
+ * This file was generated from WebXRText.xml
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix Widgets Framework Team
  */
@@ -19,7 +19,7 @@ export type MxLightingTypeEnum = "Simple" | "PBR";
 
 export type MxDragTypeEnum = "FixedDistance" | "FixedToWorld";
 
-export interface WebARTextContainerProps {
+export interface WebXRTextContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
@@ -77,7 +77,7 @@ export interface WebARTextContainerProps {
     mxOnHoverExit?: ActionValue;
 }
 
-export interface WebARTextPreviewProps {
+export interface WebXRTextPreviewProps {
     /**
      * @deprecated Deprecated since version 9.18.0. Please use class property instead.
      */

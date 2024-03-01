@@ -1,9 +1,9 @@
 import React, { createElement, useEffect, useState } from "react";
-import { WebARTextContainerProps } from "../typings/WebARTextProps";
+import { WebXRTextContainerProps } from "../typings/WebXRTextProps";
 import { SharedARText } from "../../../Shared/ComponentParent/src/SharedARText";
 import { Scene, Texture } from "@babylonjs/core";
 
-export function WebARText(props: WebARTextContainerProps): React.ReactElement {
+export function WebXRText(props: WebXRTextContainerProps): React.ReactElement {
     const { mxMaterialTexture } = props;
     const [texture, setTexture] = useState<Texture>();
     const [scene, setScene] = useState<Scene>();
