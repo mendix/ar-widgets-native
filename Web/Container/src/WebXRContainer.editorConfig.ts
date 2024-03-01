@@ -1,14 +1,14 @@
-import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
+import { WebXRContainerContainerProps } from "../typings/WebXRContainerProps";
 import { hidePropertyIn, Problem, Properties } from "@mendix/pluggable-widgets-tools";
 
-export function getProperties(values: WebARContainerContainerProps, defaultProperties: Properties): Properties {
+export function getProperties(values: WebXRContainerContainerProps, defaultProperties: Properties): Properties {
     if (!values.mxUsePBR) {
         hidePropertyIn(defaultProperties, values, "mxHdrPath");
     }
     return defaultProperties;
 }
 
-export function check(values: WebARContainerContainerProps): Problem[] {
+export function check(values: WebXRContainerContainerProps): Problem[] {
     const errors: Problem[] = [];
     if (values.mxUsePBR) {
         if (values.mxHdrPath?.toString() === "") {

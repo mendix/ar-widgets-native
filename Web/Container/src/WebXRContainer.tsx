@@ -17,8 +17,8 @@ import {
     WebXRSessionManager,
     WebXRState
 } from "@babylonjs/core";
-import { WebARContainerContainerProps } from "../typings/WebARContainerProps";
-export function WebARContainer(props: WebARContainerContainerProps): ReactElement {
+import { WebXRContainerContainerProps } from "../typings/WebXRContainerProps";
+export function WebXRContainer(props: WebXRContainerContainerProps): ReactElement {
     const [scene, setScene] = useState<Scene>();
     const [parent, setParent] = useState<Mesh | undefined>();
     const [parentID, setParentID] = useState<number>(NaN);
