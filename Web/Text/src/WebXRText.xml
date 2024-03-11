@@ -238,9 +238,9 @@
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="Interaction">
-            <propertyGroup caption="Dragging">
+            <propertyGroup caption="Interaction">
                 <property key="mxUseDraggingInteraction" type="boolean" defaultValue="false">
-                    <caption>Dragging:</caption>
+                    <caption>Use interaction interface:</caption>
                     <description />
                 </property>
                 <property key="mxDraggingEnabled" type="expression" defaultValue="false">
@@ -256,26 +256,26 @@
                         <enumerationValue key="FixedToWorld">Fixed to world</enumerationValue>
                     </enumerationValues>
                 </property>
+                <property key="mxScalingEnabled" type="expression" defaultValue="false">
+                    <caption>Enable scaling:</caption>
+                    <description />
+                    <returnType type="Boolean" />
+                </property>
+                <property key="mxRotationEnabled" type="expression" defaultValue="false">
+                    <caption>Enable rotation:</caption>
+                    <description />
+                    <returnType type="Boolean" />
+                </property>
                 <property key="mxOnDrag" type="action" required="false">
                     <caption>On drag</caption>
                     <description>Called when the object is dragged.</description>
                 </property>
+                <property key="mxOnScale" type="action" required="false">
+                    <caption>On scale</caption>
+                    <description>Called when pinch gesture is performed on object.</description>
+                </property>
             </propertyGroup>
-            <propertyGroup caption="Pinching">
-                <property key="mxUsePinchInteraction" type="boolean" defaultValue="false">
-                    <caption>Scaling interaction:</caption>
-                    <description />
-                </property>
-                <property key="mxPinchEnabled" type="expression" defaultValue="false">
-                    <caption>Enable scaling interface:</caption>
-                    <description />
-                    <returnType type="Boolean" />
-                </property>
-                <property key="mxPinchRotationEnabled" type="expression" defaultValue="false">
-                    <caption>Enable rotation interface:</caption>
-                    <description />
-                    <returnType type="Boolean" />
-                </property>
+            <propertyGroup caption="Interface settings">
                 <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
                     <caption>Scaling interface color:</caption>
                     <description>The color of the interface used for scaling and dragging the object. Using following format: #rrggbb</description>
@@ -286,10 +286,7 @@
                     <description>The size of the scaling gizmo in meters</description>
                     <returnType type="Decimal" />
                 </property>
-                <property key="mxOnPinchActionValue" type="action" required="false">
-                    <caption>On scale</caption>
-                    <description>Called when pinch gesture is performed on object.</description>
-                </property>
+
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="Events">

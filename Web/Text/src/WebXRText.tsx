@@ -21,12 +21,15 @@ export function WebXRText(props: WebXRTextContainerProps): React.ReactElement {
 
     return (
         <SharedARText
+            {...props}
+            mxUsePinchInteraction={false}
+            mxPinchEnabled={props.mxScalingEnabled}
+            mxPinchRotationEnabled={props.mxRotationEnabled}
             compiledTexture={texture}
             handleSceneLoaded={newScene => {
                 setScene(newScene);
             }}
             useGizmo={true}
-            {...props}
         />
     );
 }

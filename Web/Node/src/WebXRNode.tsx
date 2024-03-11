@@ -13,8 +13,8 @@ export function WebXRNode(props: WebXRNodeContainerProps): React.ReactElement | 
     const gizmoTransform = useGizmoComponent({
         mesh: nodeParent,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
-        pinchEnabled: props.mxPinchEnabled.value ?? false,
-        rotationEnabled: props.mxPinchRotationEnabled.value ?? false,
+        pinchEnabled: props.mxScalingEnabled.value ?? false,
+        rotationEnabled: props.mxRotationEnabled.value ?? false,
         gizmoSize: Number(props.mxGizmoSize.value) ?? 0.1,
         color: props.mxGizmoColor.value ?? "#ffffff"
     });
@@ -94,13 +94,11 @@ export function WebXRNode(props: WebXRNodeContainerProps): React.ReactElement | 
                 mxScaleZExpr={props.mxScaleZExpr}
                 OnSceneLoaded={handleSceneLoaded}
                 mxUseDraggingInteraction={props.mxUseDraggingInteraction}
-                mxUsePinchInteraction={props.mxUsePinchInteraction}
                 mxDraggingEnabled={props.mxDraggingEnabled.value ?? false}
                 mxDragType={props.mxDragType}
                 mxOnDrag={props.mxOnDrag}
-                mxPinchEnabled={props.mxPinchEnabled.value ?? false}
+                mxPinchEnabled={props.mxScalingEnabled.value ?? false}
                 mxPinchToScaleEnabled={false}
-                mxOnPinchActionValue={props.mxOnPinchActionValue}
                 mxOnHoverEnter={props.mxOnHoverEnter}
                 mxOnHoverExit={props.mxOnHoverExit}
                 mxOnClick={props.mxOnClick}

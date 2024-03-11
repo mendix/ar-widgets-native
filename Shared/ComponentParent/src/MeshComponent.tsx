@@ -428,12 +428,12 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     }, [rootMesh, engineContext.scene, mxDraggingEnabled, engineContext.featuresManager, engineContext.xrActive]);
 
     useEffect(() => {
-        if (rootMesh?.scaling && mxUsePinchInteraction && mxPinchToScaleEnabled && mxPinchEnabled) {
+        if (rootMesh?.scaling && mxPinchToScaleEnabled && mxPinchEnabled) {
             rootMesh.scaling.x = startScale.x * engineContext.pinchScale;
             rootMesh.scaling.y = startScale.y * engineContext.pinchScale;
             rootMesh.scaling.z = startScale.z * engineContext.pinchScale;
         }
-        if (mxPinchEnabled && mxUsePinchInteraction && mxOnPinchActionValue?.canExecute) {
+        if (mxPinchEnabled && mxOnPinchActionValue?.canExecute) {
             mxOnPinchActionValue.execute();
         }
     }, [engineContext.pinchScale]);
