@@ -9,7 +9,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../repeater_modules/mendix/custom_widget.xsd"
 >
-    <name>Repeater (AR)</name>
+    <name>Repeater (XR) - Beta</name>
     <description>Iterates over a data source and render a content</description>
     <studioProCategory>Augmented Reality</studioProCategory>
     <properties>

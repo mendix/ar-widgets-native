@@ -65,7 +65,6 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxOnDrag,
         mxOnHoverEnter,
         mxOnHoverExit,
-        mxUsePinchInteraction,
         mxOnPinchActionValue,
         mxPinchEnabled,
         mxPinchToScaleEnabled,
