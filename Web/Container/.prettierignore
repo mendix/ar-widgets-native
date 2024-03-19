@@ -1,0 +1,6 @@
+# Ignore artifacts:
+bundle
+coverage
+
+# Ignore all HTML files:
+src/bundle/*.js

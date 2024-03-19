@@ -5,8 +5,10 @@ import { EngineContext, GlobalContext, State } from "../typings/GlobalContextPro
 import {
     ActionManager,
     Color3,
+    CompatibilityOptions,
     ExecuteCodeAction,
     Mesh,
+    PBRMaterial,
     PBRMetallicRoughnessMaterial,
     Scene,
     StandardMaterial,
@@ -63,7 +65,6 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
         mxOnDrag,
         mxOnHoverEnter,
         mxOnHoverExit,
-        mxUsePinchInteraction,
         mxOnPinchActionValue,
         mxPinchEnabled,
         mxPinchToScaleEnabled,
@@ -78,6 +79,7 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     const [rotation, setRotation] = useState<Vector3>(Vector3.Zero);
     const [scale, setScale] = useState<Vector3>(Vector3.One);
     const [startScale, setStartScale] = useState<Vector3>(Vector3.One);
+    const [sceneLoaded, setSceneLoaded] = useState<Scene>();
     const meshRef = useRef<Mesh>();
     const setAction = (action: ActionValue, trigger: number, meshes: Mesh[]) => {
         meshes?.forEach(mesh => {
@@ -116,10 +118,11 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     }, [mxOnHoverExit, allMeshes]);
 
     useEffect(() => {
-        if (engineContext.scene) {
+        if (engineContext.scene && sceneLoaded === undefined) {
+            setSceneLoaded(engineContext.scene);
             OnSceneLoaded(engineContext.scene);
         }
-    }, [engineContext.scene]);
+    }, [engineContext.scene, sceneLoaded]);
 
     useEffect(() => {
         if (rootMesh && !meshRef.current) meshRef.current = rootMesh;
@@ -306,35 +309,36 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
             if (mxMaterialOption === "Color" && mxMaterialColor) {
                 color = Color3.FromHexString(mxMaterialColor);
             }
-            allMeshes?.forEach(childMesh => {
+            allMeshes?.forEach((childMesh, index) => {
                 if (mxLightingType === "PBR" && mxMaterialOption !== "Object") {
-                    handlePBRMaterial(childMesh, color, props.texture);
+                    handlePBRMaterial(childMesh, index, color, props.texture, props.aOTexture);
                 }
                 if (mxLightingType === "Simple" && mxMaterialOption !== "Object") {
                     handleSimpleMaterial(childMesh, color, props.texture);
                 }
             });
         }
-    }, [mxMaterialColor, props.texture, allMeshes, engineContext.scene]);
+    }, [mxMaterialColor, props.texture, props.aOTexture, allMeshes, engineContext.scene]);
 
-    const handlePBRMaterial = (mesh: Mesh, color?: Color3, texture?: Texture) => {
+    const handlePBRMaterial = (mesh: Mesh, index: number, color?: Color3, texture?: Texture, aotexture?: Texture) => {
         if (engineContext.scene) {
-            if (!(mesh.material instanceof PBRMetallicRoughnessMaterial)) {
-                mesh.material = new PBRMetallicRoughnessMaterial(mesh.name + "Material", engineContext.scene);
+            mesh.material = new PBRMaterial(mesh.name + index + "Material", engineContext.scene);
+            if (aotexture) {
+                (mesh.material as PBRMaterial).ambientTexture = aotexture;
             }
-            if (mesh.material instanceof PBRMetallicRoughnessMaterial) {
-                if (color) {
-                    mesh.material.baseColor = color;
-                } else if (texture) {
-                    mesh.material.baseTexture = texture;
-                }
-                if (mxRoughness?.status === ValueStatus.Available) {
-                    mesh.material.roughness = Number(mxRoughness.value);
-                }
-                if (mxMetalness?.status === ValueStatus.Available) {
-                    mesh.material.metallic = Number(mxMetalness.value);
-                }
+            if (color) {
+                (mesh.material as PBRMaterial).albedoColor = color;
+            } else if (texture) {
+                (mesh.material as PBRMaterial).albedoTexture = texture;
             }
+
+            if (mxRoughness?.status === ValueStatus.Available) {
+                (mesh.material as PBRMaterial).roughness = Number(mxRoughness.value);
+            }
+            if (mxMetalness?.status === ValueStatus.Available) {
+                (mesh.material as PBRMaterial).metallic = Number(mxMetalness.value);
+            }
+            // }
         }
     };
 
@@ -363,7 +367,7 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     useEffect(() => {
         allMeshes?.forEach(childMesh => {
-            if (mxRoughness?.value && childMesh && childMesh.material instanceof PBRMetallicRoughnessMaterial) {
+            if (mxRoughness?.value && childMesh && childMesh.material instanceof PBRMaterial) {
                 childMesh.material.roughness = Number(mxRoughness.value);
             }
         });
@@ -371,7 +375,7 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
 
     useEffect(() => {
         allMeshes?.forEach(childMesh => {
-            if (mxMetalness?.value && childMesh && childMesh.material instanceof PBRMetallicRoughnessMaterial) {
+            if (mxMetalness?.value && childMesh && childMesh.material instanceof PBRMaterial) {
                 childMesh.material.metallic = Number(mxMetalness.value);
             }
         });
@@ -423,12 +427,12 @@ export function MeshComponent(props: MeshComponentProps): React.ReactElement {
     }, [rootMesh, engineContext.scene, mxDraggingEnabled, engineContext.featuresManager, engineContext.xrActive]);
 
     useEffect(() => {
-        if (rootMesh?.scaling && mxUsePinchInteraction && mxPinchToScaleEnabled && mxPinchEnabled) {
+        if (rootMesh?.scaling && mxPinchToScaleEnabled && mxPinchEnabled) {
             rootMesh.scaling.x = startScale.x * engineContext.pinchScale;
             rootMesh.scaling.y = startScale.y * engineContext.pinchScale;
             rootMesh.scaling.z = startScale.z * engineContext.pinchScale;
         }
-        if (mxPinchEnabled && mxUsePinchInteraction && mxOnPinchActionValue?.canExecute) {
+        if (mxPinchEnabled && mxOnPinchActionValue?.canExecute) {
             mxOnPinchActionValue.execute();
         }
     }, [engineContext.pinchScale]);

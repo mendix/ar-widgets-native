@@ -1,6 +1,6 @@
 {
-    "name": "@mendix/webarsquare",
-    "widgetName": "WebARSquare",
+    "name": "@mendix/webxrsquare",
+    "widgetName": "WebXRSquare",
     "version": "1.0.0",
     "description": "A square",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",

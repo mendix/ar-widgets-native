@@ -1,6 +1,6 @@
 {
-    "name": "@mendix/webar3dobject",
-    "widgetName": "WebAR3DObject",
+    "name": "@mendix/webxr3dobject",
+    "widgetName": "WebXR3DObject",
     "version": "1.0.0",
     "description": "A cube",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",

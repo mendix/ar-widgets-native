@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="com.mendix.widget.web.webxrcube.WebXRCube" pluginWidget="true" needsEntityContext="true" offlineCapable="true" supportedPlatform="Web" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Cube (XR) - Beta</name>
+    <description>Add an AR Cube</description>
+    <studioProCategory>Augmented Reality</studioProCategory>
+    <helpUrl>https://docs.mendix.com/refguide/mobile/using-mobile-capabilities/augmented-reality/</helpUrl>
+    <properties>
+        <propertyGroup caption="General">
+            <propertyGroup caption="Position">
+                <property key="mxPositionType" type="enumeration" defaultValue="Static">
+                    <caption>Position type:</caption>
+                    <description />
+                    <enumerationValues>
+                        <enumerationValue key="Static">Static</enumerationValue>
+                        <enumerationValue key="Attribute">Dynamic</enumerationValue>
+                        <enumerationValue key="Expression">Expression</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="mxPositionXStat" type="decimal" defaultValue="0.0">
+                    <caption>X</caption>
+                    <description />
+                </property>
+                <property key="mxPositionYStat" type="decimal" defaultValue="0.0">
+                    <caption>Y</caption>
+                    <description />
+                </property>
+                <property key="mxPositionZStat" type="decimal" defaultValue="0.0">
+                    <caption>Z</caption>
+                    <description />
+                </property>
+                <property key="mxPositionXAtt" type="attribute" required="false">
+                    <caption>X</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxPositionYAtt" type="attribute" required="false">
+                    <caption>Y</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxPositionZAtt" type="attribute" required="false">
+                    <caption>Z</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxPositionXExpr" type="expression" defaultValue="0">
+                    <caption>X</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxPositionYExpr" type="expression" defaultValue="0">
+                    <caption>Y</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxPositionZExpr" type="expression" defaultValue="0">
+                    <caption>Z</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Rotation">
+                <property key="mxRotationType" type="enumeration" defaultValue="Static">
+                    <caption>Rotation type:</caption>
+                    <description />
+                    <enumerationValues>
+                        <enumerationValue key="Static">Static</enumerationValue>
+                        <enumerationValue key="Attribute">Dynamic</enumerationValue>
+                        <enumerationValue key="Expression">Expression</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="mxRotationXStat" type="decimal" defaultValue="0.0">
+                    <caption>X</caption>
+                    <description />
+                </property>
+                <property key="mxRotationYStat" type="decimal" defaultValue="0.0">
+                    <caption>Y</caption>
+                    <description />
+                </property>
+                <property key="mxRotationZStat" type="decimal" defaultValue="0.0">
+                    <caption>Z</caption>
+                    <description />
+                </property>
+                <property key="mxRotationXAtt" type="attribute" required="false">
+                    <caption>X</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxRotationYAtt" type="attribute" required="false">
+                    <caption>Y</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxRotationZAtt" type="attribute" required="false">
+                    <caption>Z</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxRotationXExpr" type="expression" defaultValue="0">
+                    <caption>X</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxRotationYExpr" type="expression" defaultValue="0">
+                    <caption>Y</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxRotationZExpr" type="expression" defaultValue="0">
+                    <caption>Z</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Scale">
+                <property key="mxScaleType" type="enumeration" defaultValue="Static">
+                    <caption>Scale type:</caption>
+                    <description />
+                    <enumerationValues>
+                        <enumerationValue key="Static">Static</enumerationValue>
+                        <enumerationValue key="Attribute">Dynamic</enumerationValue>
+                        <enumerationValue key="Expression">Expression</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="mxScaleXStat" type="decimal" defaultValue="1.0">
+                    <caption>X</caption>
+                    <description />
+                </property>
+                <property key="mxScaleYStat" type="decimal" defaultValue="1.0">
+                    <caption>Y</caption>
+                    <description />
+                </property>
+                <property key="mxScaleZStat" type="decimal" defaultValue="1.0">
+                    <caption>Z</caption>
+                    <description />
+                </property>
+                <property key="mxScaleXAtt" type="attribute" required="false">
+                    <caption>X</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxScaleYAtt" type="attribute" required="false">
+                    <caption>Y</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxScaleZAtt" type="attribute" required="false">
+                    <caption>Z</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="mxScaleXExpr" type="expression" defaultValue="1">
+                    <caption>X</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxScaleYExpr" type="expression" defaultValue="1">
+                    <caption>Y</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxScaleZExpr" type="expression" defaultValue="1">
+                    <caption>Z</caption>
+                    <description />
+                    <returnType type="Decimal" />
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption="Material">
+            <propertyGroup caption="Material">
+                <property key="mxMaterialOption" type="enumeration" defaultValue="Color">
+                    <caption>Type:</caption>
+                    <description />
+                    <enumerationValues>
+                        <enumerationValue key="Texture">Texture</enumerationValue>
+                        <enumerationValue key="Color">Color</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="mxMaterialTexture" type="image" required="false">
+                    <caption>Texture:</caption>
+                    <description />
+                </property>
+                <property key="mxMaterialColor" type="expression" defaultValue="'#0CABF9'">
+                    <caption>Color:</caption>
+                    <description>Using following format: #rrggbb</description>
+                    <returnType type="String" />
+                </property>
+                <property key="mxOpacity" type="expression" defaultValue="1">
+                    <caption>Opacity:</caption>
+                    <description>Takes a value from 0.0 - 1.0. The lower the value, the more transparent.</description>
+                    <returnType type="Decimal" />
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Lighting">
+                <property key="mxLightingType" type="enumeration" required="true" defaultValue="Simple">
+                    <caption>Type:</caption>
+                    <description />
+                    <enumerationValues>
+                        <enumerationValue key="Simple">Simple</enumerationValue>
+                        <enumerationValue key="PBR">Realistic</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="mxRoughness" type="expression" defaultValue="1">
+                    <caption>Roughness:</caption>
+                    <description>Takes a value from 0.0 - 1.0. The higher the value, the rougher the object's surface. The lower the value, the more shiny the object's surface.</description>
+                    <returnType type="Decimal" />
+                </property>
+                <property key="mxMetalness" type="expression" defaultValue="1">
+                    <caption>Metalness:</caption>
+                    <description>Takes a value from 0.0 - 1.0. The higher the value, the more metallic the object's appearance. The lower the value, the more plastic the object's appearance.</description>
+                    <returnType type="Decimal" />
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption="Interaction">
+            <propertyGroup caption="Interaction">
+                <property key="mxUseDraggingInteraction" type="boolean" defaultValue="false">
+                    <caption>Use interaction interface:</caption>
+                    <description />
+                </property>
+                <property key="mxDraggingEnabled" type="expression" defaultValue="false">
+                    <caption>Enable dragging:</caption>
+                    <description />
+                    <returnType type="Boolean" />
+                </property>
+                <property key="mxDragType" type="enumeration" required="true" defaultValue="FixedDistance">
+                    <caption>Type:</caption>
+                    <description />
+                    <enumerationValues>
+                        <enumerationValue key="FixedDistance">Fixed distance</enumerationValue>
+                        <enumerationValue key="FixedToWorld">Fixed to world</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="mxScalingEnabled" type="expression" defaultValue="false">
+                    <caption>Enable scaling:</caption>
+                    <description />
+                    <returnType type="Boolean" />
+                </property>
+                <property key="mxRotationEnabled" type="expression" defaultValue="false">
+                    <caption>Enable rotation:</caption>
+                    <description />
+                    <returnType type="Boolean" />
+                </property>
+                <property key="mxOnDrag" type="action" required="false">
+                    <caption>On drag</caption>
+                    <description>Called when the object is dragged.</description>
+                </property>
+                <property key="mxOnScale" type="action" required="false">
+                    <caption>On scale</caption>
+                    <description>Called when pinch gesture is performed on object.</description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Interface settings">
+                <property key="mxGizmoColor" type="expression" defaultValue="'#FFFFFF'">
+                    <caption>Scaling interface color:</caption>
+                    <description>The color of the interface used for scaling and dragging the object. Using following format: #rrggbb</description>
+                    <returnType type="String" />
+                </property>
+                <property key="mxGizmoSize" type="expression" defaultValue="0.05">
+                    <caption>Scaling interface size:</caption>
+                    <description>The size of the scaling gizmo in meters</description>
+                    <returnType type="Decimal" />
+                </property>
+
+            </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption="Events">
+            <property key="mxOnClick" type="action" required="false">
+                <caption>On click</caption>
+                <description>Called when the object is clicked.</description>
+            </property>
+            <property key="mxOnHoverEnter" type="action" required="false">
+                <caption>On hover enter</caption>
+                <description>Called when the object is in the middle of the screen.</description>
+            </property>
+            <property key="mxOnHoverExit" type="action" required="false">
+                <caption>On hover exit</caption>
+                <description>Called when the object is in the middle of the screen.</description>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>

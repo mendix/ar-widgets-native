@@ -1,6 +1,6 @@
 {
-    "name": "@mendix/webarcube",
-    "widgetName": "WebARCube",
+    "name": "@mendix/webxrcube",
+    "widgetName": "WebXRCube",
     "version": "1.0.0",
     "description": "A cube",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",
