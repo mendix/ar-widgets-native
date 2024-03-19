@@ -9,7 +9,7 @@ export function WebXRCube(props: WebXRCubeContainerProps): React.ReactElement {
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
     const gizmoTransform = useGizmoComponent({
-        mesh: mesh,
+        mesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
         pinchEnabled: props.mxScalingEnabled.value ?? false,
         rotationEnabled: props.mxRotationEnabled.value ?? false,

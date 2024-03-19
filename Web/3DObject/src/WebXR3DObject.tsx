@@ -26,7 +26,7 @@ export function WebXR3DObject(props: WebXR3DObjectContainerProps): React.ReactEl
     useEffect(() => {
         if (mxMaterialTexture && scene) {
             if (typeof mxMaterialTexture.value === "string") {
-                //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
+                // @ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(mxMaterialTexture.value.uri, scene));
@@ -37,12 +37,10 @@ export function WebXR3DObject(props: WebXR3DObjectContainerProps): React.ReactEl
     useEffect(() => {
         if (mxMaterialAmbientOcclusion && scene) {
             if (typeof mxMaterialAmbientOcclusion.value === "string") {
-                //@ts-ignore - for some reason it thinks mxMaterialAmbientOcclusion is of type never, code does work though
-                let tex = new Texture(mxMaterialAmbientOcclusion.value, scene);
-                setAOTexture(tex);
+                // @ts-ignore - for some reason it thinks mxMaterialAmbientOcclusion is of type never, code does work though
+                setAOTexture(new Texture(mxMaterialAmbientOcclusion.value, scene));
             } else if (typeof mxMaterialAmbientOcclusion.value === "object") {
-                let tex = new Texture(mxMaterialAmbientOcclusion.value.uri, scene);
-                setAOTexture(tex);
+                setAOTexture(new Texture(mxMaterialAmbientOcclusion.value.uri, scene));
             }
         }
     }, [mxMaterialAmbientOcclusion, scene]);
@@ -54,8 +52,12 @@ export function WebXR3DObject(props: WebXR3DObjectContainerProps): React.ReactEl
 
     useEffect(() => {
         if (rootMeshURLLoaded !== props.mxSourceExpr.value) {
-            if (rootMesh) rootMesh.dispose();
-            if (scene) handleMesh(scene);
+            if (rootMesh) {
+                rootMesh.dispose();
+            }
+            if (scene) {
+                handleMesh(scene);
+            }
             setRootMeshURLLoaded(props.mxSourceExpr.value);
         }
     }, [props.mxSourceExpr.value]);

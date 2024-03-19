@@ -29,7 +29,7 @@ export function WebXRText(props: WebXRTextContainerProps): React.ReactElement {
             handleSceneLoaded={newScene => {
                 setScene(newScene);
             }}
-            useGizmo={true}
+            useGizmo
         />
     );
 }

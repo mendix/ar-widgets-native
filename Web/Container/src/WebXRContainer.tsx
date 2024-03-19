@@ -30,7 +30,9 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
     const light = useRef<Light>();
 
     useEffect(() => {
-        if (!canvasRef.current) return;
+        if (!canvasRef.current) {
+            return;
+        }
         const resizeObserver = new ResizeObserver(objectArray => {
             if (!xrActiveRef.current) {
                 window.requestAnimationFrame((): void | undefined => {
@@ -95,7 +97,7 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
             const newParent = new Mesh("ContainerARParent", newScene);
             setParent(newParent);
             setParentID(newParent.uniqueId);
-            engine.runRenderLoop(function () {
+            engine.runRenderLoop(() => {
                 newScene.render();
             });
 
@@ -106,7 +108,7 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
             const instantiateWebXR = async () => {
                 const supportedAR = await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
                 console.log("is immersive-ar supported? " + supportedAR);
-                var defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
+                const defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
                     uiOptions: {
                         sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
                     },
