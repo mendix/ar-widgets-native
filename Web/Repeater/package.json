@@ -1,6 +1,6 @@
 {
-  "name": "webarrepeater",
-  "widgetName": "WebARRepeater",
+  "name": "webxrrepeater",
+  "widgetName": "WebXRRepeater",
   "version": "1.0.0",
   "description": "Repeater AR",
   "copyright": "© Mendix Technology BV 2022. All rights reserved.",
@@ -23,7 +23,7 @@
     "lint:fix": "pluggable-widgets-tools lint:fix",
     "prerelease": "npm run lint",
     "release": "pluggable-widgets-tools release:web",
-    "prettier": "prettier --write ./src/*.tsx ./typings/*",
+    "prettier": "prettier --write ./src/*.ts* ./typings/*",
     "releaseWithPrettier": "npm run prettier && npm run release",
     "moveRelease": "cp ./dist/1.0.0/* ../Release/"
   }

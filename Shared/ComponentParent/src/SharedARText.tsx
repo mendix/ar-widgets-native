@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ARTextProps } from "../typings/ARTextProps";
 import { setAttributes, MeshComponent } from "./MeshComponent";
 import { useGizmoComponent } from "./useGizmoComponent";
@@ -23,6 +23,7 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
     const global = globalThis;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
+    const currentText = useRef<string>();
     const gizmoTransform = useGizmo
         ? useGizmoComponent({
               mesh: mesh,
@@ -33,23 +34,26 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
               color: mxGizmoColor?.value ?? "#ffffff"
           })
         : null;
+    const textParent = useRef<Mesh>();
     const handleSceneLoaded = (newScene: Scene) => {
+        textParent.current = new Mesh("TextParent");
+        createTextMesh(newScene);
+        setScene(newScene);
+        props.handleSceneLoaded ? props.handleSceneLoaded(newScene) : null;
+    };
+    const createTextMesh = (scene: Scene) => {
         const newMesh = MeshBuilder.CreateText(
             "myText",
             mxText.value ?? "",
             font,
             {
+                size: 1,
                 resolution: 64,
-                depth: 10
+                depth: 1
             },
-            newScene
+            scene
         );
-        if (newMesh) {
-            newMesh.scaling = Vector3.Zero();
-            setMesh(newMesh);
-        }
-        setScene(newScene);
-        props.handleSceneLoaded ? props.handleSceneLoaded(newScene) : null;
+        if (newMesh) setMesh(newMesh);
     };
 
     useEffect(() => {
@@ -77,21 +81,12 @@ export function SharedARText(props: ARTextProps): React.ReactElement {
     }, [useGizmo, gizmoTransform?.newPosition, gizmoTransform?.newRotation, gizmoTransform?.newScale]);
 
     useEffect(() => {
-        if (mxText.value && font !== undefined && scene) {
+        if (currentText.current !== mxText.value && font !== undefined && scene) {
             if (mesh) mesh.dispose();
-            const newMesh = MeshBuilder.CreateText(
-                "myText",
-                mxText.value ?? "",
-                font,
-                {
-                    resolution: 64,
-                    depth: 10
-                },
-                scene
-            );
-            if (newMesh) setMesh(newMesh);
+            currentText.current = mxText.value;
+            createTextMesh(scene);
         }
-    }, [mxText, font]);
+    }, [mxText.value, font]);
 
     return (
         <MeshComponent

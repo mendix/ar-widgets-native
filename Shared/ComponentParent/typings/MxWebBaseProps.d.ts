@@ -8,4 +8,7 @@ export interface MxWebBaseProps extends MxBaseProps {
     mxPinchRotationEnabled: DynamicValue<boolean>;
     mxGizmoColor: DynamicValue<string>;
     mxGizmoSize: DynamicValue<Big>;
+    mxScalingEnabled: DynamicValue<boolean>;
+    mxRotationEnabled: DynamicValue<boolean>;
+    mxOnScale?: ActionValue;
 }

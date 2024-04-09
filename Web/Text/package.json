@@ -1,6 +1,6 @@
 {
-    "name": "@mendix/webartext",
-    "widgetName": "WebARText",
+    "name": "@mendix/webxrtext",
+    "widgetName": "WebXRText",
     "version": "1.0.0",
     "description": "A text",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",

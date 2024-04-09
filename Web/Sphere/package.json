@@ -1,6 +1,6 @@
 {
-    "name": "@mendix/webarsphere",
-    "widgetName": "WebARSphere",
+    "name": "@mendix/webxrsphere",
+    "widgetName": "WebXRSphere",
     "version": "1.0.0",
     "description": "A sphere",
     "copyright": "© Mendix Technology BV 2023. All rights reserved.",

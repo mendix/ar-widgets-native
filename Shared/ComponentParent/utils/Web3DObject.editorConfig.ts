@@ -5,8 +5,15 @@ import { getPropertiesBase as Base, checkBase as Check } from "./3DObject.editor
 
 export function getPropertiesBase(values: MxWebBaseProps, defaultProperties: PropertyGroup[]): Properties {
     defaultProperties = Base(values as unknown as MxBaseProps, defaultProperties);
-    if (!values.mxUsePinchInteraction) {
-        hidePropertiesIn(defaultProperties, values, ["mxPinchRotationEnabled", "mxGizmoColor", "mxGizmoSize"]);
+
+    if (!values.mxUseDraggingInteraction) {
+        hidePropertiesIn(defaultProperties, values, [
+            "mxScalingEnabled",
+            "mxRotationEnabled",
+            "mxOnScale",
+            "mxGizmoColor",
+            "mxGizmoSize"
+        ]);
     }
     return defaultProperties;
 }
