@@ -144,8 +144,8 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
         >
             <div id="reader" />
             <ParentContext.Provider value={parentID}>{props.mxContentWidget}</ParentContext.Provider>
-            <div style={{ flex: 1, ...props.style }}>
-                <canvas ref={canvasRef} style={{ width: "100%", height: "100%", display: "block" }} />
+            <div style={{ flex: 1 }}>
+                <canvas ref={canvasRef} style={{ width: "100%", height: "100%", display: "block", ...props.style }} />
             </div>
         </EngineContext.Provider>
     );
