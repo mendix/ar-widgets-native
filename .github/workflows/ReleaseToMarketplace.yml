@@ -31,4 +31,4 @@ jobs:
                   API_USER_OPENID: ${{ secrets.API_USER_OPENID }}
                   API_USER: ${{ secrets.API_USER }}
                   API_PASS: ${{ secrets.API_PASS }}
-                  MODULE_VERSION: ${{  github.ref_name }}"
+                  MODULE_VERSION: ${{  github.ref_name }}
