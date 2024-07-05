@@ -27,8 +27,8 @@ jobs:
             - name: Create and publish draft
               run: npm run createDraftInMarketplace
               env:
-                  API_URL: ${{ secrets.API_URL }}
-                  API_USER_OPENID: ${{ secrets.API_USER_OPENID }}
-                  API_USER: ${{ secrets.API_USER }}
-                  API_PASS: ${{ secrets.API_PASS }}
+                  API_URL: ${{ secrets.TEST_API_URL }}
+                  API_USER_OPENID: ${{ secrets.TEST_API_USER_OPENID }}
+                  API_USER: ${{ secrets.TEST_API_USER }}
+                  API_PASS: ${{ secrets.TEST_API_PASS }}
                   MODULE_VERSION: ${{  github.ref_name }}
