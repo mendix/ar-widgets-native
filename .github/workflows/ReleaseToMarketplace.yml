@@ -24,7 +24,8 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
             - run: npm ci
-            - run: npm run createDraftInMarketplace
+            - name: Create and publish draft
+              run: npm run createDraftInMarketplace
               env:
                   API_URL: ${{ secrets.API_URL }}
                   API_USER_OPENID: ${{ secrets.API_USER_OPENID }}
