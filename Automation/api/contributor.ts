@@ -86,10 +86,10 @@ async function fetchContributor<T = unknown>(method: "PATCH" | "POST", path: str
     const openId = process.env.API_USER_OPENID;
     const pass = process.env.API_PASS;
 
-    assert.ok(url, "env.CPAPI_URL is empty");
-    assert.ok(user, "env.CPAPI_USER is empty");
-    assert.ok(openId, "env.CPAPI_USER_OPENID is empty");
-    assert.ok(pass, "env.CPAPI_PASS is empty");
+    assert.ok(url, "env.API_URL is empty");
+    assert.ok(user, "env.API_USER is empty");
+    assert.ok(openId, "env.API_USER_OPENID is empty");
+    assert.ok(pass, "env.API_PASS is empty");
 
     const Authorization = `Basic ${Buffer.from(`${user}:${pass}`).toString("base64")}`;
 
