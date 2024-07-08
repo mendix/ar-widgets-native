@@ -2,7 +2,7 @@ import { createDraft, CreateDraftSuccessResponse, publishDraft } from "./api/con
 import { Version } from "./api/utils/version";
 
 function CreateDraftWeb(appVersion: Version): Promise<CreateDraftSuccessResponse> {
-    const studioProVersion: Version = new Version(10, 9, 0);
+    const studioProVersion: Version = new Version(9, 21, 2);
     const result = createDraft({
         appName: "WebXR Widgets",
         appNumber: 203481, //number in marketplace
