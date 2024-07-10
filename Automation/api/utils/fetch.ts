@@ -29,9 +29,6 @@ export async function fetch<T = unknown>(
         );
     }
     console.log(`Response status Code ${response.status}`);
-    if (!response.ok) {
-        console.error(response);
-    }
     if (response.status === 409) {
         throw new Error(
             `Fetching Failed (Code ${response.status}). Possible solution: Check & delete drafts in Mendix Marketplace.`
