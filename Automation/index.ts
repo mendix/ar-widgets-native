@@ -8,7 +8,7 @@ function CreateDraftWeb(appVersion: Version): Promise<CreateDraftSuccessResponse
         appNumber: 203481, //number in marketplace
         version: appVersion,
         studioProVersion: studioProVersion,
-        artifactUrl: `https://github.com/HedwigAR/ar-widgets-native/releases/download/${process.env.MODULE_VERSION}/WebXRWidgets.mpk` //link to github mpk
+        artifactUrl: `https://github.com/mendix/ar-widgets-native/releases/download/${process.env.MODULE_VERSION}/WebXRWidgets.mpk` //link to github mpk
     });
     return result;
 }
@@ -20,7 +20,7 @@ function CreateDraftNative(appVersion: Version): Promise<CreateDraftSuccessRespo
         appNumber: 117209, //number in marketplace
         version: appVersion,
         studioProVersion: studioProVersion,
-        artifactUrl: `https://github.com/HedwigAR/ar-widgets-native/releases/download/${process.env.MODULE_VERSION}/NativeMobileAR.mpk` //link to github mpk
+        artifactUrl: `https://github.com/mendix/ar-widgets-native/releases/download/${process.env.MODULE_VERSION}/NativeMobileAR.mpk` //link to github mpk
     });
     return result;
 }
