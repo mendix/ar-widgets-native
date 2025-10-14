@@ -1,23 +1,24 @@
-import { createElement, ReactElement, useEffect, useRef, useState, useCallback } from "react";
+import { createElement, ReactElement, useEffect, useRef, useState } from "react";
 import { EngineContext, ParentContext } from "../../../Shared/ComponentParent/src/EngineContext";
 import { ValueStatus } from "mendix";
 import {
-    ArcRotateCamera,
-    Camera,
-    Color4,
-    CompatibilityOptions,
-    CubeTexture,
-    Engine,
-    HemisphericLight,
-    Light,
-    Mesh,
     Scene,
+    Mesh,
+    Engine,
+    Camera,
+    Light,
+    CubeTexture,
+    CompatibilityOptions,
+    Color4,
     Tools,
+    ArcRotateCamera,
     Vector3,
+    HemisphericLight,
     WebXRSessionManager,
     WebXRState
 } from "@babylonjs/core";
 import { WebXRContainerContainerProps } from "../typings/WebXRContainerProps";
+
 export function WebXRContainer(props: WebXRContainerContainerProps): ReactElement {
     const [scene, setScene] = useState<Scene>();
     const [parent, setParent] = useState<Mesh | undefined>();
@@ -43,7 +44,7 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
                 });
             }
         });
-        resizeObserver.observe(canvasRef.current);
+        resizeObserver.observe(canvasRef.current as unknown as Element);
         return () => resizeObserver.disconnect();
     }, []);
 
@@ -62,7 +63,7 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
             ) as Mesh;
             light.current?.setEnabled(false);
         }
-    }, [scene, props.mxHdrPath, scene?.activeCamera]);
+    }, [scene, props.mxUsePBR, props.mxHdrPath, scene?.activeCamera]);
 
     useEffect(() => {
         if (scene === undefined) {
@@ -106,34 +107,62 @@ export function WebXRContainer(props: WebXRContainerContainerProps): ReactElemen
             }
 
             const instantiateWebXR = async () => {
-                const supportedAR = await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
-                console.log("is immersive-ar supported? " + supportedAR);
-                const defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
-                    uiOptions: {
-                        sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
-                    },
-                    optionalFeatures: true
-                });
-                defaultXRExperience.baseExperience.onStateChangedObservable.add(state => {
-                    if (state === WebXRState.ENTERING_XR) {
-                        skyboxRef.current?.setEnabled(false);
-                        xrActiveRef.current = true;
-                    } else if (state === WebXRState.EXITING_XR) {
-                        skyboxRef.current?.setEnabled(true);
-                        xrActiveRef.current = false;
+                try {
+                    // Check if WebXR is available in the browser
+                    if (!navigator.xr) {
+                        console.log("WebXR not supported in this browser");
+                        return;
                     }
-                });
 
-                if (!defaultXRExperience.baseExperience) {
-                    console.log("No XR support");
-                } else {
-                    setCamera(defaultXRExperience.baseExperience.camera);
-                    console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
+                    const supportedAR = await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
+                    console.log("is immersive-ar supported? " + supportedAR);
+
+                    const defaultXRExperience = await newScene.createDefaultXRExperienceAsync({
+                        uiOptions: {
+                            sessionMode: supportedAR ? "immersive-ar" : "immersive-vr"
+                        },
+                        optionalFeatures: true
+                    });
+
+                    // Check if WebXR experience was created successfully
+                    if (defaultXRExperience && defaultXRExperience.baseExperience) {
+                        defaultXRExperience.baseExperience.onStateChangedObservable.add((state: WebXRState) => {
+                            if (state === WebXRState.ENTERING_XR) {
+                                skyboxRef.current?.setEnabled(false);
+                                xrActiveRef.current = true;
+                            } else if (state === WebXRState.EXITING_XR) {
+                                skyboxRef.current?.setEnabled(true);
+                                xrActiveRef.current = false;
+                            }
+                        });
+
+                        setCamera(defaultXRExperience.baseExperience.camera);
+                        console.log("XR supported, state: " + defaultXRExperience.baseExperience.state);
+                    } else {
+                        console.log("Failed to create WebXR experience - WebXR may not be supported");
+                    }
+                } catch (error) {
+                    console.error("WebXR initialization failed:", error);
+                    console.log("Continuing without WebXR support");
                 }
             };
             instantiateWebXR();
         }
-    }, [canvasRef.current]);
+
+        // Cleanup function to dispose of Babylon resources
+        return () => {
+            try {
+                if (engineRef.current) {
+                    engineRef.current.dispose();
+                }
+                if (scene) {
+                    scene.dispose();
+                }
+            } catch (error) {
+                console.error("Error during cleanup:", error);
+            }
+        };
+    }, []); // Empty dependency - should only run once on mount
 
     return (
         <EngineContext.Provider

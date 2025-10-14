@@ -28,6 +28,8 @@ export interface WebXRImageTrackerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     mxScannedResult: string;
     mxPositionX: string;
     mxPositionY: string;

@@ -1,5 +1,5 @@
 import typescript from "@rollup/plugin-typescript";
-const copy = require("rollup-plugin-copy");
+import copy from "rollup-plugin-copy";
 
 export default args => {
     const result = args.configDefaultConfig;

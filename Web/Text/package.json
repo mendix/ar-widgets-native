@@ -1,9 +1,9 @@
 {
     "name": "@mendix/webxrtext",
     "widgetName": "WebXRText",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A text",
-    "copyright": "© Mendix Technology BV 2023. All rights reserved.",
+    "copyright": "© Mendix Technology BV 2025. All rights reserved.",
     "author": "Mendix",
     "engines": {
         "node": ">=12"
@@ -26,6 +26,6 @@
         "prettier": "prettier --write ./src/*.ts* ./typings/*",
         "releaseWithPrettier": "npm run prettier && npm run release",
         "rollupfontjson": "npx rollup --config rollupFont.config.js",
-        "moveRelease": "cp ./dist/1.0.0/* ../Release/"
+        "moveRelease": "node ../../Shared/scripts/moveRelease.js"
     }
 }

@@ -115,7 +115,7 @@ export interface WebXRSpherePreviewProps {
     mxScaleYExpr: string;
     mxScaleZExpr: string;
     mxMaterialOption: MxMaterialOptionEnum;
-    mxMaterialTexture: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
+    mxMaterialTexture: { type: "static"; imageUrl: string } | { type: "dynamic"; entity: string } | null;
     mxMaterialColor: string;
     mxOpacity: string;
     mxLightingType: MxLightingTypeEnum;

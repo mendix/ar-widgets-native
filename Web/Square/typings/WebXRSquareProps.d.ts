@@ -84,6 +84,8 @@ export interface WebXRSquarePreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: number | null;
     mxPositionYStat: number | null;

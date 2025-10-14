@@ -77,6 +77,8 @@ export interface WebXRNodePreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxBillboard: MxBillboardEnum;
     mxPositionType: MxPositionTypeEnum;

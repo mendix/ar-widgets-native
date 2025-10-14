@@ -1,7 +1,5 @@
 import typescript from "@rollup/plugin-typescript";
-const copy = require("rollup-plugin-copy");
-import commonjs from "@rollup/plugin-commonjs";
-// import replace from '@rollup/plugin-replace';
+import copy from "rollup-plugin-copy";
 
 export default args => {
     const result = args.configDefaultConfig;
@@ -12,7 +10,6 @@ export default args => {
             typescript({
                 include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
             }),
-            commonjs()
         );
         config.output.paths = {
             ...config.output.paths,

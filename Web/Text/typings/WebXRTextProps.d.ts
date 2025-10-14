@@ -85,6 +85,8 @@ export interface WebXRTextPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     mxText: string;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: number | null;

@@ -8,7 +8,7 @@ export function WebXRSphere(props: WebXRSphereContainerProps): React.ReactElemen
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
-    const handleSceneLoaded = (scene: Scene) => {
+    const handleSceneLoaded = (scene: Scene) : void => {
         const newSphere = MeshBuilder.CreateSphere(props.name, { diameter: 1 }, scene);
         newSphere.scaling = Vector3.Zero();
         setMesh(newSphere);
@@ -16,7 +16,7 @@ export function WebXRSphere(props: WebXRSphereContainerProps): React.ReactElemen
     };
     const [texture, setTexture] = useState<Texture>();
     const gizmoTransform = useGizmoComponent({
-        mesh: mesh,
+        mesh,
         draggingEnabled: props.mxDraggingEnabled.value ?? false,
         pinchEnabled: props.mxScalingEnabled.value ?? false,
         rotationEnabled: props.mxRotationEnabled.value ?? false,
@@ -27,7 +27,7 @@ export function WebXRSphere(props: WebXRSphereContainerProps): React.ReactElemen
     useEffect(() => {
         if (mxMaterialTexture && scene) {
             if (typeof mxMaterialTexture.value === "string") {
-                //@ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
+                // @ts-ignore - for some reason it thinks mxMaterialTexture is of type never, code does work though
                 setTexture(new Texture(mxMaterialTexture.value, scene));
             } else if (typeof mxMaterialTexture.value === "object") {
                 setTexture(new Texture(mxMaterialTexture.value.uri, scene));

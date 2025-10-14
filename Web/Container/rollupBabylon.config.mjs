@@ -2,9 +2,7 @@ import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
-import typescript from "@rollup/plugin-typescript";
 import analyze from "rollup-plugin-analyzer";
-import bundleSize from "rollup-plugin-bundle-size";
 
 export default {
   input: "../../node_modules/@babylonjs/core/index.js",
@@ -15,9 +13,10 @@ export default {
 
   plugins: [
     resolve(),
-    commonjs(),
+    commonjs({
+      requireReturnsDefault: 'auto',
+    }),
     analyze({ summaryOnly: true, limit: 20 }),
-    typescript(),
     getBabelOutputPlugin({
       allowAllFormats: true,
       babelrc: false,
@@ -32,6 +31,5 @@ export default {
         comments: /@preserve|@?copyright|@lic|@cc_on|licen[cs]e|^\**!/i,
       },
     }),
-    bundleSize(),
   ],
 };

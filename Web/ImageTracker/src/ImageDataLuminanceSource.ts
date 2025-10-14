@@ -8,10 +8,69 @@ import IllegalArgumentException from "@zxing/library/esm/core/IllegalArgumentExc
 export class ImageDataLuminanceSource extends LuminanceSource {
     private buffer: Uint8ClampedArray;
 
-    public constructor(data: ImageData) {
+    constructor(data: ImageData) {
         super(data.width, data.height);
 
         this.buffer = ImageDataLuminanceSource.toGrayscaleBuffer(data.data, data.width, data.height);
+    }
+
+    getRow(y: number /* int */, row: Uint8ClampedArray): Uint8ClampedArray {
+        if (y < 0 || y >= this.getHeight()) {
+            throw new IllegalArgumentException("Requested row is outside the image: " + y);
+        }
+        const width: number /* int */ = this.getWidth();
+        const start = y * width;
+        if (row === null) {
+            row = this.buffer.slice(start, start + width);
+        } else {
+            if (row.length < width) {
+                row = new Uint8ClampedArray(width);
+            }
+            // The underlying raster of image consists of bytes with the luminance values
+            // TODO: can avoid set/slice?
+            row.set(this.buffer.slice(start, start + width));
+        }
+
+        return row;
+    }
+
+    getMatrix(): Uint8ClampedArray {
+        return this.buffer;
+    }
+
+    isCropSupported(): boolean {
+        return false;
+    }
+
+    crop(
+        left: number /* int */,
+        top: number /* int */,
+        width: number /* int */,
+        height: number /* int */
+    ): LuminanceSource {
+        super.crop(left, top, width, height);
+        return this;
+    }
+
+    /**
+     * This is always true, since the image is a gray-scale image.
+     *
+     * @return true
+     */
+    isRotateSupported(): boolean {
+        return false;
+    }
+
+    rotateCounterClockwise(): LuminanceSource {
+        return this;
+    }
+
+    rotateCounterClockwise45(): LuminanceSource {
+        return this;
+    }
+
+    invert(): LuminanceSource {
+        return new InvertedLuminanceSource(this);
     }
 
     private static toGrayscaleBuffer(imageBuffer: Uint8ClampedArray, width: number, height: number): Uint8ClampedArray {
@@ -31,69 +90,11 @@ export class ImageDataLuminanceSource extends LuminanceSource {
                 // .299R + 0.587G + 0.114B (YUV/YIQ for PAL and NTSC),
                 // (306*R) >> 10 is approximately equal to R*0.299, and so on.
                 // 0x200 >> 10 is 0.5, it implements rounding.
+                // eslint-disable-next-line no-bitwise
                 gray = (306 * pixelR + 601 * pixelG + 117 * pixelB + 0x200) >> 10;
             }
             grayscaleBuffer[j] = gray;
         }
         return grayscaleBuffer;
-    }
-
-    public getRow(y: number /*int*/, row: Uint8ClampedArray): Uint8ClampedArray {
-        if (y < 0 || y >= this.getHeight()) {
-            throw new IllegalArgumentException("Requested row is outside the image: " + y);
-        }
-        const width: number /*int*/ = this.getWidth();
-        const start = y * width;
-        if (row === null) {
-            row = this.buffer.slice(start, start + width);
-        } else {
-            if (row.length < width) {
-                row = new Uint8ClampedArray(width);
-            }
-            // The underlying raster of image consists of bytes with the luminance values
-            // TODO: can avoid set/slice?
-            row.set(this.buffer.slice(start, start + width));
-        }
-
-        return row;
-    }
-
-    public getMatrix(): Uint8ClampedArray {
-        return this.buffer;
-    }
-
-    public isCropSupported(): boolean {
-        return false;
-    }
-
-    public crop(
-        left: number /*int*/,
-        top: number /*int*/,
-        width: number /*int*/,
-        height: number /*int*/
-    ): LuminanceSource {
-        super.crop(left, top, width, height);
-        return this;
-    }
-
-    /**
-     * This is always true, since the image is a gray-scale image.
-     *
-     * @return true
-     */
-    public isRotateSupported(): boolean {
-        return false;
-    }
-
-    public rotateCounterClockwise(): LuminanceSource {
-        return this;
-    }
-
-    public rotateCounterClockwise45(): LuminanceSource {
-        return this;
-    }
-
-    public invert(): LuminanceSource {
-        return new InvertedLuminanceSource(this);
     }
 }
