@@ -14,7 +14,7 @@ export default args => {
         );
         config.output.paths = {
             ...config.output.paths,
-            "@babylonjs/core": "../../../shared/babylonjscore.js"
+            "@babylonjs/core": "../../../shared/babylonjscore"
         };
     });
     return result;

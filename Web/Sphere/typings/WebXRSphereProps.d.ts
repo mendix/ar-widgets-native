@@ -84,6 +84,8 @@ export interface WebXRSpherePreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     mxPositionType: MxPositionTypeEnum;
     mxPositionXStat: number | null;
     mxPositionYStat: number | null;
@@ -115,7 +117,7 @@ export interface WebXRSpherePreviewProps {
     mxScaleYExpr: string;
     mxScaleZExpr: string;
     mxMaterialOption: MxMaterialOptionEnum;
-    mxMaterialTexture: { type: "static"; imageUrl: string } | { type: "dynamic"; entity: string } | null;
+    mxMaterialTexture: { type: "static"; imageUrl: string; } | { type: "dynamic"; entity: string; } | null;
     mxMaterialColor: string;
     mxOpacity: string;
     mxLightingType: MxLightingTypeEnum;

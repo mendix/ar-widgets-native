@@ -8,7 +8,7 @@ export function WebXRSphere(props: WebXRSphereContainerProps): React.ReactElemen
     const { mxMaterialTexture } = props;
     const [mesh, setMesh] = useState<Mesh>();
     const [scene, setScene] = useState<Scene>();
-    const handleSceneLoaded = (scene: Scene) : void => {
+    const handleSceneLoaded = (scene: Scene): void => {
         const newSphere = MeshBuilder.CreateSphere(props.name, { diameter: 1 }, scene);
         newSphere.scaling = Vector3.Zero();
         setMesh(newSphere);

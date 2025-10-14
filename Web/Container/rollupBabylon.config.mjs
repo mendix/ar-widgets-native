@@ -1,4 +1,3 @@
-import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
@@ -7,25 +6,19 @@ import analyze from "rollup-plugin-analyzer";
 export default {
   input: "../../node_modules/@babylonjs/core/index.js",
   output: {
-    format: "amd",
+    format: "es",
     file: "./src/bundle/babylonjscore.js",
   },
 
   plugins: [
-    resolve(),
+    resolve({
+      preferBuiltins: false,
+      browser: true
+    }),
     commonjs({
       requireReturnsDefault: 'auto',
     }),
     analyze({ summaryOnly: true, limit: 20 }),
-    getBabelOutputPlugin({
-      allowAllFormats: true,
-      babelrc: false,
-      // Disable compact output to keep comments
-      compact: false,
-      // Keep all comments (terser will process them).
-      shouldPrintComment: () => true,
-      presets: [["@babel/preset-env", { targets: { safari: "12" } }]],
-    }),
     terser({
       output: {
         comments: /@preserve|@?copyright|@lic|@cc_on|licen[cs]e|^\**!/i,

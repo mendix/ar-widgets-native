@@ -1,37 +1,28 @@
-import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
-import typescript from "@rollup/plugin-typescript";
 import analyze from "rollup-plugin-analyzer";
-import bundleSize from "rollup-plugin-bundle-size";
 
 export default {
-    input: "../../node_modules/@zxing/library/cjs/index.js",
+    input: "../../node_modules/@zxing/library/esm/index.js",
     output: {
-        format: "amd",
+        format: "es",
         file: "./src/bundle/zxinglibrary.js"
     },
 
     plugins: [
-        resolve(),
-        commonjs(),
-        analyze({ summaryOnly: true, limit: 20 }),
-        typescript(),
-        getBabelOutputPlugin({
-            allowAllFormats: true,
-            babelrc: false,
-            // Disable compact output to keep comments
-            compact: false,
-            // Keep all comments (terser will process them).
-            shouldPrintComment: () => true,
-            presets: [["@babel/preset-env", { targets: { safari: "12" } }]]
+        resolve({
+            preferBuiltins: false,
+            browser: true
         }),
+        commonjs({
+            requireReturnsDefault: 'auto',
+        }),
+        analyze({ summaryOnly: true, limit: 20 }),
         terser({
             output: {
                 comments: /@preserve|@?copyright|@lic|@cc_on|licen[cs]e|^\**!/i
             }
-        }),
-        bundleSize()
+        })
     ]
 };
