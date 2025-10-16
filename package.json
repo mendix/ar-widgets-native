@@ -8,7 +8,6 @@
     },
     "packagePath": "mendix",
     "scripts": {
-        "postinstall": "patch-package",
         "buildAllNative": "npm run --prefix \"./Native/3DObject\" build && npm run --prefix \"./Native/Text\" build && npm run --prefix \"./Native/Repeater\" build && npm run --prefix \"./Native/Cube\" build && npm run --prefix \"./Native/Node\" build && npm run --prefix \"./Native/Sphere\" build && npm run --prefix \"./Native/Square\" build && npm run --prefix \"./Native/Container\" build && npm run --prefix \"./Native/ImageTracker\" build",
         "buildReleaseNative": "npm run --prefix \"./Native/Text\" releaseWithPrettier && npm run --prefix \"./Native/Repeater\" releaseWithPrettier && npm run --prefix \"./Native/Cube\" releaseWithPrettier && npm run --prefix \"./Native/Sphere\" releaseWithPrettier && npm run --prefix \"./Native/Square\" releaseWithPrettier && npm run --prefix \"./Native/Node\" releaseWithPrettier && npm run --prefix \"./Native/Container\" releaseWithPrettier && npm run --prefix \"./Native/3DObject\" releaseWithPrettier && npm run --prefix \"./Native/ImageTracker\" releaseWithPrettier",
         "moveReleasesNative": "mkdir -p Native/Release && npm run --prefix \"./Native/Text\" moveRelease && npm run --prefix \"./Native/Repeater\" moveRelease && npm run --prefix \"./Native/Cube\" moveRelease && npm run --prefix \"./Native/Sphere\" moveRelease && npm run --prefix \"./Native/Square\" moveRelease && npm run --prefix \"./Native/Node\" moveRelease && npm run --prefix \"./Native/Container\" moveRelease && npm run --prefix \"./Native/3DObject\" moveRelease && npm run --prefix \"./Native/ImageTracker\" moveRelease",
@@ -34,8 +33,8 @@
         "@types/react-test-renderer": "~18.0.0",
         "@types/semver": "^7.3.6",
         "bufferutil": "^4.0.3",
-        "eslint": "^7.20.0",
-        "eslint-plugin-prettier": "5.5.4",
+        "eslint": "^7.32.0",
+        "eslint-plugin-prettier": "^4.2.1",
         "lodash": "^4.17.20",
         "node-fetch": "^2.6.9",
         "prettier": "3.0.3",
@@ -57,7 +56,6 @@
         "babylonjs-gltf2interface": "6.8.1",
         "base-64": "^1.0.0",
         "earcut": "^2.2.4",
-        "patch-package": "^8.0.0",
         "utf8": "^3.0.0"
     }
 }
