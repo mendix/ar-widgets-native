@@ -8,8 +8,8 @@
     },
     "packagePath": "mendix",
     "scripts": {
-        "buildAllWeb": "npm run --prefix \"./Web/Container\" rollupBabylon && npm run --prefix \"./Web/Cube\" build && npm run --prefix \"./Web/ImageTracker\" build && npm run --prefix \"./Web/Repeater\" build && npm run --prefix \"./Web/Sphere\" build && npm run --prefix \"./Web/Square\" build && npm run --prefix \"./Web/Node\" build && npm run --prefix \"./Web/Container\" build && npm run --prefix \"./Web/3DObject\" build && npm run --prefix \"./Web/Text\" build",
-        "buildReleaseWeb": "npm run --prefix \"./Web/Container\" rollupBabylon && npm run --prefix \"./Web/Cube\" releaseWithPrettier && npm run --prefix \"./Web/Sphere\" releaseWithPrettier && npm run --prefix \"./Web/Repeater\" releaseWithPrettier && npm run --prefix  \"./Web/ImageTracker\" releaseWithPrettier && npm run --prefix \"./Web/Square\" releaseWithPrettier && npm run --prefix \"./Web/Node\" releaseWithPrettier && npm run --prefix \"./Web/Container\" releaseWithPrettier && npm run --prefix \"./Web/3DObject\" releaseWithPrettier && npm run --prefix \"./Web/Text\" releaseWithPrettier",
+        "buildAllWeb": "npm run --prefix \"./Web/ImageTracker\" rollupzxinglibrary && npm run --prefix \"./Web/ImageTracker\" rollupworker && npm run --prefix \"./Web/Container\" rollupBabylon && npm run --prefix \"./Web/Cube\" build && npm run --prefix \"./Web/ImageTracker\" build && npm run --prefix \"./Web/Repeater\" build && npm run --prefix \"./Web/Sphere\" build && npm run --prefix \"./Web/Square\" build && npm run --prefix \"./Web/Node\" build && npm run --prefix \"./Web/Container\" build && npm run --prefix \"./Web/3DObject\" build && npm run --prefix \"./Web/Text\" build",
+        "buildReleaseWeb": "npm run --prefix \"./Web/ImageTracker\" rollupzxinglibrary && npm run --prefix \"./Web/ImageTracker\" rollupworker && npm run --prefix \"./Web/Container\" rollupBabylon && npm run --prefix \"./Web/Cube\" releaseWithPrettier && npm run --prefix \"./Web/Sphere\" releaseWithPrettier && npm run --prefix \"./Web/Repeater\" releaseWithPrettier && npm run --prefix  \"./Web/ImageTracker\" releaseWithPrettier && npm run --prefix \"./Web/Square\" releaseWithPrettier && npm run --prefix \"./Web/Node\" releaseWithPrettier && npm run --prefix \"./Web/Container\" releaseWithPrettier && npm run --prefix \"./Web/3DObject\" releaseWithPrettier && npm run --prefix \"./Web/Text\" releaseWithPrettier",
         "moveReleasesWeb": "mkdir -p Web/Release && npm run --prefix \"./Web/Cube\" moveRelease && npm run --prefix \"./Web/Repeater\" moveRelease && npm run --prefix \"./Web/Sphere\" moveRelease && npm run --prefix  \"./Web/ImageTracker\" moveRelease && npm run --prefix \"./Web/Square\" moveRelease && npm run --prefix \"./Web/Node\" moveRelease && npm run --prefix \"./Web/Container\" moveRelease && npm run --prefix \"./Web/3DObject\" moveRelease && npm run --prefix \"./Web/Text\" moveRelease",
         "createDraftInMarketplace": "ts-node Automation/index.ts"
     },
@@ -17,9 +17,11 @@
     "devDependencies": {
         "@mendix/pluggable-widgets-tools": "10.21.2",
         "@prettier/plugin-xml": "3.0.0",
+        "@rollup/plugin-commonjs": "^25.0.0",
         "@rollup/plugin-json": "^6.1.0",
         "@rollup/plugin-node-resolve": "^16.0.0",
         "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^11.0.0",
         "@types/base-64": "^1.0.0",
         "@types/big.js": "^6.0.2",
         "@types/earcut": "^2.1.1",

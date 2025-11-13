@@ -35,7 +35,7 @@ export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React
             !stopped.current &&
             videoRef.current &&
             sceneRef.current &&
-            (engineContextCamera.current !== undefined || sceneRef.current?.activeCamera !== (undefined || null))
+            (engineContextCamera.current !== undefined || sceneRef.current?.activeCamera != null)
         ) {
             const cameraToClone = engineContextCamera.current ?? sceneRef.current.activeCamera;
             if (clonedCamera.current && lastPosition.current) {

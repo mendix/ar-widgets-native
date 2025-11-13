@@ -6,19 +6,16 @@ import IllegalArgumentException from "@zxing/library/esm/core/IllegalArgumentExc
  * adapted from @zxing/library/library/esm/browser/HTMLCanvasElementLuminanceSource.ts, copied from https://github.com/pocesar/react-use-qrcode/blob/master/src/ImageDataLuminanceSource.ts
  */
 export class ImageDataLuminanceSource extends LuminanceSource {
-    private buffer: Uint8ClampedArray;
-
-    constructor(data: ImageData) {
+    constructor(data) {
         super(data.width, data.height);
-
         this.buffer = ImageDataLuminanceSource.toGrayscaleBuffer(data.data, data.width, data.height);
     }
 
-    getRow(y: number /* int */, row: Uint8ClampedArray): Uint8ClampedArray {
+    getRow(y, row) {
         if (y < 0 || y >= this.getHeight()) {
             throw new IllegalArgumentException("Requested row is outside the image: " + y);
         }
-        const width: number /* int */ = this.getWidth();
+        const width = this.getWidth();
         const start = y * width;
         if (row === null) {
             row = this.buffer.slice(start, start + width);
@@ -34,20 +31,15 @@ export class ImageDataLuminanceSource extends LuminanceSource {
         return row;
     }
 
-    getMatrix(): Uint8ClampedArray {
+    getMatrix() {
         return this.buffer;
     }
 
-    isCropSupported(): boolean {
+    isCropSupported() {
         return false;
     }
 
-    crop(
-        left: number /* int */,
-        top: number /* int */,
-        width: number /* int */,
-        height: number /* int */
-    ): LuminanceSource {
+    crop(left, top, width, height) {
         super.crop(left, top, width, height);
         return this;
     }
@@ -57,23 +49,23 @@ export class ImageDataLuminanceSource extends LuminanceSource {
      *
      * @return true
      */
-    isRotateSupported(): boolean {
+    isRotateSupported() {
         return false;
     }
 
-    rotateCounterClockwise(): LuminanceSource {
+    rotateCounterClockwise() {
         return this;
     }
 
-    rotateCounterClockwise45(): LuminanceSource {
+    rotateCounterClockwise45() {
         return this;
     }
 
-    invert(): LuminanceSource {
+    invert() {
         return new InvertedLuminanceSource(this);
     }
 
-    private static toGrayscaleBuffer(imageBuffer: Uint8ClampedArray, width: number, height: number): Uint8ClampedArray {
+    static toGrayscaleBuffer(imageBuffer, width, height) {
         const grayscaleBuffer = new Uint8ClampedArray(width * height);
         for (let i = 0, j = 0, length = imageBuffer.length; i < length; i += 4, j++) {
             let gray;

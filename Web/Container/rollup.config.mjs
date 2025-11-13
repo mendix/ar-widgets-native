@@ -20,15 +20,24 @@ export default args => {
                             src: "./src/bundle/babylonjscore.js",
                             dest: "dist/tmp/widgets/com/mendix/shared"
                         },
+                        {
+                            src: "./src/bundle/babylonjscore.amd.js", 
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        },
                     ]
                 })
             ];
         }
+        
+        // Dynamic path mapping based on output format
+        const isAMD = config.output.format === "amd";
+        const babylonPath = isAMD ? "../../../shared/babylonjscore.amd" : "../../../shared/babylonjscore";
+        
         config.output.paths = {
             ...config.output.paths,
-            "@babylonjs/core": "../../../shared/babylonjscore.js",
-            "@babylonjs/core/Engines/engine.js": "../../../shared/babylonjscore.js",
-            "@babylonjs/core/scene.js": "../../../shared/babylonjscore.js",
+            "@babylonjs/core": babylonPath,
+            "@babylonjs/core/Engines/engine.js": babylonPath,
+            "@babylonjs/core/scene.js": babylonPath,
         };
         config.plugins.push(
             typescript({

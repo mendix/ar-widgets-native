@@ -12,9 +12,14 @@ export default args => {
             }),
             rollupJson()
         );
+        
+        // Dynamic path mapping based on output format
+        const isAMD = config.output.format === "amd";
+        const babylonPath = isAMD ? "../../../shared/babylonjscore.amd" : "../../../shared/babylonjscore";
+        
         config.output.paths = {
             ...config.output.paths,
-            "@babylonjs/core": "../../../shared/babylonjscore"
+            "@babylonjs/core": babylonPath
         };
     });
     return result;
