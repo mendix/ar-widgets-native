@@ -21,7 +21,7 @@ export default args => {
                             dest: "dist/tmp/widgets/com/mendix/shared"
                         },
                         {
-                            src: "./src/bundle/babylonjscore.amd.js", 
+                            src: "./src/bundle/babylonjscore.umd.js", 
                             dest: "dist/tmp/widgets/com/mendix/shared"
                         },
                     ]
@@ -29,9 +29,9 @@ export default args => {
             ];
         }
         
-        // Dynamic path mapping based on output format
-        const isAMD = config.output.format === "amd";
-        const babylonPath = isAMD ? "../../../shared/babylonjscore.amd" : "../../../shared/babylonjscore";
+        // Use ES modules for React mode, UMD for Dojo mode
+        const isDojo = config.output.format === "amd";
+        const babylonPath = isDojo ? "../../../shared/babylonjscore.umd" : "../../../shared/babylonjscore";
         
         config.output.paths = {
             ...config.output.paths,

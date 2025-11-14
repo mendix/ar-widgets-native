@@ -21,15 +21,23 @@ export default args => {
                         ) {
                             const data = fs.readFileSync(chunkOrAsset, { encoding: "utf8" });
                             const regex = /@babylonjs\/core\/.*?\.js/g;
-                            fs.writeFileSync(chunkOrAsset, data.replaceAll(regex, "../../../shared/babylonjscore"));
+                            // Use appropriate build based on file type
+                            const isDojo = chunkOrAsset.toString().includes(".amd.") || config.output.format === "amd";
+                            const babylonPath = isDojo ? "../../../shared/babylonjscore.umd" : "../../../shared/babylonjscore";
+                            fs.writeFileSync(chunkOrAsset, data.replaceAll(regex, babylonPath));
                         }
                     }
                 }
             }
         );
+        
+        // Use ES modules for React mode, UMD for Dojo mode
+        const isDojo = config.output.format === "amd";
+        const babylonPath = isDojo ? "../../../shared/babylonjscore.umd" : "../../../shared/babylonjscore";
+        
         config.output.paths = {
             ...config.output.paths,
-            "@babylonjs/core": "../../../shared/babylonjscore.js"
+            "@babylonjs/core": babylonPath
         };
     });
 

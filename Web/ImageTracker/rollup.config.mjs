@@ -11,9 +11,14 @@ export default args => {
                 include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
             }),
         );
+        
+        // Use ES modules for React mode, UMD for Dojo mode
+        const isDojo = config.output.format === "amd";
+        const babylonPath = isDojo ? "../../../shared/babylonjscore.umd" : "../../../shared/babylonjscore";
+        
         config.output.paths = {
             ...config.output.paths,
-            "@babylonjs/core": "../../../shared/babylonjscore.js"
+            "@babylonjs/core": babylonPath
         };
     });
 

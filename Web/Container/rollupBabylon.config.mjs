@@ -27,13 +27,16 @@ export default [
       }),
     ],
   },
-  // AMD build for Dojo mode
+  // UMD build for both React and Dojo compatibility
   {
     input: "../../node_modules/@babylonjs/core/index.js",
     output: {
-      format: "amd",
-      file: "./src/bundle/babylonjscore.amd.js",
-      name: "babylonjs"
+      format: "umd",
+      file: "./src/bundle/babylonjscore.umd.js",
+      name: "BABYLON",
+      globals: {
+        '@babylonjs/core': 'BABYLON'
+      }
     },
     plugins: [
       resolve({
@@ -41,10 +44,9 @@ export default [
         browser: true
       }),
       commonjs({
-        requireReturnsDefault: 'auto',
+        requireReturnsDefault: 'auto'
       }),
-      analyze({ summaryOnly: true, limit: 20 })
-      // Removed terser for AMD build to avoid stack overflow issues
+      analyze({ summaryOnly: true, limit: 5 })
     ],
   }
 ];
