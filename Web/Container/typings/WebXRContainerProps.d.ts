@@ -31,6 +31,8 @@ export interface WebXRContainerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     mxContentWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     mxPreviewCameraDistance: number | null;
     mxPositionX: number | null;

@@ -1,0 +1,78 @@
+import typescript from "@rollup/plugin-typescript";
+import copy from "rollup-plugin-copy";
+
+export default args => {
+    const result = args.configDefaultConfig;
+    result.forEach(config => {
+        const external = [/^@babylonjs\/core($|\/)/];
+        config.external = [...config.external, ...external];
+        config.plugins.push(
+            typescript({
+                include: ["../../Shared/ComponentParent/**/*.ts+(|x)", "./**/*.ts+(|x)"]
+            }),
+        );
+        
+        // Use ES modules for React mode, UMD for Dojo mode
+        const isDojo = config.output.format === "amd";
+        const babylonPath = isDojo ? "../../../shared/babylonjscore.umd" : "../../../shared/babylonjscore";
+        
+        config.output.paths = {
+            ...config.output.paths,
+            "@babylonjs/core": babylonPath
+        };
+    });
+
+    result.forEach((config, index) => {
+        const external = [/^@zxing\/library($|\/)/];
+        config.external = [...config.external, ...external];
+
+        // Only for first entry
+        if (index === 0) {
+            config.plugins = [
+                ...config.plugins,
+                copy({
+                    verbose: true,
+                    copyOnce: true,
+                    targets: [
+                        {
+                            src: "./src/bundle/zxinglibrary.js",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
+                }),
+                copy({
+                    targets: [
+                        {
+                            src: "ReadMeOSS.txt",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
+                })
+            ];
+        }
+        config.output.paths = {
+            ...config.output.paths,
+            "@zxing/library/cjs": "../../../shared/zxinglibrary.js"
+        };
+    });
+
+    result.forEach((config, index) => {
+        // Only for first entry
+        if (index === 0) {
+            config.plugins = [
+                ...config.plugins,
+                copy({
+                    verbose: true,
+                    copyOnce: true,
+                    targets: [
+                        {
+                            src: "./src/bundle/Worker.js",
+                            dest: "dist/tmp/widgets/com/mendix/shared"
+                        }
+                    ]
+                })
+            ];
+        }
+    });
+    return result;
+};

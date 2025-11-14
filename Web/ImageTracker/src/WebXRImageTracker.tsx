@@ -35,7 +35,7 @@ export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React
             !stopped.current &&
             videoRef.current &&
             sceneRef.current &&
-            (engineContextCamera.current !== undefined || sceneRef.current?.activeCamera !== (undefined || null))
+            (engineContextCamera.current !== undefined || sceneRef.current?.activeCamera != null)
         ) {
             const cameraToClone = engineContextCamera.current ?? sceneRef.current.activeCamera;
             if (clonedCamera.current && lastPosition.current) {
@@ -82,7 +82,9 @@ export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React
                 clonedCamera.current.rotationQuaternion = cameraToClone!.absoluteRotation.clone();
             } else {
                 setTimeout(() => {
-                    if (!stopped.current && scanning.current) callDecodeWorker();
+                    if (!stopped.current && scanning.current) {
+                        callDecodeWorker();
+                    }
                 }, 250);
             }
         }
@@ -109,9 +111,13 @@ export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React
                 if (codeReaderRef.current) {
                     streamRef.current = stream;
                     const video = document.createElement("video");
-                    let { width, height } = stream.getTracks()[0].getSettings();
-                    if (width) video.width = width;
-                    if (height) video.height = height;
+                    const { width, height } = stream.getTracks()[0].getSettings();
+                    if (width) {
+                        video.width = width;
+                    }
+                    if (height) {
+                        video.height = height;
+                    }
                     video.srcObject = streamRef.current;
                     video.play().then(() => {
                         videoRef.current = video;
@@ -196,8 +202,8 @@ export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React
             if (foundIndex > -1) {
                 const previousResult = previousResults[foundIndex];
                 const newResultPoints = newResult.result;
-                let newRays: Ray[] = [];
-                let combinedPoint: Vector3 | undefined = undefined;
+                const newRays: Ray[] = [];
+                let combinedPoint: Vector3 | undefined;
                 newResultPoints.forEach((point, index) => {
                     if (newResult.camera) {
                         const newRay = sceneRef.current!.pick(point.x, point.y, undefined, false, newResult.camera).ray;
@@ -222,9 +228,9 @@ export function WebXRImageTracker(props: WebXRImageTrackerContainerProps): React
                                 props.mxPositionX.setValue(Big(preciseX.includes("e") ? 0 : preciseX));
                                 props.mxPositionY.setValue(Big(preciseY.includes("e") ? 0 : preciseY));
                                 props.mxPositionZ.setValue(Big(preciseZ.includes("e") ? 0 : preciseZ));
-                                props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting
-                                    ? props.mxOnDataChanged.execute()
-                                    : null;
+                                if (props.mxOnDataChanged?.canExecute && !props.mxOnDataChanged.isExecuting) {
+                                    props.mxOnDataChanged.execute();
+                                }
                                 setPreviousResults(oldresults => {
                                     oldresults[foundIndex].position = combinedPoint!;
                                     oldresults[foundIndex].previousRays = newRays;
